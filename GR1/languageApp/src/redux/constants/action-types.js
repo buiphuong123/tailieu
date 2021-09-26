@@ -1,0 +1,20 @@
+// Login action 
+export const LOGIN_REQUESTING = 'LOGIN_REQUESTING';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAIL = 'LOGIN_FAIL';
+export const REGISTER_REQUESTING = 'REGISTER_REQUESTING';
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+export const REGISTER_FAIL = 'REGISTER_FAIL';
+export const LOGOUT_USER = 'LOGOUT_USER';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const TYPE_ISEND = 'TYPE_ISEND';
+// language
+export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
+
+export const SEND_REQUEST = 'SEND_REQUEST';
+export const SEND_REQUEST_SUCCESS = 'SEND_REQUEST_SUCCESS';
+export const SEND_REQUEST_FAILURE = 'SEND_REQUEST_FAILURE';
+
+// loading
+export const SHOW_LOADING = 'SHOW_LOADING';
+export const HIDE_LOADING = 'HIDE_LOADING';
