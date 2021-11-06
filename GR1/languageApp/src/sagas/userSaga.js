@@ -1,26 +1,20 @@
 import {call, put, takeEvery, takeLatest, takeLeading, delay } from 'redux-saga/effects';
 import axios from 'axios';
 import * as types from '../redux/constants/action-types';
-import { showLoading, hideLoading, loginUserSuccess, loginUserFail, registerUserFail, registerUserSuccess, logoutSuccess } from '../redux/actions/index';
-import { login, register } from '../apis/user';
-import NavigationService from '../navigations/NavigationService';
-// import { CommonActions  } from '@react-navigation/native';
+import { showLoading, hideLoading, loginUserSuccess, loginUserFail, registerUserFail, registerUserSuccess, logoutSuccess, sendMailSuccess, sendMailFail } from '../redux/actions/index';
+import { login, register, sendMailPass } from '../apis/user';
 
-function* loginUs({ payload }) {
+function* loginUs({ payload, props }) {
     const { username, password } = payload;
     yield put(showLoading());
     const resp = yield call(login, {
         username,
         password,
-        // status: STATUSES[0].value,
     });
     const { data } = resp;
     if (data.code == 1) {
         yield put(loginUserSuccess(data.user));
-        yield NavigationService.navigate("Drawer");
-        // yield put(CommonActions .navigate({ routeName: 'Drawer' }));
-        // yield CommonActions.navigate('Drawer');
-        console.log('xong roi');
+        props.navigation.navigate("Drawer");
     }
     else {
         yield put(loginUserFail(data.error));
@@ -43,6 +37,24 @@ function *registerUs({ payload }) {
     }
     else {
         yield put(registerUserFail(data.error));
+    }
+    yield delay(100);
+    yield put(hideLoading());
+}
+
+function *sendMail({ payload, props }) {
+    const { email } = payload;
+    yield put(showLoading());
+    const resp = yield call(sendMailPass, {
+        email
+    });
+    const { data } = resp;
+    if (data.code == 1) {
+        yield put(sendMailSuccess(data.success));
+        props.navigation.navigate("VerifyCode", {props, email: email});
+    }
+    else {
+        yield put(sendMailFail(data.error));
     }
     yield delay(100);
     yield put(hideLoading());
@@ -78,4 +90,8 @@ export function* watchRegisterUser() {
 
 export function* watchLogoutUser() {
     yield takeLatest(types.LOGOUT_USER, logoutUser);
+}
+
+export function* watchsendMail() {
+    yield takeLatest(types.PASSWORD_REQUESTING, sendMail);
 }

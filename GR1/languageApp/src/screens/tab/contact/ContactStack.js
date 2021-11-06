@@ -5,7 +5,7 @@ import CustomHeader from '../../CustomHeader';
 const ContactStack = ({navigation}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
-            <CustomHeader title="Home" isHome={true} navigation={navigation} />
+            {/* <CustomHeader title="Home" isHome={true} navigation={navigation} /> */}
             <View>
                 <Text>Contact Screen</Text>
             </View>

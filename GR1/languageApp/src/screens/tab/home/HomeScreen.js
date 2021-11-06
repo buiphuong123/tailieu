@@ -1,22 +1,29 @@
-import React, {Component}  from 'react'
+import React, {useState}  from 'react'
 import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native'
 import CustomHeader from '../../CustomHeader';
+import axios from "axios";
+import { useSelector, useDispatch } from 'react-redux';
+import { getGrammarRequest } from '../../../redux/actions/index';
 
 const HomeScreen = ({navigation}) => {
+    const dispatch = useDispatch();
+    const GrammarRequest = () => dispatch(getGrammarRequest(navigation));
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <View style={{flex: 1}}>
             <CustomHeader title="Home" isHome={true} navigation={navigation} />
-            <View>
-                <Text>Home Screen</Text>
+            <View style={{ backgroundColor: 'gray'}}>
+                <Text>Grammar Screen</Text>
                 <TouchableOpacity 
                     style={{marginTop: 20}}
-                    onPress={() => navigation.navigate("HomeDetail")}
+                    onPress={() => GrammarRequest()}
                 >
-                    <Text>Go to home detail</Text>
+                    <View>
+                        <Text>Go to home Grammar</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
 
-        </SafeAreaView>
+        </View>
     )
 }
 export default HomeScreen;

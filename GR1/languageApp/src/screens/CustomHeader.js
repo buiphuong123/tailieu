@@ -20,7 +20,7 @@ const CustomHeader = ({title, isHome, navigation}) => {
                 }
             </View>
             <View style={{flex: 1.5, justifyContent: 'center'}}>
-                <Text style={{textAlign: 'center', color: colors.text}}>{title}</Text>
+                <Text style={{textAlign: 'center', color: colors.text, fontSize: 18}}>{title}</Text>
             </View>
             <View style={{flex: 1}}></View>
         </View>

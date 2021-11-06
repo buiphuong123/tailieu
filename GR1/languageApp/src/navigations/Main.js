@@ -8,7 +8,6 @@ import ContactStack from '../screens/tab/contact/ContactStack';
 
 const Tab = createBottomTabNavigator();
     const Main = () => {
-
         return(
            <Tab.Navigator
                 screenOptions={({route})=>({

@@ -10,8 +10,17 @@ import rootSaga from './src/sagas/rootSaga';
 import Fetchdata from './src/screens/Fetchdata';
 import Toast from '@phamhuuan/react-native-toast-message';
 import GlobalLoading from './src/GlobalLoading';
-
+import NewPassword from './src/screens/user/NewPassword';
+import FlatListitem from './src/screens/Flatlistitem';
 const sagaMiddleware = createSagaMiddleware();
+import HomeScreenDetail from './src/screens/tab/home/HomeScreenDetail';
+import HomeScreen from './src/screens/tab/home/HomeScreen';
+import ExplainScreen from './src/screens/tab/home/ExplainScreen';
+import ListGrammer from './src/screens/tab/home/ListGrammer';
+import Grammer from './src/screens/tab/home/Grammer';
+import GrammarScreenDetail from './src/screens/tab/home/GrammarScreenDetail';
+import GrammerScreen from './src/screens/tab/home/GrammerScreen';
+
 
 const store = createStore(
   appReducers,
@@ -26,6 +35,13 @@ const App = () => {
         <GlobalLoading />
         {/* <Fetchdata /> */}
       </Provider>
+      // <HomeScreenDetail />
+      // <GrammarScreenDetail />
+      // <GrammerScreen />
+      // <ExplainScreen />
+      // <ListGrammer />
+      // <Grammer />
+      // <HomeScreen />
   );
 };
 sagaMiddleware.run(rootSaga);

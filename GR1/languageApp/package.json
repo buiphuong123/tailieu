@@ -1,5 +1,5 @@
 {
-  "name": "languageApp",
+  "name": "languageapp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "@phamhuuan/react-native-toast-message": "^1.0.2",
     "@react-native-async-storage/async-storage": "^1.15.5",
     "@react-native-community/checkbox": "^0.5.8",
+    "@react-native-community/slider": "^4.1.10",
     "@react-native-masked-view/masked-view": "^0.2.4",
     "@react-navigation/bottom-tabs": "^5.11.11",
     "@react-navigation/drawer": "^5.12.5",
@@ -22,17 +23,21 @@
     "axios": "^0.21.1",
     "native-base": "^3.0.2",
     "prop-types": "^15.7.2",
-    "react": "17.0.1",
-    "react-native": "0.64.2",
+    "react": "^0.0.0-0203b6567",
+    "react-native": "^0.65.1",
     "react-native-confirmation-code-field": "^7.1.0",
     "react-native-elements": "^3.4.2",
+    "react-native-furi": "^0.0.1",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-htmlview": "^0.16.0",
     "react-native-i18n": "^2.0.15",
     "react-native-paper": "^4.9.2",
+    "react-native-progress": "^5.0.0",
     "react-native-reanimated": "^2.2.0",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^3.4.0",
     "react-native-snap-carousel": "^3.9.1",
+    "react-native-sound": "^0.11.1",
     "react-native-vector-icons": "^8.1.0",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
@@ -46,7 +51,7 @@
     "eslint": "^7.29.0",
     "jest": "^27.0.5",
     "metro-react-native-babel-preset": "^0.66.0",
-    "react-test-renderer": "17.0.1"
+    "react-test-renderer": "17.0.2"
   },
   "jest": {
     "preset": "react-native"

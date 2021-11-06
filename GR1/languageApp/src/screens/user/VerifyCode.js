@@ -12,6 +12,7 @@ import {
 } from 'react-native-confirmation-code-field';
 import lock from '../../assets/images/lock.jpg';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   root: {flex: 1, padding: 20,},
@@ -58,15 +59,38 @@ textenter: {
 
 const CELL_COUNT = 4;
 
-const VerifyCode = () => {
+const VerifyCode = ({navigation, route}) => {
   const { colors } = useTheme();
 
   const [value, setValue] = useState('');
+  const [error, setError] = useState('');
   const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
+  const { email } = route.params;
+  const verity = () => {
+    console.log('GIA TRI CUA VALUE LA', value);
+    // console.log(email);
+    axios.put('http://192.168.1.4:3002/language/resetPassword/'+ value, {
+      "email": email
+    }, {
+      headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    .then((response) => {
+      // console.log(response.data);
+        if(response.data.code === 1) {
+          navigation.navigate("NewPassword", {email: email});
+        }
+        else {
+          setError(response.data.err);
+        }
+    })
+  }
 
   return (
     <SafeAreaView style={styles.root}>
@@ -108,14 +132,16 @@ const VerifyCode = () => {
         )}
       />
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => {navigation.navigate("ForgotPassword")}} >
           <AppText style={{color: '#009387', marginTop:15}} i18nKey={'resend code'}/>
       </TouchableOpacity>
-
+          <View style={{marginTop:5}}>
+            <Text style={{color: 'red'}}>{error != '' ? error : ''}</Text>
+          </View>
       <View style={styles.button}>
         <TouchableOpacity
                 style={[styles.signIn, {backgroundColor: '#009387'}]}
-                onPress = {() => signUp()}
+                onPress = {() => verity()}
             >
             <View
                 colors={['#08d4c4', '#01ab9d']}

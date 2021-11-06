@@ -21,6 +21,7 @@ import Toast from '@phamhuuan/react-native-toast-message';
 import i18n from '../../i18n/i18n';
 import { loginRequest, setIsEnd } from '../../redux/actions/index';
 import { useSelector, useDispatch } from 'react-redux';
+
 const Login = (props) => {
     const [data, setData] = React.useState({
         username: '',
@@ -37,7 +38,7 @@ const Login = (props) => {
     
     const dispatch = useDispatch();
 
-    const loginRequestUser = (username, password) => dispatch(loginRequest(username, password));
+    const loginRequestUser = (username, password) => dispatch(loginRequest(username, password, props));
     
     // useEffect(() => {
     //     if( user.user !== undefined ) {
@@ -211,7 +212,7 @@ const Login = (props) => {
             }
             
 
-            <TouchableOpacity onPress = {() => props.navigation.navigate("ForgotPassword")}>
+            <TouchableOpacity onPress = {() => forgot()}>
                 <AppText style={{color: '#009387', marginTop:15}} i18nKey={'forgot pass'}/>
             </TouchableOpacity>
             <View style={styles.button}>
@@ -266,7 +267,7 @@ const Login = (props) => {
                 >
                     <AppText style={[styles.textSign, {
                         color: '#009387'
-                    }]} i18nKey={'SignUpkk'}/>
+                    }]} i18nKey={'SignUp'}/>
                 </TouchableOpacity>
 
             </View>

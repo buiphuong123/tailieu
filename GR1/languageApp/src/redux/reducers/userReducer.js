@@ -1,6 +1,5 @@
 import * as types from './../constants/action-types';
 import { showToastSuccess, showToastError } from '../../helpers/toastHelper';
-
 const initState = { 
     user: {},
  }
@@ -37,6 +36,26 @@ const userReducer = (state = initState, action) => {
             return {
                 ...state,
                 user: data,
+            }
+        }
+        case types.PASSWORD_REQUESTING: {
+            console.log('forgot password vao reducer');
+            return{
+                ...state
+            }
+        }
+        case types.MAIL_SUCESS: {
+            const { message } = action.payload;
+            showToastSuccess(message);
+            return{
+                ...state
+            }
+        }
+        case types.MAIL_FAIL: {
+            const { error } = action.payload;
+            showToastError(error);
+            return{
+                ...state
             }
         }
         case types.LOGIN_FAIL: {

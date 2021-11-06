@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useState } from 'react';
 import { 
     View, 
     Text, 
@@ -23,8 +23,12 @@ import { loginRequest, setIsEnd } from '../../redux/actions/index';
 import { useSelector, useDispatch } from 'react-redux';
 import Loading from './Loading';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import passApi from '../../apis/passApi';
+import axios from 'axios';
+import { showToastSuccess, showToastError } from '../../helpers/toastHelper';
+import { forgotPasswordRequest } from '../../redux/actions/index';
 
-const ForgotPassword = () => {
+const ForgotPassword = (props) => {
     const [data, setData] = React.useState({
         email: '',
         isValidEmail: true,
@@ -33,7 +37,9 @@ const ForgotPassword = () => {
     const { colors } = useTheme();
     
     const loading = useSelector(state => state.userReducer.loading);
-    
+    const dispatch = useDispatch();
+
+    const forgotRequest = (email, props) => dispatch(forgotPasswordRequest(email, props));
     const handleEmailChange = (val) => {
         if( val.includes('@') == true ) {
             setData({
@@ -50,20 +56,41 @@ const ForgotPassword = () => {
         }
     }
 
-    const showToastSuccess = () => {
-        Toast.show({
-            type: 'success',
-            text1: 'Login success',
-          });
-        setBooleadisEnd();
-    }
+    // const showToastSuccess = () => {
+    //     Toast.show({
+    //         type: 'success',
+    //         text1: 'Login success',
+    //       });
+    //     setBooleadisEnd();
+    // }
 
-    const showToastError = (text) => {
-        Toast.show({
-            type: 'error',
-            text1: text,
-          });
-        setBooleadisEnd();
+    // const showToastError = (text) => {
+    //     Toast.show({
+    //         type: 'error',
+    //         text1: text,
+    //       });
+    //     setBooleadisEnd();
+    // }
+    const doLogin = () => {
+        // axios.post('http://192.168.1.3:3002/language/forgot', {
+        //     "email": data.email,
+        // }, {
+        //     headers: {
+        //         "Accept": "application/json",
+        //         "Content-Type": "application/json"
+        //     }
+        // })
+        // .then((response) => {
+        //     console.log('RESPOND.DATA O DAY LA' , response.data);
+        //     if (response.data.success != undefined) {
+        //         showToastSuccess(response.data.success);
+        //         props.navigation.navigate("VerifyCode");
+        //     }
+        //     else {
+        //         showToastError(response.data.error);
+        //     }
+        // });
+        forgotRequest(data.email, props);
     }
   
     return (

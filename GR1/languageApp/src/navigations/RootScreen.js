@@ -8,7 +8,7 @@ import VerifyCode from '../screens/user/VerifyCode';
 import ForgotPassword from '../screens/user/ForgotPassword';
 import Main from './Main';
 import DrawerTab from '../navigations/DrawerTab';
-
+import NewPassword from '../screens/user/NewPassword';
 const Stack = createStackNavigator();
 
 const RootScreen = ({navigation}) => {
@@ -49,6 +49,11 @@ const RootScreen = ({navigation}) => {
             <Stack.Screen
                 name='Drawer'
                 component={DrawerTab}
+            />
+
+            <Stack.Screen
+                name='NewPassword'
+                component={NewPassword}
             />
         </Stack.Navigator>
     )

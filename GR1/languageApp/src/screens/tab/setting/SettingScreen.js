@@ -5,7 +5,7 @@ import CustomHeader from '../../CustomHeader';
 const SettingScreen = ({navigation}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
-            <CustomHeader title="Setting" isHome={true} navigation={navigation} />
+            {/* <CustomHeader title="Setting" isHome={true} navigation={navigation} /> */}
             <View>
                 <Text>Setting Screen</Text>
                 <TouchableOpacity 

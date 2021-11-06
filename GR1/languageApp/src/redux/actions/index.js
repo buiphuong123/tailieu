@@ -29,10 +29,12 @@ export const fetchDataFailure = (error) => {
     }
 }
 
-export function loginRequest (username, password) { 
+export function loginRequest (username, password, props) { 
     return {
       type: types.LOGIN_REQUESTING,
-      payload: {username, password}
+      payload: {username, password},
+      props
+      
     }
 }
 
@@ -71,6 +73,29 @@ export const registerUserFail = (error) => {
     }
 }
 
+export const forgotPasswordRequest = (email, props) => {
+    console.log('forgot password vao action r nhe');
+    return {
+        type: types.PASSWORD_REQUESTING,
+        payload: { email },
+        props
+    }
+}
+
+export const sendMailSuccess = (message) => {
+    return {
+        type: types.MAIL_SUCESS,
+        payload: { message }
+    }
+}
+
+export const sendMailFail = (error) => {
+    return {
+        type: types.MAIL_FAIL,
+        payload: { error }
+    }
+}
+
 export function logoutUser(user) {
     return {
         type: types.LOGOUT_USER,
@@ -87,6 +112,27 @@ export function logoutSuccess() {
 export function setIsEnd() {
     return {
         type: types.TYPE_ISEND,
+    }
+}
+
+export function getGrammarRequest (navigation) { 
+    return {
+      type: types.GET_GRAMMAR,
+      navigation
+      
+    }
+}
+
+export const getGrammarSuccess = () => {
+    return {
+        type: types.GET_GRAMMAR_SUCCESS,
+    }
+}
+
+export const getGrammarFail = (error) => {
+    return {
+        type: types.GET_GRAMMAR_FAIL,
+        payload: {error}
     }
 }
 

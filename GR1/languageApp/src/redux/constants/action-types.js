@@ -18,3 +18,14 @@ export const SEND_REQUEST_FAILURE = 'SEND_REQUEST_FAILURE';
 // loading
 export const SHOW_LOADING = 'SHOW_LOADING';
 export const HIDE_LOADING = 'HIDE_LOADING';
+
+//forgot password
+export const PASSWORD_REQUESTING = 'PASSWORD_REQUESTING';
+export const MAIL_SUCESS = 'MAIL_SUCESS';
+export const MAIL_FAIL = 'MAIL_FAIL';
+
+// get Grammar
+export const GET_GRAMMAR = 'GET_GRAMMAR';
+export const GET_GRAMMAR_SUCCESS = 'GET_GRAMMAR_SUCCESS';
+export const GET_GRAMMAR_FAIL = 'GET_GRAMMAR_FAIL';
+

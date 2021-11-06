@@ -67,8 +67,8 @@ const DrawerContent = (props) => {
                                 size={50}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
-                                <Title style={styles.title}>{user.user.username}</Title>
-                                <Caption style={styles.caption}>{user.user.email}</Caption>
+                                {/* <Title style={styles.title}>{user.user.username}</Title>
+                                <Caption style={styles.caption}>{user.user.email}</Caption> */}
                             </View>
                         </View>
 

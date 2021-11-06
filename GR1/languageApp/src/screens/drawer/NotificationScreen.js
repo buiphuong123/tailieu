@@ -5,7 +5,7 @@ import CustomHeader from '../CustomHeader';
 export default NotificationScreen = ({navigation}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
-            <CustomHeader title="Notification" navigation={navigation} />
+            {/* <CustomHeader title="Notification" navigation={navigation} /> */}
             <View>
                 <Text>Notification screen!</Text>
             </View>
