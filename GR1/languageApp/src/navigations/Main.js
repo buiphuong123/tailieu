@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import HomeStack from '../screens/tab/home/homestack/HomeStack';
 import SetStack from '../screens/tab/setting/setstack/SetStack';
 import ContactStack from '../screens/tab/contact/ContactStack';
+import NotificationStack from '../screens/tab/notification/NotificationStack';
 
 const Tab = createBottomTabNavigator();
     const Main = () => {
@@ -21,6 +22,9 @@ const Tab = createBottomTabNavigator();
                             iconName = focused ? 'people' : 'people';
                         }else if (route.name === 'JLPT') {
                             iconName = focused ? 'md-bookmarks-sharp' : 'md-bookmarks-sharp';
+                        }
+                        else if (route.name === 'Notification') {
+                            iconName = focused ? 'notifications-outline' : 'notifications-outline';
                         }
                         return <Icon name={iconName} size={size} color={color} />;
                     },
@@ -48,6 +52,11 @@ const Tab = createBottomTabNavigator();
                  <Tab.Screen 
                     name="Setting" 
                     component={SetStack} 
+                />
+
+                <Tab.Screen 
+                    name="Notification" 
+                    component={NotificationStack} 
                 />
                 
 

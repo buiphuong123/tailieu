@@ -1,25 +1,47 @@
 import {call, put, takeLatest, delay } from 'redux-saga/effects';
 import * as types from '../redux/constants/action-types';
 import { showLoading, hideLoading, getGrammarSuccess, getGrammarFail } from '../redux/actions/index';
-import { getGra } from '../apis/user';
+import { allcomment, getGra } from '../apis/user';
+import {getListCommentSuccess} from '../redux/actions/comment.action'
 
-function* getGrammar({ navigation }) {
+function* getGrammar({ payload, navigation }) {
+    const { id } = payload;
     yield put(showLoading());
-    const resp = yield call(getGra);
+    const resp = yield call(getGra, {
+        id: id
+    });
     const { data } = resp;
     if (data.code == 1) {
-        yield put(getGrammarSuccess());
-        navigation.navigate("GrammarScr", {dataGrammar: data.grammar});
+        console.log('VAO REDUCER ROI NHA');
+        yield put(getGrammarSuccess(data.grammar));
+        navigation.navigate("GrammarScr");
     }
     else {
         yield put(getGrammarFail(data.error));
     }
-    yield delay(100);
+    // yield delay(100);
+    yield put(hideLoading());
+}
+
+function* getComment({payload}) {
+    const {grammar_id, user_id} = payload;
+    yield put(showLoading());
+    const resp = yield call(allcomment, {
+        grammar_id,
+        user_id
+    });
+    const { data } = resp;
+    if(data.code === 1) {
+        yield put(getListCommentSuccess(data.comment));
+    }
     yield put(hideLoading());
 }
 
 
 export function* watchgetGrammar() {
     yield takeLatest(types.GET_GRAMMAR, getGrammar);
+}
+export function* watchgetComment() {
+    yield takeLatest(types.GET_LIST_COMMENT_REQUEST, getComment);
 }
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { View, Text, Platform } from 'react-native';
 import Home from './src/navigations/Home';
 import { createStore, applyMiddleware, compose  } from 'redux';
 import { Provider } from 'react-redux';
@@ -20,14 +20,111 @@ import ListGrammer from './src/screens/tab/home/ListGrammer';
 import Grammer from './src/screens/tab/home/Grammer';
 import GrammarScreenDetail from './src/screens/tab/home/GrammarScreenDetail';
 import GrammerScreen from './src/screens/tab/home/GrammerScreen';
-
-
+import ModalScreen from './src/screens/tab/home/ModalScreen';
+import io from 'socket.io-client';
+import messaging from '@react-native-firebase/messaging';
+import firebase from '@react-native-firebase/app';
 const store = createStore(
   appReducers,
   applyMiddleware(sagaMiddleware)
 );
-
+export const socket = io("http://192.168.1.6:3002");
 const App = () => {
+  const [notification, setNotification] = useState({
+    title: undefined,
+    body: undefined
+  })
+  // const [token, setToken] = useState("");
+ 
+  // const getToken = async() => {
+  //   const firebaseToken = await firebase.messaging().getToken();
+  //   console.log(firebaseToken);
+  //   setToken(firebaseToken);
+  //   console.log('set xong r');
+  // }
+  // create channel 
+//   useEffect(() => {
+//       createChannel();
+//       notificationListener();
+//   }, []);
+
+//  const createChannel = () => {
+//     const channel = new firebase.notifications.Android.Channel(
+//       'channelId',
+//       'channelName',
+//       firebase.notifications.Android.Importance.Max,
+//     ).setDescription('Description');
+
+//     firebase.notifications().android.createChannel(channel);
+//   };
+//   // foreground notification
+//   const notificationListener = () => {
+//     firebase.notifications().onNotification((notification) => {
+//       if(Platform.OS ==='android') {
+//         const localNotification = new firebase.notifications.Notification({
+//           sound: 'default',
+//           show_in_foreground: true,
+//         })
+//         .setNotificationId(notification.notificationId)
+//         .setTitle(notification.title)
+//         .setSubTitle(notification.subtitle)
+//         .setBody(notification.body)
+//         .setData(notification.data)
+//         .android.setChannelId('channelId')
+//         .android.setPriority(firebase.notifications.Android.Priority.Hight);
+        
+//         firebase
+//         .notifications()
+//         .displayNotification(localNotification)
+//         .catch((err) => console.log(err));
+//       }
+//     });
+//   };
+  useEffect(() => {
+  //   getToken();
+  //  console.log('TOKEN DAY NHA', token);
+    messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      setNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body
+      })
+    });
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
+      setNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body
+      })
+    });
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', remoteMessage);
+      setNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body
+      })
+    });
+
+    messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        console.log(
+          'Notification caused app to open from quit state:',
+          JSON.stringify(remoteMessage),
+        );
+        setNotification({
+          title: remoteMessage.notification.title,
+          body: remoteMessage.notification.body
+        })
+      }
+    });
+}, []);
+
+  // useEffect(() => {
+   
+  // });
   return (
       <Provider store={store}>
         <Home />
@@ -35,6 +132,7 @@ const App = () => {
         <GlobalLoading />
         {/* <Fetchdata /> */}
       </Provider>
+      // <ModalScreen />
       // <HomeScreenDetail />
       // <GrammarScreenDetail />
       // <GrammerScreen />

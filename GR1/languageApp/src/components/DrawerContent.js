@@ -36,7 +36,7 @@ const DrawerContent = (props) => {
     const [show, setShow] = useState(false);
     const user = useSelector(state => state.userReducer.user)
     const dispatch = useDispatch();
-    const logout = (user) => dispatch(logoutUser(user));
+    const logout = (token) => dispatch(logoutUser(token));
     const setLanguages = (language) => dispatch(changeLanguage(language));
     
     const setLanguage = (language) => {
@@ -50,9 +50,10 @@ const DrawerContent = (props) => {
    }
 
    const logoutUs = () => {
-    logout(user.user);
-       props.navigation.navigate("Toggle");
-       
+    props.navigation.navigate("Login");
+    console.log('USER HIEN TAI FORM ', user);
+    logout(user.token);
+    
    }
     return(
         <View style={{flex:1}}>
@@ -67,8 +68,8 @@ const DrawerContent = (props) => {
                                 size={50}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
-                                {/* <Title style={styles.title}>{user.user.username}</Title>
-                                <Caption style={styles.caption}>{user.user.email}</Caption> */}
+                                <Title style={styles.title}>{user.username}</Title>
+                                <Caption style={styles.caption}>{user.email}</Caption>
                             </View>
                         </View>
 

@@ -21,6 +21,7 @@ import Toast from '@phamhuuan/react-native-toast-message';
 import i18n from '../../i18n/i18n';
 import { loginRequest, setIsEnd } from '../../redux/actions/index';
 import { useSelector, useDispatch } from 'react-redux';
+import firebase from '@react-native-firebase/app';
 
 const Login = (props) => {
     const [data, setData] = React.useState({
@@ -33,19 +34,20 @@ const Login = (props) => {
     });
     const [datauser, setDatauser] = useState({username: data.username, password: data.password});
     const { colors } = useTheme();
-    
+    const [notifiToken, setNotifiToken] = useState("");
     const user = useSelector(state => state.userReducer.user);
     
     const dispatch = useDispatch();
 
-    const loginRequestUser = (username, password) => dispatch(loginRequest(username, password, props));
-    
-    // useEffect(() => {
-    //     if( user.user !== undefined ) {
-    //         props.navigation.navigate("Drawer");
-    //     }
-        
-    // }, [user.user]);
+    const loginRequestUser = (username, password, notifiToken) => dispatch(loginRequest(username, password, notifiToken, props));
+    const getToken = async() => {
+        const firebaseToken = await firebase.messaging().getToken();
+        setNotifiToken(firebaseToken);
+      }
+    useEffect(() => {
+        getToken();
+        console.log('notifitoken day nha ', notifiToken);
+    }, [notifiToken]);
     
     const textInputChange = (val) => {
         if( val.trim().length >= 4 ) {
@@ -105,7 +107,7 @@ const Login = (props) => {
     }
 
     const doLogin = () => {
-        loginRequestUser(data.username,  data.password);
+        loginRequestUser(data.username,  data.password, notifiToken);
     }
 
     const forgot = () => {

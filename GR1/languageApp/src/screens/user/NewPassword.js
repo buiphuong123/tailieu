@@ -71,7 +71,7 @@ const NewPassword = ({navigation, route}) => {
             }
         }
         else {
-            axios.post('http://192.168.1.4:3002/language/changePassword', {
+            axios.post('http://192.168.1.6:3002/language/changePassword', {
             "email": email,
             "password": data.newPass
           }, {

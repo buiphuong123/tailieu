@@ -32,14 +32,15 @@ const userReducer = (state = initState, action) => {
         }
         case types.LOGIN_SUCCESS: {
             const data = action.payload;
-            showToastSuccess("login success");
+            if(state.user === {}){
+                showToastSuccess("login success");
+            }
             return {
                 ...state,
-                user: data,
+                user: data.user,
             }
         }
         case types.PASSWORD_REQUESTING: {
-            console.log('forgot password vao reducer');
             return{
                 ...state
             }
@@ -70,7 +71,6 @@ const userReducer = (state = initState, action) => {
         case types.LOGOUT_USER: {
             return {
                 ...state,
-                user: {},
             }
         }
 

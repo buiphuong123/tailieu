@@ -6,6 +6,7 @@ import HomePages from '../screens/Homepages';
 import Language from '../screens/Language';
 import DrawerContent from '../components/DrawerContent';
 import HomeScreenDetail from "../screens/tab/home/HomeScreenDetail";
+import Login from "../screens/user/Login";
 
 const Drawer = createDrawerNavigator();
 
@@ -17,6 +18,7 @@ const DrawerTab = () => {
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Homepages" component={HomePages} />
             <Drawer.Screen name="Language" component={Language} />
+            {/* <Drawer.Screen name="Login" component={Login} /> */}
         </Drawer.Navigator> 
     )
 }

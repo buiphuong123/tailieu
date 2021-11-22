@@ -29,10 +29,10 @@ export const fetchDataFailure = (error) => {
     }
 }
 
-export function loginRequest (username, password, props) { 
+export function loginRequest (username, password, notifiToken, props) { 
     return {
       type: types.LOGIN_REQUESTING,
-      payload: {username, password},
+      payload: {username, password, notifiToken},
       props
       
     }
@@ -96,14 +96,14 @@ export const sendMailFail = (error) => {
     }
 }
 
-export function logoutUser(user) {
+export function logoutUser(token) {
     return {
         type: types.LOGOUT_USER,
-        payload: {user}
+        payload: {token}
     }
 }
 
-export function logoutSuccess() {
+export const logoutSuccess = () => {
     return {
         type: types.LOGOUT_SUCCESS,
     }
@@ -115,17 +115,19 @@ export function setIsEnd() {
     }
 }
 
-export function getGrammarRequest (navigation) { 
+export function getGrammarRequest (id, navigation) { 
     return {
       type: types.GET_GRAMMAR,
+      payload: {id},
       navigation
       
     }
 }
 
-export const getGrammarSuccess = () => {
+export const getGrammarSuccess = (grammartList) => {
     return {
         type: types.GET_GRAMMAR_SUCCESS,
+        payload: { grammartList },
     }
 }
 

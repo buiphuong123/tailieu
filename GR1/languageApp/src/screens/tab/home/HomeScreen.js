@@ -7,7 +7,8 @@ import { getGrammarRequest } from '../../../redux/actions/index';
 
 const HomeScreen = ({navigation}) => {
     const dispatch = useDispatch();
-    const GrammarRequest = () => dispatch(getGrammarRequest(navigation));
+    const users = useSelector(state => state.userReducer.user);
+    const GrammarRequest = () => dispatch(getGrammarRequest(users._id, navigation));
     return (
         <View style={{flex: 1}}>
             <CustomHeader title="Home" isHome={true} navigation={navigation} />
