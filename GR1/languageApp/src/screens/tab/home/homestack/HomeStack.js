@@ -8,6 +8,7 @@ import GrammarScreenDetail from '../GrammarScreenDetail';
 import Grammer from '../Grammer';
 import ListGrammer from '../ListGrammer';
 import ExplainScreen from '../ExplainScreen';
+import WordScreen from '../WordScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,10 +26,7 @@ const HomeStack = () => {
                 component={HomeScreen}
             />
 
-            {/* <Stack.Screen
-                name='HomeDetail'
-                component={HomeScreenDetail}
-            /> */}
+
 
             <Stack.Screen
                 name='GrammarScr'
@@ -39,6 +37,12 @@ const HomeStack = () => {
                 name='ExplainScreen'
                 component={ExplainScreen}
             />
+
+            <Stack.Screen
+                name='WordScreen'
+                component={WordScreen}
+            />
+
         </Stack.Navigator>
     )
 }

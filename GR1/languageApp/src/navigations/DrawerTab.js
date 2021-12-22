@@ -18,7 +18,7 @@ const DrawerTab = () => {
             <Drawer.Screen name="Profile" component={Profile} />
             <Drawer.Screen name="Homepages" component={HomePages} />
             <Drawer.Screen name="Language" component={Language} />
-            {/* <Drawer.Screen name="Login" component={Login} /> */}
+            <Drawer.Screen name="Login" component={Login} />
         </Drawer.Navigator> 
     )
 }

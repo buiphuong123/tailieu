@@ -5,6 +5,7 @@ import fetchDataReducer from './fetchDataReducer';
 import uiReducer from './uiReducer';
 import commentReducer from "./commentReducer";
 import grammarReducer from "./grammarReducer";
+import notifiReducer from "./notifiReducer";
 
 const appReducers = combineReducers({
     userReducer,
@@ -12,7 +13,8 @@ const appReducers = combineReducers({
     languageReducer,
     fetchDataReducer,
     commentReducer,
-    grammarReducer
+    grammarReducer,
+    notifiReducer
 });
 
 export default appReducers;

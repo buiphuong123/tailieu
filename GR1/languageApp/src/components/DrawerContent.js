@@ -36,7 +36,7 @@ const DrawerContent = (props) => {
     const [show, setShow] = useState(false);
     const user = useSelector(state => state.userReducer.user)
     const dispatch = useDispatch();
-    const logout = (token) => dispatch(logoutUser(token));
+    const logout = (token, notifiToken) => dispatch(logoutUser(token, notifiToken));
     const setLanguages = (language) => dispatch(changeLanguage(language));
     
     const setLanguage = (language) => {
@@ -52,7 +52,7 @@ const DrawerContent = (props) => {
    const logoutUs = () => {
     props.navigation.navigate("Login");
     console.log('USER HIEN TAI FORM ', user);
-    logout(user.token);
+    logout(user.token, user.notifiToken);
     
    }
     return(

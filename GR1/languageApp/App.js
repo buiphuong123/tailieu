@@ -24,23 +24,29 @@ import ModalScreen from './src/screens/tab/home/ModalScreen';
 import io from 'socket.io-client';
 import messaging from '@react-native-firebase/messaging';
 import firebase from '@react-native-firebase/app';
+import { kaka } from './src/apis/user';
+// import { useSelector } from 'react-redux';
+import axios from 'axios';
+
+
 const store = createStore(
   appReducers,
   applyMiddleware(sagaMiddleware)
 );
-export const socket = io("http://192.168.1.6:3002");
+export const socket = io("http://192.168.1.72:3002");
 const App = () => {
   const [notification, setNotification] = useState({
     title: undefined,
-    body: undefined
-  })
+    body: undefined,
+    time: undefined,
+    action: undefined,
+  });
+
   // const [token, setToken] = useState("");
  
   // const getToken = async() => {
   //   const firebaseToken = await firebase.messaging().getToken();
   //   console.log(firebaseToken);
-  //   setToken(firebaseToken);
-  //   console.log('set xong r');
   // }
   // create channel 
 //   useEffect(() => {
@@ -80,47 +86,69 @@ const App = () => {
 //       }
 //     });
 //   };
-  useEffect(() => {
-  //   getToken();
-  //  console.log('TOKEN DAY NHA', token);
-    messaging().onMessage(async remoteMessage => {
-      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-      setNotification({
-        title: remoteMessage.notification.title,
-        body: remoteMessage.notification.body
-      })
-    });
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
-      setNotification({
-        title: remoteMessage.notification.title,
-        body: remoteMessage.notification.body
-      })
-    });
+//   useEffect(() => {
+//     getToken();
+//   //  console.log('TOKEN DAY NHA', token);
+//     messaging().onMessage(async remoteMessage => {
+//       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+//       axios.post('http://192.168.1.72:3002/language/createNotifi', {
+//             // "username": user._id,
+//             "content": remoteMessage.notification.body,
+//             "time": remoteMessage.sentTime,
+//             "action": remoteMessage.data.action
+//         }, {
+//             headers: {
+//                 "Accept": "application/json",
+//                 "Content-Type": "application/json"
+//             }
+//         })
+//             .then((response) => {
+//                 console.log(response.data);
+//             })
+//       // setNotification({
+//       //   ...notification,
+//       //   title: remoteMessage.notification.title,
+//       //   body: remoteMessage.notification.body,
+//       //   time: remoteMessage.data.sentTime,
+//       //   action: remoteMessage.data.action,
+//       // });
+//       // console.log('body sau khi set', notification.body);
+//       // console.log(notification.body + 'at'+ notification.time);
+//     });
 
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
-      setNotification({
-        title: remoteMessage.notification.title,
-        body: remoteMessage.notification.body
-      })
-    });
 
-    messaging()
-    .getInitialNotification()
-    .then(remoteMessage => {
-      if (remoteMessage) {
-        console.log(
-          'Notification caused app to open from quit state:',
-          JSON.stringify(remoteMessage),
-        );
-        setNotification({
-          title: remoteMessage.notification.title,
-          body: remoteMessage.notification.body
-        })
-      }
-    });
-}, []);
+//     messaging().onNotificationOpenedApp(remoteMessage => {
+//       console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
+//       setNotification({
+//         title: remoteMessage.notification.title,
+//         body: remoteMessage.notification.body
+//       })
+//     });
+
+//     messaging().setBackgroundMessageHandler(async remoteMessage => {
+//       console.log('Message handled in the background!', remoteMessage);
+//       setNotification({
+//         title: remoteMessage.notification.title,
+//         body: remoteMessage.notification.body
+//       })
+//     });
+
+//     messaging()
+//     .getInitialNotification()
+//     .then(remoteMessage => {
+//       if (remoteMessage) {
+//         console.log(
+//           'Notification caused app to open from quit state:',
+//           JSON.stringify(remoteMessage),
+//         );
+//         setNotification({
+//           title: remoteMessage.notification.title,
+//           body: remoteMessage.notification.body
+//         })
+//       }
+//     });
+
+// }, []);
 
   // useEffect(() => {
    

@@ -74,11 +74,12 @@ function *sendMail({ payload, props }) {
 }
 
 function* logoutUserss({ payload }) {
-    const { token } = payload;
+    const { token, notifiToken } = payload;
     console.log('user saga logout', token);
     yield put(showLoading());
     const resp = yield call(logoutUser, {
       token,
+      notifiToken
     });
     const { data } = resp;
     if (data.code == 1) {

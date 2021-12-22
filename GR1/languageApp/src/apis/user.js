@@ -8,6 +8,8 @@ const urlRegister = 'signUp';
 const urlGrammar = 'getGrammar';
 const urlComment = 'getComment';
 const urlLogout = 'logout';
+const urlTest = 'test1';
+const urlNoti = 'getNotifi';
 
 // export const getList = (params = {}) => {
 //   let queryParams = '';
@@ -43,6 +45,13 @@ export const logoutUser = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlLogout}`, data);
 }
 
+export const kaka = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlTest}`, data);
+}
+
+export const listNotifi = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlNoti}`, data);
+}
 // http://localhost:3000/tasks/:id METHOD: PUT
 // export const updateTask = (data, taskId) => {
 //   return axiosService.put(`${API_ENDPOINT}/${url}/${taskId}`, data);

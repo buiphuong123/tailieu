@@ -21,7 +21,8 @@ import DrawerTab from './DrawerTab';
 import { navigationRef } from './NavigationService';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginUserSuccess } from '../redux/actions/index';
-
+import messaging from '@react-native-firebase/messaging';
+import axios from 'axios';
 
 const Home = (props) => {
     const [isDarkTheme, setIsDarkTheme] = React.useState(false);
@@ -40,8 +41,57 @@ const Home = (props) => {
         }
         
     }
+
+    // const takeNotifi = () => {
+
+    // } 
+
     useEffect(() => {
         takeData();
+    //     console.log('vao day');
+    //     messaging().onMessage(async remoteMessage => {
+    //         console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    //         // setNotification({
+    //         //   ...notification,
+    //         //   title: remoteMessage.notification.title,
+    //         //   body: remoteMessage.notification.body,
+    //         //   time: remoteMessage.data.sentTime,
+    //         //   action: remoteMessage.data.action,
+    //         // });
+    //         // console.log('body sau khi set', notification.body);
+    //         // console.log(notification.body + 'at'+ notification.time);
+    //       });
+        
+      
+      
+    //       messaging().onNotificationOpenedApp(remoteMessage => {
+    //         console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
+    //         // setNotification({
+    //         //   title: remoteMessage.notification.title,
+    //         //   body: remoteMessage.notification.body
+    //         // })
+    //       });
+      
+    //       messaging().setBackgroundMessageHandler(async remoteMessage => {
+    //         console.log('Message handled in the background!', remoteMessage);
+    //         // setNotification({
+    //         //   title: remoteMessage.notification.title,
+    //         //   body: remoteMessage.notification.body
+    //         // })
+    //       });
+      
+    //       messaging()
+    //       .getInitialNotification()
+    //       .then(remoteMessage => {
+    //         if (remoteMessage) {
+    //           props.navigation.navigate("ExplainScreen", {word: remoteMessage.data.routedata})
+    //           console.log(
+    //             'Notification caused app to open from quit state:',
+    //             (remoteMessage.data.routedata),
+                
+    //           );
+    //         }
+    //       });
     },[]);
     // useEffect(() => {
     //     console.log('LAY TRONG ASYNC LA ',dataUser);

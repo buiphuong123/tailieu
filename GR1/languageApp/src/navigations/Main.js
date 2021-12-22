@@ -9,6 +9,7 @@ import NotificationStack from '../screens/tab/notification/NotificationStack';
 
 const Tab = createBottomTabNavigator();
     const Main = () => {
+        // const notifiList = useSelector(state => state.notifiReducer.notifiList);
         return(
            <Tab.Navigator
                 screenOptions={({route})=>({
@@ -57,6 +58,7 @@ const Tab = createBottomTabNavigator();
                 <Tab.Screen 
                     name="Notification" 
                     component={NotificationStack} 
+                    options={{ tabBarBadge: 1 }}
                 />
                 
 

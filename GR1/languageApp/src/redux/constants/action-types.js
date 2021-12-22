@@ -32,3 +32,8 @@ export const GET_GRAMMAR_FAIL = 'GET_GRAMMAR_FAIL';
 // get comment
 export const GET_LIST_COMMENT = 'GET_LIST_COMMENT';
 export const GET_LIST_COMMENT_REQUEST = 'GET_LIST_COMMENT_REQUEST';
+
+//notification
+export const GET_NOTIFI = 'GET_NOTIFI';
+export const GET_NOTIFI_SUCCESS = 'GET_NOTIFI_SUCCESS';
+

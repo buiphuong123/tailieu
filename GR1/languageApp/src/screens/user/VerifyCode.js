@@ -73,7 +73,7 @@ const VerifyCode = ({navigation, route}) => {
   const verity = () => {
     console.log('GIA TRI CUA VALUE LA', value);
     // console.log(email);
-    axios.put('http://192.168.1.6:3002/language/resetPassword/'+ value, {
+    axios.put('http://192.168.1.72:3002/language/resetPassword/'+ value, {
       "email": email
     }, {
       headers: {

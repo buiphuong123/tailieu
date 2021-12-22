@@ -46,7 +46,7 @@ const Login = (props) => {
       }
     useEffect(() => {
         getToken();
-        console.log('notifitoken day nha ', notifiToken);
+        // console.log('notifitoken day nha ', notifiToken);
     }, [notifiToken]);
     
     const textInputChange = (val) => {

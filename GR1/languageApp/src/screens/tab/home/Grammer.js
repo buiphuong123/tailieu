@@ -18,17 +18,17 @@ export default Grammer = ({ navigation, route }) => {
     const [memerize, setmemerize] = useState(false);
     const dispatch = useDispatch();
     const setMemerize = (grammerId, userId, item) => {
-        console.log('DATA GRAMMAR LA ', dataGrammar);
-        if(item.memerizes.length === 1) {
-            item.memerizes = [];
+        objIndex = data.findIndex((e => e._id === grammerId));
+        if(data[objIndex].memerizes.length === 1) {
+            data[objIndex].memerizes = [];
         }
-        else if(item.memerizes.length === 0) {
-            item.memerizes.push({isMem: true})
+        else if(data[objIndex].memerizes.length === 0) {
+            data[objIndex].memerizes.push({isMem: true});
         }
-        setData([...data, item]);
+        setData([...data]);
         dispatch(getGrammarSuccess(data));
 
-        axios.post('http://192.168.1.6:3002/language/createMemGrammar', {
+        axios.post('http://192.168.1.72:3002/language/createMemGrammar', {
             "user_id": userId,
             "grammar_id": grammerId
         }, {
@@ -44,12 +44,7 @@ export default Grammer = ({ navigation, route }) => {
                 throw error;
             })
     }
-    useEffect(() => {
-        console.log('DATA GRAMMAR LA ', dataGrammar);
-    }, []);
-    const furiExample = () => {
-        navigation.navigate("ExplainScreen", {word: item});
-    }
+   
     const renderGrammar = ({ item, index }) => {
         return (
             <View>
@@ -105,7 +100,7 @@ export default Grammer = ({ navigation, route }) => {
                 </View>
                 <View>
                     <FlatList
-                        data={memerize ? dataGrammar.filter((e) => e.memerizes.length >0) : dataGrammar.filter((e) => e.memerizes.length <= 0)}
+                        data={memerize ? dataGrammar.filter((e) => e.memerizes.length === 1) : dataGrammar.filter((e) => e.memerizes.length === 0)}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={renderGrammar}
                     />

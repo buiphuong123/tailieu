@@ -96,10 +96,10 @@ export const sendMailFail = (error) => {
     }
 }
 
-export function logoutUser(token) {
+export function logoutUser(token, notifiToken) {
     return {
         type: types.LOGOUT_USER,
-        payload: {token}
+        payload: {token, notifiToken}
     }
 }
 

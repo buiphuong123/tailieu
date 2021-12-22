@@ -3,7 +3,7 @@ import { all, fork } from 'redux-saga/effects';
 
 import { watchLoginUser, watchRegisterUser, watchsendMail, watchLogoutUser } from './userSaga';
 import { watchgetComment, watchgetGrammar } from './grammarSaga';
-
+import { watchgetNotifi } from './notiSaga';
 
 export default function* rootSaga() {
     yield all([
@@ -13,5 +13,6 @@ export default function* rootSaga() {
         watchsendMail(),
         watchgetGrammar(),
         watchgetComment(),
+        watchgetNotifi(),
     ])
 }

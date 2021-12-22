@@ -6,7 +6,7 @@ import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Iconss from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Furi from 'react-native-furi';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getListCommentRequest } from '../../../redux/actions/comment.action';
 import io from 'socket.io-client';
@@ -18,14 +18,13 @@ import Modal from 'react-native-modal'; // 2.4.0
 export default ExplainScreen = ({ navigation, route }) => {
     const dispatch = useDispatch();
     const commentList = useSelector(state => state.commentReducer.commentList);
-    const countComment = useSelector(state => state.commentReducer.countComment);
     const users = useSelector(state => state.userReducer.user);
     const [dataUser, setDataUser] = useState({});
     const [comment, setComment] = useState("");
     var last = new Date(); // ngày hiện tại
-    const [countComm, setCountComm] = useState(0); 
     const [dataComment, setdataComment] = useState([]);
     const [isVisible, setisVisible] = useState(false);
+    const { word } = route.params;
 
 
     // useEffect(() => {
@@ -63,6 +62,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         //         dispatch(getListCommentRequest(word._id, JSON.parse(data)._id));
         //     });
         // setDataUser(users);
+        console.log('DATA LA ', word);
             dispatch(getListCommentRequest(word._id, users._id));
             // console.log('goi lại dispatch');
        
@@ -70,9 +70,15 @@ export default ExplainScreen = ({ navigation, route }) => {
     
     useEffect(() => {
         setdataComment(commentList);
-        // setCountComm(countComment);
-        // settotalPages(Math.ceil(countComm/filters.limit));
     }, [commentList]);
+
+    // useEffect(() => {
+    //     dispatch(getListNotifiRequest(users.username));
+    // }, []);
+    // useEffect(() => {
+    //     setdataNotifi(notifiList);
+    //     console.log('data notifi la', dataNotifi);
+    // }, [notifiList]);
 
     const likeaction = (comment_id, user_id, username_friends) => {
         // const _isMounted = useRef(true);
@@ -114,9 +120,13 @@ export default ExplainScreen = ({ navigation, route }) => {
 
             }
         }
-        axios.post('http://192.168.1.6:3002/language/sendNotiToDevice', {
+        axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
             "username": users.username,
-            "username_friends": username_friends
+            "username_friends": username_friends,
+            "action": "like",
+            "comment_id": comment_id,
+            "screen": "Explainscreen",
+            "word": word,
         }, {
             headers: {
                 "Accept": "application/json",
@@ -131,7 +141,7 @@ export default ExplainScreen = ({ navigation, route }) => {
             })
 
 
-        axios.post('http://192.168.1.6:3002/language/createLikeComment', {
+        axios.post('http://192.168.1.72:3002/language/createLikeComment', {
             "comment_id": comment_id,
             "user_id_like": user_id
         }, {
@@ -198,7 +208,7 @@ export default ExplainScreen = ({ navigation, route }) => {
 
             }
         }
-        axios.post('http://192.168.1.6:3002/language/createDisLikeComment', {
+        axios.post('http://192.168.1.72:3002/language/createDisLikeComment', {
             "comment_id": comment_id,
             "user_id_dislike": user_id
         }, {
@@ -240,7 +250,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         // const kaka = {grammar_id: grammar_id, user_id: users._id, content: comment, time: date, islike: 0, isdislike: 0, like: 0, dislike: 0, review: "not approved" };
         // setdataComment(dataComment.concat(kaka));
         setComment('');
-        axios.post('http://192.168.1.6:3002/language/createComment', {
+        axios.post('http://192.168.1.72:3002/language/createComment', {
             "grammar_id": grammar_id,
             "user_id": users._id,
             "content": comment
@@ -254,9 +264,8 @@ export default ExplainScreen = ({ navigation, route }) => {
                 console.log(response.data);
             })
 
-            console.log('DATA DAY NHE', dataComment);
+            // console.log('DATA DAY NHE', dataComment);
     }
-    const { word } = route.params;
     const renderItem = ({ item }) => {
         return (
             <View style={{ flexDirection: 'row' }}>
@@ -400,7 +409,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                             renderItem={renderMean}
                         />
                     </View>
-                    {word.indication.length === 0 ? null :
+                    {word.indication.length === 0 ||  typeof word.indication === 'undefined' ? null :
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ fontWeight: 'bold', color: 'blue', fontSize: 18, textDecorationLine: 'underline' }}>Dấu hiện nhận biết: </Text>
                             <FlatList
