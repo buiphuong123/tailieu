@@ -33,7 +33,7 @@ const store = createStore(
   appReducers,
   applyMiddleware(sagaMiddleware)
 );
-export const socket = io("http://192.168.1.72:3002");
+export const socket = io("http://192.168.1.7:3002");
 const App = () => {
   const [notification, setNotification] = useState({
     title: undefined,
@@ -91,7 +91,7 @@ const App = () => {
 //   //  console.log('TOKEN DAY NHA', token);
 //     messaging().onMessage(async remoteMessage => {
 //       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-//       axios.post('http://192.168.1.72:3002/language/createNotifi', {
+//       axios.post('http://192.168.1.7:3002/language/createNotifi', {
 //             // "username": user._id,
 //             "content": remoteMessage.notification.body,
 //             "time": remoteMessage.sentTime,

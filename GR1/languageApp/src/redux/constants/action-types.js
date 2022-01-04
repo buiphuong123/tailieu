@@ -37,3 +37,16 @@ export const GET_LIST_COMMENT_REQUEST = 'GET_LIST_COMMENT_REQUEST';
 export const GET_NOTIFI = 'GET_NOTIFI';
 export const GET_NOTIFI_SUCCESS = 'GET_NOTIFI_SUCCESS';
 
+// word
+export const WORD = 'WORD';
+export const ALL_WORD = 'ALL_WORD';
+export const ALL_HIRA = 'ALL_HIRA';
+export const ALL_KANJI = 'ALL_KANJI';
+export const ALL_MEAN = 'ALL_MEAN';
+export const ALL_REVERSE = 'ALL_REVERSE';
+export const ALL_MEMERIZE = 'ALL_MEMERIZE';
+export const ALL_NOTMEMERIZE = 'ALL_NOTMEMERIZE';
+export const ALL_LIKE = 'ALL_LIKE';
+
+export const GET_LIST_WORD_REQUEST = 'GET_LIST_WORD_REQUEST';
+export const GET_LIST_WORD_SUCCESS = 'GET_LIST_WORD_SUCCESS';

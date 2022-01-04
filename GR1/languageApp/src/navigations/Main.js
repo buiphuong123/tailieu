@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, Text, Button, Dimensions, Imgae, StyleSheet,TextInput} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -6,10 +6,12 @@ import HomeStack from '../screens/tab/home/homestack/HomeStack';
 import SetStack from '../screens/tab/setting/setstack/SetStack';
 import ContactStack from '../screens/tab/contact/ContactStack';
 import NotificationStack from '../screens/tab/notification/NotificationStack';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
     const Main = () => {
-        // const notifiList = useSelector(state => state.notifiReducer.notifiList);
+            const notifiList = useSelector(state => state.notifiReducer.notifiList);
+            var count = notifiList.reduce((pre, cur) => (cur.isRead === false) ? ++pre : pre, 0);          
         return(
            <Tab.Navigator
                 screenOptions={({route})=>({
@@ -58,7 +60,7 @@ const Tab = createBottomTabNavigator();
                 <Tab.Screen 
                     name="Notification" 
                     component={NotificationStack} 
-                    options={{ tabBarBadge: 1 }}
+                    options={{ tabBarBadge: count }}
                 />
                 
 

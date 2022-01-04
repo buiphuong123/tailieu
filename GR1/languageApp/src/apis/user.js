@@ -10,7 +10,7 @@ const urlComment = 'getComment';
 const urlLogout = 'logout';
 const urlTest = 'test1';
 const urlNoti = 'getNotifi';
-
+const urlWord = 'getWord';
 // export const getList = (params = {}) => {
 //   let queryParams = '';
 //   if (Object.keys(params).length > 0) {
@@ -51,6 +51,10 @@ export const kaka = data => {
 
 export const listNotifi = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlNoti}`, data);
+}
+
+export const allWord = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlWord}`, data);
 }
 // http://localhost:3000/tasks/:id METHOD: PUT
 // export const updateTask = (data, taskId) => {

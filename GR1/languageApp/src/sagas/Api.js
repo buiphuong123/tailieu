@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const urlLogin = 'http://192.168.1.72:3002/language/login';
+const urlLogin = 'http://192.168.1.7:3002/language/login';
 
 function loginUser(user) {
     return axios({

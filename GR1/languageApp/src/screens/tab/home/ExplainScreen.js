@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View,  SafeAreaView, Dimensions, Image, TouchableOpacity, StyleSheet, Button, FlatList, ScrollView, TextInput, Platform, Alert } from 'react-native'
+import { Text, View, SafeAreaView, Dimensions, Image, TouchableOpacity, StyleSheet, Button, FlatList, ScrollView, TextInput, Platform, Alert } from 'react-native'
 import CustomHeader from '../../CustomHeader';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -28,8 +28,8 @@ export default ExplainScreen = ({ navigation, route }) => {
 
 
     // useEffect(() => {
-        // takeComment(word._id);
-        // takeCount();
+    // takeComment(word._id);
+    // takeCount();
     // });
     // const [filters, setFilters] = useState({
     //     page: 1,
@@ -53,8 +53,8 @@ export default ExplainScreen = ({ navigation, route }) => {
             console.log('mess nhan duoc ', msg);
             sendCommentResend(msg.comment, msg.username);
         });
-    // }
-  }, [dataComment.length !==0]);
+        // }
+    }, [dataComment.length !== 0]);
     useEffect(() => {
         // AsyncStorage.getItem('@user')
         //     .then((data) => {
@@ -62,23 +62,14 @@ export default ExplainScreen = ({ navigation, route }) => {
         //         dispatch(getListCommentRequest(word._id, JSON.parse(data)._id));
         //     });
         // setDataUser(users);
-        console.log('DATA LA ', word);
-            dispatch(getListCommentRequest(word._id, users._id));
-            // console.log('goi lại dispatch');
-       
+        dispatch(getListCommentRequest(word._id, users._id));
+        // console.log('goi lại dispatch');
+
     }, []);
-    
+
     useEffect(() => {
         setdataComment(commentList);
     }, [commentList]);
-
-    // useEffect(() => {
-    //     dispatch(getListNotifiRequest(users.username));
-    // }, []);
-    // useEffect(() => {
-    //     setdataNotifi(notifiList);
-    //     console.log('data notifi la', dataNotifi);
-    // }, [notifiList]);
 
     const likeaction = (comment_id, user_id, username_friends) => {
         // const _isMounted = useRef(true);
@@ -87,10 +78,13 @@ export default ExplainScreen = ({ navigation, route }) => {
         //         _isMounted.current = false;
         //     }
         // }, []);
+        var index = 0;
         var i;
         for (i = 0; i < commentList.length; i++) {
             if (commentList[i]._id === comment_id) {
+                console.log('XEM ISLIKE THE NAO NHE', commentList[i].islike)
                 if (commentList[i].islike === true) {
+                    index = 1;
                     commentList[i].islike = false;
                     // commentList[i].like = commentList[i].like - 1;
                     setdataComment([...commentList]);
@@ -113,35 +107,63 @@ export default ExplainScreen = ({ navigation, route }) => {
                         setdataComment([...commentList]);
                         break;
                     }
-                    
-                    
+
+
 
                 }
 
             }
         }
-        axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
-            "username": users.username,
-            "username_friends": username_friends,
-            "action": "like",
-            "comment_id": comment_id,
-            "screen": "Explainscreen",
-            "word": word,
-        }, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch(function(error) {
-                throw error;
-            })
+        if(username_friends === users.username) {
+            index = 1;
+        }
 
+        if (index === 0) {
+            axios.post('http://192.168.1.7:3002/language/sendNotiToDevice', {
+                "username": users.username,
+                "username_friends": username_friends,
+                "action": "like",
+                "comment_id": comment_id,
+                "screen": "Explainscreen",
+                "word": word,
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
+        }
+        // else {
+        //     if (username_friends !== users.username) {
+        //         axios.post('http://192.168.1.7:3002/language/sendNotiToDevice', {
+        //             "username": users.username,
+        //             "username_friends": username_friends,
+        //             "action": "like",
+        //             "comment_id": comment_id,
+        //             "screen": "Explainscreen",
+        //             "word": word,
+        //         }, {
+        //             headers: {
+        //                 "Accept": "application/json",
+        //                 "Content-Type": "application/json"
+        //             }
+        //         })
+        //             .then((response) => {
+        //                 console.log(response.data);
+        //             })
+        //             .catch(function (error) {
+        //                 throw error;
+        //             })
+        //     }
+        // }
 
-        axios.post('http://192.168.1.72:3002/language/createLikeComment', {
+        axios.post('http://192.168.1.7:3002/language/createLikeComment', {
             "comment_id": comment_id,
             "user_id_like": user_id
         }, {
@@ -153,7 +175,7 @@ export default ExplainScreen = ({ navigation, route }) => {
             .then((response) => {
                 console.log(response.data);
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 throw error;
             })
 
@@ -163,25 +185,27 @@ export default ExplainScreen = ({ navigation, route }) => {
         var i;
         for (i = 0; i < commentList.length; i++) {
             if (commentList[i]._id === comment_id && islike === true) {
-                    commentList[i].like = commentList[i].like - 1;
-                    setdataComment([...commentList]);
-                    break;
-                }
-            else if(commentList[i]._id === comment_id && islike === false) {
+                commentList[i].like = commentList[i].like - 1;
+                setdataComment([...commentList]);
+                break;
+            }
+            else if (commentList[i]._id === comment_id && islike === false) {
                 commentList[i].like = commentList[i].like + 1;
-                    setdataComment([...commentList]);
-                    break; 
+                setdataComment([...commentList]);
+                break;
             }
 
         }
-        
+
     }
 
-    const dislikeaction = (comment_id, user_id) => {
+    const dislikeaction = (comment_id, user_id, username_friends) => {
+        var index = 0;
         var i;
         for (i = 0; i < commentList.length; i++) {
             if (commentList[i]._id === comment_id) {
                 if (commentList[i].isdislike === true) {
+                    index = 1;
                     commentList[i].isdislike = false;
                     // commentList[i].dislike = commentList[i].dislike - 1;
                     setdataComment([...commentList]);
@@ -194,21 +218,48 @@ export default ExplainScreen = ({ navigation, route }) => {
                         // commentList[i].dislike = commentList[i].dislike + 1;
                         // commentList[i].like = commentList[i].like - 1;
                         setdataComment([...commentList]);
-                    break;
+                        break;
                     }
                     else {
                         commentList[i].isdislike = true;
                         // commentList[i].dislike = commentList[i].dislike + 1;
                         setdataComment([...commentList]);
-                    break;
+                        break;
                     }
-                    
+
 
                 }
 
             }
         }
-        axios.post('http://192.168.1.72:3002/language/createDisLikeComment', {
+
+        if(username_friends === users.username) {
+            index = 1;
+        }
+
+        if (index === 0) {
+            axios.post('http://192.168.1.7:3002/language/sendNotiToDevice', {
+                "username": users.username,
+                "username_friends": username_friends,
+                "action": "dislike",
+                "comment_id": comment_id,
+                "screen": "Explainscreen",
+                "word": word,
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
+        }
+
+        axios.post('http://192.168.1.7:3002/language/createDisLikeComment', {
             "comment_id": comment_id,
             "user_id_dislike": user_id
         }, {
@@ -226,31 +277,31 @@ export default ExplainScreen = ({ navigation, route }) => {
         var i;
         for (i = 0; i < commentList.length; i++) {
             if (commentList[i]._id === comment_id && isdislike === true) {
-                    commentList[i].dislike = commentList[i].dislike - 1;
-                    setdataComment([...commentList]);
-                    break;
-                }
-            else if(commentList[i]._id === comment_id && isdislike === false) {
+                commentList[i].dislike = commentList[i].dislike - 1;
+                setdataComment([...commentList]);
+                break;
+            }
+            else if (commentList[i]._id === comment_id && isdislike === false) {
                 commentList[i].dislike = commentList[i].dislike + 1;
-                    setdataComment([...commentList]);
-                    break; 
+                setdataComment([...commentList]);
+                break;
             }
 
         }
     }
     const sendCommentResend = (newComment, username) => {
-        const kaka = {grammar_id: newComment.grammar_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: username };
+        const kaka = { grammar_id: newComment.grammar_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: username };
         setdataComment(dataComment.concat(kaka));
     }
     const sendComment = (grammar_id) => {
-        if(comment.length === 0 || comment === '') {
+        if (comment.length === 0 || comment === '') {
             return;
         }
         // var date = new Date;
         // const kaka = {grammar_id: grammar_id, user_id: users._id, content: comment, time: date, islike: 0, isdislike: 0, like: 0, dislike: 0, review: "not approved" };
         // setdataComment(dataComment.concat(kaka));
         setComment('');
-        axios.post('http://192.168.1.72:3002/language/createComment', {
+        axios.post('http://192.168.1.7:3002/language/createComment', {
             "grammar_id": grammar_id,
             "user_id": users._id,
             "content": comment
@@ -264,7 +315,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                 console.log(response.data);
             })
 
-            // console.log('DATA DAY NHE', dataComment);
+        // console.log('DATA DAY NHE', dataComment);
     }
     const renderItem = ({ item }) => {
         return (
@@ -285,26 +336,26 @@ export default ExplainScreen = ({ navigation, route }) => {
     }
 
     const time = (dt) => {
-        const result = (last.getTime() - dt.getTime())/1000;
-        const minutes = (result-result%60)/60;
-        const hours = (minutes-minutes%60)/60;
-        const day = (result-result%86400)/86400;
-        const month = (day-day%30)/30;
-        const year = (month-month%12)/12;
-        if(year !== 0) {
+        const result = (last.getTime() - dt.getTime()) / 1000;
+        const minutes = (result - result % 60) / 60;
+        const hours = (minutes - minutes % 60) / 60;
+        const day = (result - result % 86400) / 86400;
+        const month = (day - day % 30) / 30;
+        const year = (month - month % 12) / 12;
+        if (year !== 0) {
             return year + ' ' + 'nam';
         }
-        else if(month !== 0) {
-            return month + ' ' +'thang';
+        else if (month !== 0) {
+            return month + ' ' + 'thang';
         }
-        else if(day !== 0) {
-            return day + ' ' +'ngay';
+        else if (day !== 0) {
+            return day + ' ' + 'ngay';
         }
-        else if(hours !== 0) {
-            return hours + ' ' +'gio';
+        else if (hours !== 0) {
+            return hours + ' ' + 'gio';
         }
-        else if(minutes !== 0) {
-            return minutes + ' ' +'phut';
+        else if (minutes !== 0) {
+            return minutes + ' ' + 'phut';
         }
         else {
             return 'vua xong';
@@ -315,26 +366,26 @@ export default ExplainScreen = ({ navigation, route }) => {
         // setdataComment(commentList);
         return (
             <View>
-                <View  style={{ flexDirection: 'row' }}>
-                <Text style={{marginRight: 10, marginTop: 8 }}>{index + 1}/</Text>
-                <View>
-                   
-                    <Furi
-                        style={{}}
-                        value={item.jp}
-                        valueStyle={{
-                            color: 'black',
-                            borderColor: 'black',
-                            borderWidth: 0,
-                        }}
-                        furiStyle={{
-                            borderColor: 'red',
-                            borderWidth: 0,
-                        }}
-                        showFuri={true}
-                        size={13}
-                    />
-                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ marginRight: 10, marginTop: 8 }}>{index + 1}/</Text>
+                    <View>
+
+                        <Furi
+                            style={{}}
+                            value={item.jp}
+                            valueStyle={{
+                                color: 'black',
+                                borderColor: 'black',
+                                borderWidth: 0,
+                            }}
+                            furiStyle={{
+                                borderColor: 'red',
+                                borderWidth: 0,
+                            }}
+                            showFuri={true}
+                            size={13}
+                        />
+                    </View>
                 </View>
                 <Text>{item.vn}</Text>
             </View>
@@ -359,7 +410,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 15 }}>
                             <Icon
-                                onPress={() => dislikeaction(item._id, users._id)}
+                                onPress={() => dislikeaction(item._id, users._id, item.user_id.username)}
                                 name="dislike1"
                                 color={item.isdislike ? 'blue' : '#d9d9d9'}
                                 size={17}
@@ -375,8 +426,8 @@ export default ExplainScreen = ({ navigation, route }) => {
                             <Text style={{ marginLeft: 5, marginTop: -2 }}>7</Text>
                         </View>
                     </View>
-                    <View style={{marginLeft: 20}}>
-                        <Text>{item.user_id.username === undefined ? item.username: item.user_id.username} ({time(dt)})</Text>
+                    <View style={{ marginLeft: 20 }}>
+                        <Text>{item.user_id.username === undefined ? item.username : item.user_id.username} ({time(dt)})</Text>
                     </View>
                 </View>
             </View>
@@ -409,7 +460,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                             renderItem={renderMean}
                         />
                     </View>
-                    {word.indication.length === 0 ||  typeof word.indication === 'undefined' ? null :
+                    {word.indication.length === 0 || typeof word.indication === 'undefined' ? null :
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ fontWeight: 'bold', color: 'blue', fontSize: 18, textDecorationLine: 'underline' }}>Dấu hiện nhận biết: </Text>
                             <FlatList
@@ -440,7 +491,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                     <View>
                         <FlatList
                             style={{ padding: 5 }}
-                            data={dataComment.slice(0,3)}
+                            data={dataComment.slice(0, 3)}
                             keyExtractor={item => item.id}
                             renderItem={renderComment}
                         />
@@ -467,40 +518,40 @@ export default ExplainScreen = ({ navigation, route }) => {
                         </View>
                     </View>
                 </View>
-               
+
             </ScrollView>
             <View style={styles.container}>
-            <Modal
-                isVisible={isVisible}
-                animationInTiming={1000}
-                animationOutTiming={1000}
-                backdropTransitionInTiming={1000}
-                backdropTransitionOutTiming={1000}
-                deviceWidth={WIDTH}
+                <Modal
+                    isVisible={isVisible}
+                    animationInTiming={1000}
+                    animationOutTiming={1000}
+                    backdropTransitionInTiming={1000}
+                    backdropTransitionOutTiming={1000}
+                    deviceWidth={WIDTH}
                 >
-               <View style={styles.modalContent}>
-                    <ScrollView>
-                        <FlatList
-                            style={{ padding: 5 }}
-                            data={dataComment.slice(3,dataComment.length)}
-                            keyExtractor={item => item.id}
-                            renderItem={renderComment}
-                        />
-                    </ScrollView>
-          
-          <TouchableOpacity onPress={() => setisVisible(false)}>
-            <View style={styles.button}>
-                <Text>Close</Text>
+                    <View style={styles.modalContent}>
+                        <ScrollView>
+                            <FlatList
+                                style={{ padding: 5 }}
+                                data={dataComment.slice(3, dataComment.length)}
+                                keyExtractor={item => item.id}
+                                renderItem={renderComment}
+                            />
+                        </ScrollView>
+
+                        <TouchableOpacity onPress={() => setisVisible(false)}>
+                            <View style={styles.button}>
+                                <Text>Close</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
             </View>
-            </TouchableOpacity>
-        </View>
-             </Modal>
-            </View>
-            {/* <TouchableOpacity
+            <TouchableOpacity
                 style={{ borderWidth: 1, width: 50, borderRadius: 30, backgroundColor: '#009387', borderColor: '#009387', bottom: 20, right: 20, position: 'absolute', zIndex: 1 }}
                 onPress={() => navigation.navigate("HomeDetail")}>
                 <Entypo name={'triangle-right'} size={50} style={{ color: 'white' }} />
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </View>
     )
 };
@@ -509,8 +560,8 @@ const styles = StyleSheet.create({
     container: {
         width: WIDTH,
         flex: 1,
-      },
-      button: {
+    },
+    button: {
         backgroundColor: 'lightblue',
         padding: 12,
         margin: 16,
@@ -518,19 +569,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
-      },
-      modalContent: {
+    },
+    modalContent: {
         backgroundColor: 'white',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
-      },
+    },
     //   bottomModal: {
     //     justifyContent: 'flex-end',
     //     margin: 0,
     //   },
-      text: {
+    text: {
         fontSize: 24,
         marginBottom: 30,
         padding: 40,
-      }
+    }
 })

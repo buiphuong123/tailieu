@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector, useDispatch } from 'react-redux';
 import { getListNotifiRequest } from '../../../redux/actions/notifi.action';
-import { act } from 'react-test-renderer';
 import axios from 'axios';
 
 const WIDTH = Dimensions.get('window').width;
@@ -14,16 +13,12 @@ const NotificationStack = ({ navigation }) => {
     const dispatch = useDispatch();
     const users = useSelector(state => state.userReducer.user);
     const notifiList = useSelector(state => state.notifiReducer.notifiList);
-    const [dataNotifi, setdataNotifi] = useState([]);
+    const [dataNotifi, setdataNotifi] = useState(notifiList);
     var last = new Date();
-    useEffect(() => {
-        console.log('VAO DAY NE KHI NOTIFICATION');
-        dispatch(getListNotifiRequest(users.username));
-    }, []);
+    
 
     useEffect(() => {
         setdataNotifi(notifiList);
-        console.log('data notifi la', dataNotifi);
     }, [notifiList]);
     const likeaction = (
         <View style={{ borderWidth: 1, borderColor: 'blue', padding: 5, width: 35, borderRadius: 20, backgroundColor: 'blue', top: 30, right: 10, position: 'absolute', zIndex: 1 }}>
@@ -72,10 +67,9 @@ const NotificationStack = ({ navigation }) => {
         }
     }
     const showGamen = (item, index) => {
-        console.log('ITEM.DATA LA ', item.data);
         if(dataNotifi[index].isRead === false) {
             dataNotifi[index].isRead = true;
-            axios.post('http://192.168.1.72:3002/language/editReadNotifi', {
+            axios.post('http://192.168.1.7:3002/language/editReadNotifi', {
              "notification_id": item._id,
          }, {
              headers: {

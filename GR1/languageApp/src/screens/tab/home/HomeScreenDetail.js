@@ -199,7 +199,7 @@ export default HomeScreenDetail = ({ navigation }) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <CustomHeader title="Home detail" navigation={navigation} />
+            <CustomHeader title="study grammar" navigation={navigation} />
             <View style={{ marginLeft: 20, flex: 1, zIndex: 0 }}>
                 <View style={{ flex: 10, }}>
                     <View style={{ flexDirection: 'row', }}>
@@ -235,11 +235,8 @@ export default HomeScreenDetail = ({ navigation }) => {
                             />
                         </View>
                         <View>
-                            <View style={{ borderWidth: 1, borderColor: 'gray', maxWidth: width - 150, minHeight: 60, padding: 10, borderRadius: 15 }}>
-                                <Text>jrgtekrfjgdsfg
-                                    dgsdfgsgdgsdgsf
-                                    d\const d = new type(arguments);
-                                </Text>
+                            <View style={{ borderWidth: 1, borderColor: 'gray', maxWidth: width - 150, minHeight: 60, padding: 10, borderRadius: 15, justifyContent: 'center' }}>
+                                <Text>Dấu hiệu nhận biết: ならではの</Text>
                             </View>
                         </View>
                     </View>

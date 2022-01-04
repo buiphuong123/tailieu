@@ -4,14 +4,18 @@ import CustomHeader from '../../CustomHeader';
 import axios from "axios";
 import { useSelector, useDispatch } from 'react-redux';
 import { getGrammarRequest } from '../../../redux/actions/index';
+import { getListWordRequest } from '../../../redux/actions/word.action';
 import messaging from '@react-native-firebase/messaging';
+import { getListNotifiRequest } from '../../../redux/actions/notifi.action';
 const HomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const users = useSelector(state => state.userReducer.user);
     const GrammarRequest = () => dispatch(getGrammarRequest(users._id, navigation));
+    const WordRequest = () => dispatch(getListWordRequest(users._id, navigation));
     useEffect(() => {
-        console.log('vao day');
+        dispatch(getListNotifiRequest(users.username));
         messaging().onMessage(async remoteMessage => {
+            dispatch(getListNotifiRequest(users.username));
             console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
             // setNotification({
             //   ...notification,
@@ -47,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
             .then(remoteMessage => {
                 if (remoteMessage) {
                     console.log('data chyten sang ben kia la ', remoteMessage.data);
-                    axios.post('http://192.168.1.72:3002/language/editReadNotifi', {
+                    axios.post('http://192.168.1.7:3002/language/editReadNotifi', {
                         "notification_id": remoteMessage.data.notification_id,
                     }, {
                         headers: {
@@ -81,7 +85,7 @@ const HomeScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View>
-                <TouchableOpacity onPress={() => navigation.navigate("WordScreen")}>
+                <TouchableOpacity onPress={() => WordRequest()}>
                     <Text>Go to Word Screen</Text>
                 </TouchableOpacity>
             </View>

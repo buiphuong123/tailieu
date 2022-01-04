@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, Modal, TouchableOpacity, Image, FlatList } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../HomeScreen';
 import HomeScreenDetail from '../HomeScreenDetail';
@@ -8,7 +8,9 @@ import GrammarScreenDetail from '../GrammarScreenDetail';
 import Grammer from '../Grammer';
 import ListGrammer from '../ListGrammer';
 import ExplainScreen from '../ExplainScreen';
-import WordScreen from '../WordScreen';
+import WordScreen from '../word/WordScreen';
+import WordInfo from '../word/WordInfo';
+import ListWord from '../word/ListWord';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +44,18 @@ const HomeStack = () => {
                 name='WordScreen'
                 component={WordScreen}
             />
+
+            <Stack.Screen
+                name='WordInfo'
+                component={WordInfo}
+            />
+
+            <Stack.Screen
+                name='ListWord'
+                component={ListWord}
+            />
+
+
 
         </Stack.Navigator>
     )

@@ -6,20 +6,19 @@ import { showLoading, hideLoading} from '../redux/actions/index';
 
 function* getNotification({ payload }) {
     const { username } = payload;
-    yield put(showLoading());
+    // yield put(showLoading());
     const resp = yield call(listNotifi, {
         username: username
     });
     const { data } = resp;
     if (data.code === 1) {
-        console.log('LIST NOTIFICATION: ', data.listNoti);
         yield put(getListNotifiSuccess(data.listNoti));
     }
     else {
         console.log('error');
     }
     // yield delay(100);
-    yield put(hideLoading());
+    // yield put(hideLoading());
 }
 
 
