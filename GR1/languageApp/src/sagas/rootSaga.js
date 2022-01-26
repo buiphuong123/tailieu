@@ -5,6 +5,7 @@ import { watchLoginUser, watchRegisterUser, watchsendMail, watchLogoutUser } fro
 import { watchgetComment, watchgetGrammar } from './grammarSaga';
 import { watchgetNotifi } from './notiSaga';
 import { watchgetWord } from './wordSaga';
+import { watchgetGrammarQuestion } from './grammarquestionSaga';
 export default function* rootSaga() {
     yield all([
         watchLoginUser(),
@@ -15,5 +16,6 @@ export default function* rootSaga() {
         watchgetComment(),
         watchgetNotifi(),
         watchgetWord(),
+        watchgetGrammarQuestion(),
     ])
 }

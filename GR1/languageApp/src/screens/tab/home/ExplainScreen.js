@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, SafeAreaView, Dimensions, Image, TouchableOpacity, StyleSheet, Button, FlatList, ScrollView, TextInput, Platform, Alert } from 'react-native'
+import { LogBox , Text, View, SafeAreaView, Dimensions, Image, TouchableOpacity, StyleSheet, Button, FlatList, ScrollView, TextInput, Platform, Alert } from 'react-native'
 import CustomHeader from '../../CustomHeader';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,7 +14,11 @@ import axios from 'axios';
 import { socket } from '../../../../App';
 const WIDTH = Dimensions.get('window').width;
 import Modal from 'react-native-modal'; // 2.4.0
+import { getListNotifiRequest } from '../../../redux/actions/notifi.action';
+import { getListQuestionRequest } from '../../../redux/actions/grammarquestion.action';
 
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 export default ExplainScreen = ({ navigation, route }) => {
     const dispatch = useDispatch();
     const commentList = useSelector(state => state.commentReducer.commentList);
@@ -44,13 +48,12 @@ export default ExplainScreen = ({ navigation, route }) => {
     // module.exports.getTokenApi = getTokenApi;
     useEffect(() => {
         socket.on("SEVER-SEND-LIKE", (msg) => {
-            likeactioncallagain(msg.comment_id, msg.islike);
+            likeactioncallagain(msg.comment_id, msg.islike, msg.isdislike);
         });
         socket.on("SEVER-SEND-DISLIKE", (msg) => {
-            dislikeactioncallagain(msg.comment_id, msg.isdislike);
+            dislikeactioncallagain(msg.comment_id, msg.islike, msg.isdislike);
         });
         socket.on("SEVER-SEND-NEWCOMMENT", (msg) => {
-            console.log('mess nhan duoc ', msg);
             sendCommentResend(msg.comment, msg.username);
         });
         // }
@@ -79,32 +82,33 @@ export default ExplainScreen = ({ navigation, route }) => {
         //     }
         // }, []);
         var index = 0;
+        var checkdislike = false;
         var i;
-        for (i = 0; i < commentList.length; i++) {
-            if (commentList[i]._id === comment_id) {
-                console.log('XEM ISLIKE THE NAO NHE', commentList[i].islike)
-                if (commentList[i].islike === true) {
+        for (i = 0; i < dataComment.length; i++) { // day nay lay comment tu redũ uk ncai d^^at nay uco k hiểu r
+            if (dataComment[i]._id === comment_id) {
+                if (dataComment[i].islike === true) {
                     index = 1;
-                    commentList[i].islike = false;
+                    dataComment[i].islike = false;
                     // commentList[i].like = commentList[i].like - 1;
-                    setdataComment([...commentList]);
+                    setdataComment([...dataComment]);
                     break;
                 }
                 else {
-                    if (commentList[i].isdislike === true) {
+                    if (dataComment[i].isdislike === true) {
                         console.log('isdislike laf true, chuyen nos sang false');
-                        commentList[i].isdislike = false;
+                        dataComment[i].isdislike = false;
+                        checkdislike = true;
                         // commentList[i].dislike = commentList[i].dislike - 1;
-                        commentList[i].islike = true;
+                        dataComment[i].islike = true;
                         // commentList[i].like = commentList[i].like + 1;
-                        setdataComment([...commentList]);
+                        setdataComment([...dataComment]);
                         break;
                     }
                     else {
                         console.log('isdislike laf false');
-                        commentList[i].islike = true;
+                        dataComment[i].islike = true;
                         // commentList[i].like = commentList[i].like + 1;
-                        setdataComment([...commentList]);
+                        setdataComment([...dataComment]);
                         break;
                     }
 
@@ -124,7 +128,6 @@ export default ExplainScreen = ({ navigation, route }) => {
                 "username_friends": username_friends,
                 "action": "like",
                 "comment_id": comment_id,
-                "screen": "Explainscreen",
                 "word": word,
             }, {
                 headers: {
@@ -165,7 +168,8 @@ export default ExplainScreen = ({ navigation, route }) => {
 
         axios.post('http://192.168.1.7:3002/language/createLikeComment', {
             "comment_id": comment_id,
-            "user_id_like": user_id
+            "user_id_like": user_id,
+            "checkStatus": checkdislike
         }, {
             headers: {
                 "Accept": "application/json",
@@ -181,18 +185,40 @@ export default ExplainScreen = ({ navigation, route }) => {
 
     }
 
-    const likeactioncallagain = (comment_id, islike) => {
+    const likeactioncallagain = (comment_id, islike, isdislike) => {
+        console.log('ben LIKE ACTION islike va isdislike lan luotj la ', islike, isdislike);
         var i;
         for (i = 0; i < commentList.length; i++) {
-            if (commentList[i]._id === comment_id && islike === true) {
-                commentList[i].like = commentList[i].like - 1;
-                setdataComment([...commentList]);
-                break;
-            }
-            else if (commentList[i]._id === comment_id && islike === false) {
-                commentList[i].like = commentList[i].like + 1;
-                setdataComment([...commentList]);
-                break;
+            // if (commentList[i]._id === comment_id && islike === true) {
+            //     commentList[i].like = commentList[i].like - 1;
+            //     setdataComment([...commentList]);
+            //     break;
+            // }
+            // else if (commentList[i]._id === comment_id && islike === false) {
+            //     commentList[i].like = commentList[i].like + 1;
+            //     setdataComment([...commentList]);
+            //     break;
+            // }
+            if(commentList[i]._id === comment_id) {
+                if(islike === true) {
+                    console.log('vafo islike = true');
+                    commentList[i].like = commentList[i].like - 1;
+                    setdataComment([...commentList]);
+                    break;
+                }
+                else if (islike === false && isdislike === true) {
+                    console.log('vafo islike = false va isdislike = true');
+                    commentList[i].like = commentList[i].like + 1;
+                    commentList[i].dislike = commentList[i].dislike - 1;
+                    setdataComment([...commentList]);
+                    break;
+                }
+                else if (islike === false && isdislike === false) {
+                    console.log('vafo islike = false vaf isdislike bang false');
+                    commentList[i].like = commentList[i].like + 1;
+                    setdataComment([...commentList]);
+                    break;
+                }
             }
 
         }
@@ -200,6 +226,8 @@ export default ExplainScreen = ({ navigation, route }) => {
     }
 
     const dislikeaction = (comment_id, user_id, username_friends) => {
+        console.log('vao dislike action');
+        var checklike= false;
         var index = 0;
         var i;
         for (i = 0; i < commentList.length; i++) {
@@ -215,6 +243,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                     if (commentList[i].islike === true) {
                         commentList[i].islike = false;
                         commentList[i].isdislike = true;
+                        checklike = true;
                         // commentList[i].dislike = commentList[i].dislike + 1;
                         // commentList[i].like = commentList[i].like - 1;
                         setdataComment([...commentList]);
@@ -243,7 +272,6 @@ export default ExplainScreen = ({ navigation, route }) => {
                 "username_friends": username_friends,
                 "action": "dislike",
                 "comment_id": comment_id,
-                "screen": "Explainscreen",
                 "word": word,
             }, {
                 headers: {
@@ -261,7 +289,8 @@ export default ExplainScreen = ({ navigation, route }) => {
 
         axios.post('http://192.168.1.7:3002/language/createDisLikeComment', {
             "comment_id": comment_id,
-            "user_id_dislike": user_id
+            "user_id_dislike": user_id,
+            "checkStatus": checklike,
         }, {
             headers: {
                 "Accept": "application/json",
@@ -273,25 +302,46 @@ export default ExplainScreen = ({ navigation, route }) => {
             })
 
     }
-    const dislikeactioncallagain = (comment_id, isdislike) => {
+    const dislikeactioncallagain = (comment_id, islike, isdislike) => {
         var i;
+        console.log('ben DISLIKE ACTION islike va isdislike lan luotj la ', islike, isdislike);
         for (i = 0; i < commentList.length; i++) {
-            if (commentList[i]._id === comment_id && isdislike === true) {
-                commentList[i].dislike = commentList[i].dislike - 1;
-                setdataComment([...commentList]);
-                break;
+            // if (commentList[i]._id === comment_id && isdislike === true) {
+            //     commentList[i].dislike = commentList[i].dislike - 1;
+            //     setdataComment([...commentList]);
+            //     break;
+            // }
+            // else if (commentList[i]._id === comment_id && isdislike === false) {
+            //     commentList[i].dislike = commentList[i].dislike + 1;
+            //     setdataComment([...commentList]);
+            //     break;
+            // }
+            if(commentList[i]._id === comment_id) {
+                if(isdislike === true) {
+                    console.log('vafo isdislike = true');
+                    commentList[i].dislike = commentList[i].dislike - 1;
+                    setdataComment([...commentList]);
+                    break;
+                }
+                else if (isdislike === false && islike === true) {
+                    console.log('vafo isdislike = false va islike = true');
+                    commentList[i].dislike = commentList[i].dislike + 1;
+                    commentList[i].like = commentList[i].like - 1;
+                    setdataComment([...commentList]);
+                    break;
+                }
+                else if (islike === false && isdislike === false) {
+                    console.log('vafo isdislike = false va islike = false');
+                    commentList[i].dislike = commentList[i].dislike + 1;
+                    setdataComment([...commentList]);
+                    break;
+                }
             }
-            else if (commentList[i]._id === comment_id && isdislike === false) {
-                commentList[i].dislike = commentList[i].dislike + 1;
-                setdataComment([...commentList]);
-                break;
-            }
-
         }
     }
     const sendCommentResend = (newComment, username) => {
-        const kaka = { grammar_id: newComment.grammar_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: username };
-        setdataComment(dataComment.concat(kaka));
+        const kaka = { _id: newComment._id, grammar_id: newComment.grammar_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: username };
+        setdataComment(dataComment.concat(kaka)); // cai kakaừ na_id dudau k đéo y lam gi co 
     }
     const sendComment = (grammar_id) => {
         if (comment.length === 0 || comment === '') {
@@ -433,6 +483,10 @@ export default ExplainScreen = ({ navigation, route }) => {
             </View>
         )
     }
+
+    const quesSc = () => {
+        dispatch(getListQuestionRequest(word._id, navigation));
+    }
     return (
         <View style={{ flexGrow: 1, flex: 1 }}>
             <CustomHeader title={word.grammar} navigation={navigation} />
@@ -548,8 +602,8 @@ export default ExplainScreen = ({ navigation, route }) => {
                 </Modal>
             </View>
             <TouchableOpacity
-                style={{ borderWidth: 1, width: 50, borderRadius: 30, backgroundColor: '#009387', borderColor: '#009387', bottom: 20, right: 20, position: 'absolute', zIndex: 1 }}
-                onPress={() => navigation.navigate("HomeDetail")}>
+                style={{ borderWidth: 1, width: 50, borderRadius: 30, backgroundColor: '#009387', borderColor: '#009387', bottom: 60, right: 20, position: 'absolute', zIndex: 1 }}
+                onPress={() => quesSc()}>
                 <Entypo name={'triangle-right'} size={50} style={{ color: 'white' }} />
             </TouchableOpacity>
         </View>

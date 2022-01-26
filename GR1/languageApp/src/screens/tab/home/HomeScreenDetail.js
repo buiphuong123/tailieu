@@ -142,7 +142,7 @@ export default HomeScreenDetail = ({ navigation }) => {
     const checkAnwer = () => {
         // if(arrAns)'
         const ans = arrAns.join('');
-        if(ans === kotae) {
+        if (ans === kotae) {
             volumnTrue();
             setalertSuccess(true);
         }
@@ -152,7 +152,7 @@ export default HomeScreenDetail = ({ navigation }) => {
         // setTimeout(() => {
         //     setisTrue('');
         // }, 2000);
-    
+
         // setTimeout(() => {
         // setalertSuccess(false);
         // }, 2000);
@@ -162,6 +162,7 @@ export default HomeScreenDetail = ({ navigation }) => {
         setalertError(false);
         setisTrue('');
         setRating(rating + 1);
+        navigation.navigate("ChooseAnswer");
 
     }
     const listQues = () => {
@@ -204,7 +205,7 @@ export default HomeScreenDetail = ({ navigation }) => {
                 <View style={{ flex: 10, }}>
                     <View style={{ flexDirection: 'row', }}>
                         <Slider
-                            style={{ width: 250, height: 60}}
+                            style={{ width: 250, height: 60 }}
                             minimumValue={1}
                             maximumValue={5}
                             minimumTrackTintColor="green"
@@ -217,12 +218,13 @@ export default HomeScreenDetail = ({ navigation }) => {
                             {getRatingEmoji()}
                         </Text>
                     </View>
-                    
+
                     {/* <View style={{margin: 30}}>
                         <ProgressBar 
                             progress={rating} 
                             width={200} />
                     </View> */}
+
                     <View style={{ marginBottom: 20 }}>
                         <Text>Ngu phap moi</Text>
                     </View>
@@ -250,7 +252,7 @@ export default HomeScreenDetail = ({ navigation }) => {
                             {listQues()}
                         </View>
                     </View>
-                    
+
                 </View>
                 <View style={{ paddingLeft: 40, paddingRight: 40, flex: 1, }}>
                     <Button

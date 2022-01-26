@@ -17,33 +17,13 @@ const HomeScreen = ({ navigation }) => {
         messaging().onMessage(async remoteMessage => {
             dispatch(getListNotifiRequest(users.username));
             console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-            // setNotification({
-            //   ...notification,
-            //   title: remoteMessage.notification.title,
-            //   body: remoteMessage.notification.body,
-            //   time: remoteMessage.data.sentTime,
-            //   action: remoteMessage.data.action,
-            // });
-            // console.log('body sau khi set', notification.body);
-            // console.log(notification.body + 'at'+ notification.time);
         });
-
-
-
         messaging().onNotificationOpenedApp(remoteMessage => {
             console.log('onNotificationOpenedApp: ', JSON.stringify(remoteMessage));
-            // setNotification({
-            //   title: remoteMessage.notification.title,
-            //   body: remoteMessage.notification.body
-            // })
         });
 
         messaging().setBackgroundMessageHandler(async remoteMessage => {
             console.log('Message handled in the background!', remoteMessage);
-            // setNotification({
-            //   title: remoteMessage.notification.title,
-            //   body: remoteMessage.notification.body
-            // })
         });
 
         messaging()

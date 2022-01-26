@@ -50,3 +50,7 @@ export const ALL_LIKE = 'ALL_LIKE';
 
 export const GET_LIST_WORD_REQUEST = 'GET_LIST_WORD_REQUEST';
 export const GET_LIST_WORD_SUCCESS = 'GET_LIST_WORD_SUCCESS';
+
+// question grammar 
+export const GET_QUESTION_REQUEST = 'GET_QUESTION_REQUEST';
+export const GET_QUESTION_SUCCESS = 'GET_QUESTION_SUCCESS';

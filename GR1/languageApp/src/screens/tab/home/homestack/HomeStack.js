@@ -7,10 +7,12 @@ import HomeScreenDetail from '../HomeScreenDetail';
 import GrammarScreenDetail from '../GrammarScreenDetail';
 import Grammer from '../Grammer';
 import ListGrammer from '../ListGrammer';
-import ExplainScreen from '../ExplainScreen';
+// import ExplainScreen from '../ExplainScreen';
 import WordScreen from '../word/WordScreen';
 import WordInfo from '../word/WordInfo';
 import ListWord from '../word/ListWord';
+// import Flashcard from '../word/Flashcard';
+import ChooseAnswer from '../ChooseAnswer';
 
 const Stack = createStackNavigator();
 
@@ -35,10 +37,10 @@ const HomeStack = () => {
                 component={Grammer}
             />
 
-            <Stack.Screen
+            {/* <Stack.Screen
                 name='ExplainScreen'
                 component={ExplainScreen}
-            />
+            /> */}
 
             <Stack.Screen
                 name='WordScreen'
@@ -55,7 +57,15 @@ const HomeStack = () => {
                 component={ListWord}
             />
 
+            {/* <Stack.Screen
+                name='ChooseAnswer'
+                component={ChooseAnswer}
+            /> */}
 
+            {/* <Stack.Screen
+                name='Flashcard'
+                component={Flashcard}
+            /> */}
 
         </Stack.Navigator>
     )

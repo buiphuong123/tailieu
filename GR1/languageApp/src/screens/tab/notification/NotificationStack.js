@@ -120,7 +120,7 @@ const NotificationStack = ({ navigation }) => {
                     </View>
                     <View style={{ height: 80 }}>
                         <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                            <Text numberOfLines={3}>{item.content} ksf akf kaf lakf lakf adf k afk asdfkdsf dsf dsfd  afk à  adk afk adfk </Text>
+                            <Text numberOfLines={3}>{item.content} </Text>
                         </View>
                         <View style={{}}>
                             <Text style={{marginTop: 5, color: 'gray' }}>{time(dt)}</Text>
@@ -138,6 +138,7 @@ const NotificationStack = ({ navigation }) => {
                 <View style={{ marginLeft: 10, marginBottom: 10 }}>
                     <FlatList
                         // style={{ marginTop: 15, marginLeft: 20 }}
+                        inverted={true}
                         data={dataNotifi}
                         keyExtractor={( item, index) => index.toString()}
                         renderItem={renderNotifi}

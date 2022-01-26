@@ -11,6 +11,7 @@ const urlLogout = 'logout';
 const urlTest = 'test1';
 const urlNoti = 'getNotifi';
 const urlWord = 'getWord';
+const urlgrammarquestion = 'getQuestion';
 // export const getList = (params = {}) => {
 //   let queryParams = '';
 //   if (Object.keys(params).length > 0) {
@@ -55,6 +56,10 @@ export const listNotifi = data => {
 
 export const allWord = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlWord}`, data);
+}
+
+export const allGrammarQuestion = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlgrammarquestion}`, data);
 }
 // http://localhost:3000/tasks/:id METHOD: PUT
 // export const updateTask = (data, taskId) => {
