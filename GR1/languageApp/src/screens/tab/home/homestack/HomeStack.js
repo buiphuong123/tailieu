@@ -13,6 +13,7 @@ import WordInfo from '../word/WordInfo';
 import ListWord from '../word/ListWord';
 // import Flashcard from '../word/Flashcard';
 import ChooseAnswer from '../ChooseAnswer';
+import HomeGrammar from '../HomeGrammar';
 
 const Stack = createStackNavigator();
 
@@ -57,10 +58,10 @@ const HomeStack = () => {
                 component={ListWord}
             />
 
-            {/* <Stack.Screen
-                name='ChooseAnswer'
-                component={ChooseAnswer}
-            /> */}
+            <Stack.Screen
+                name='HomeGrammar'
+                component={HomeGrammar}
+            />
 
             {/* <Stack.Screen
                 name='Flashcard'

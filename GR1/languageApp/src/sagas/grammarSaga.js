@@ -14,7 +14,8 @@ function* getGrammar({ payload, navigation }) {
     if (data.code == 1) {
         console.log('VAO REDUCER ROI NHA');
         yield put(getGrammarSuccess(data.grammar));
-        navigation.navigate("GrammarScr");
+        // navigation.navigate("GrammarScr");
+        navigation.navigate("HomeGrammar");
     }
     else {
         yield put(getGrammarFail(data.error));

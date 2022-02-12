@@ -24,10 +24,14 @@ export const PASSWORD_REQUESTING = 'PASSWORD_REQUESTING';
 export const MAIL_SUCESS = 'MAIL_SUCESS';
 export const MAIL_FAIL = 'MAIL_FAIL';
 
-// get Grammar
+// get Grammar with id
 export const GET_GRAMMAR = 'GET_GRAMMAR';
 export const GET_GRAMMAR_SUCCESS = 'GET_GRAMMAR_SUCCESS';
 export const GET_GRAMMAR_FAIL = 'GET_GRAMMAR_FAIL';
+
+// get all grammar 
+export const GET_ALL_GRAMMAR = 'GET_ALL_GRAMMAR';
+export const GET_ALL_GRAMMAR_SUCCESS = 'GET_ALL_GRAMMAR_SUCCESS';
 
 // get comment
 export const GET_LIST_COMMENT = 'GET_LIST_COMMENT';

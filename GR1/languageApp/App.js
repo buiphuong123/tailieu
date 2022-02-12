@@ -26,8 +26,8 @@ import messaging from '@react-native-firebase/messaging';
 import firebase from '@react-native-firebase/app';
 import { kaka } from './src/apis/user';
 // import { useSelector } from 'react-redux';
-import axios from 'axios';
-
+import HomeGrammar from './src/screens/tab/home/HomeGrammar';
+import ResultScreen from './src/screens/tab/home/ResultScreen';
 
 const store = createStore(
   appReducers,
@@ -35,12 +35,6 @@ const store = createStore(
 );
 export const socket = io("http://192.168.1.7:3002");
 const App = () => {
-  const [notification, setNotification] = useState({
-    title: undefined,
-    body: undefined,
-    time: undefined,
-    action: undefined,
-  });
 
   // const [token, setToken] = useState("");
  
@@ -156,18 +150,11 @@ const App = () => {
   return (
       <Provider store={store}>
         <Home />
+        {/* <ResultScreen /> */}
         <Toast ref={(ref) => Toast.setRef(ref)} />
         <GlobalLoading />
         {/* <Fetchdata /> */}
       </Provider>
-      // <ModalScreen />
-      // <HomeScreenDetail />
-      // <GrammarScreenDetail />
-      // <GrammerScreen />
-      // <ExplainScreen />
-      // <ListGrammer />
-      // <Grammer />
-      // <HomeScreen />
   );
 };
 sagaMiddleware.run(rootSaga);

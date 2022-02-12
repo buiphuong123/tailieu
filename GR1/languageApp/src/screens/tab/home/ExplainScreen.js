@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { LogBox , Text, View, SafeAreaView, Dimensions, Image, TouchableOpacity, StyleSheet, Button, FlatList, ScrollView, TextInput, Platform, Alert } from 'react-native'
+import { LogBox, Text, View, SafeAreaView, Dimensions, Image, TouchableOpacity, StyleSheet, Button, FlatList, ScrollView, TextInput, Platform, Alert } from 'react-native'
 import CustomHeader from '../../CustomHeader';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,7 +8,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Furi from 'react-native-furi';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getListCommentRequest } from '../../../redux/actions/comment.action';
+import { getListCommentRequest, getListCommentSuccess } from '../../../redux/actions/comment.action';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { socket } from '../../../../App';
@@ -47,6 +47,7 @@ export default ExplainScreen = ({ navigation, route }) => {
 
     // module.exports.getTokenApi = getTokenApi;
     useEffect(() => {
+        console.log('word truyen sang la', word);
         socket.on("SEVER-SEND-LIKE", (msg) => {
             likeactioncallagain(msg.comment_id, msg.islike, msg.isdislike);
         });
@@ -118,7 +119,7 @@ export default ExplainScreen = ({ navigation, route }) => {
 
             }
         }
-        if(username_friends === users.username) {
+        if (username_friends === users.username) {
             index = 1;
         }
 
@@ -199,8 +200,8 @@ export default ExplainScreen = ({ navigation, route }) => {
             //     setdataComment([...commentList]);
             //     break;
             // }
-            if(commentList[i]._id === comment_id) {
-                if(islike === true) {
+            if (commentList[i]._id === comment_id) {
+                if (islike === true) {
                     console.log('vafo islike = true');
                     commentList[i].like = commentList[i].like - 1;
                     setdataComment([...commentList]);
@@ -227,7 +228,7 @@ export default ExplainScreen = ({ navigation, route }) => {
 
     const dislikeaction = (comment_id, user_id, username_friends) => {
         console.log('vao dislike action');
-        var checklike= false;
+        var checklike = false;
         var index = 0;
         var i;
         for (i = 0; i < commentList.length; i++) {
@@ -262,7 +263,7 @@ export default ExplainScreen = ({ navigation, route }) => {
             }
         }
 
-        if(username_friends === users.username) {
+        if (username_friends === users.username) {
             index = 1;
         }
 
@@ -316,8 +317,8 @@ export default ExplainScreen = ({ navigation, route }) => {
             //     setdataComment([...commentList]);
             //     break;
             // }
-            if(commentList[i]._id === comment_id) {
-                if(isdislike === true) {
+            if (commentList[i]._id === comment_id) {
+                if (isdislike === true) {
                     console.log('vafo isdislike = true');
                     commentList[i].dislike = commentList[i].dislike - 1;
                     setdataComment([...commentList]);
@@ -514,7 +515,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                             renderItem={renderMean}
                         />
                     </View>
-                    {word.indication.length === 0 || typeof word.indication === 'undefined' ? null :
+                    {typeof word.indication === 'undefined' || word.indication.length === 0 ? null :
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ fontWeight: 'bold', color: 'blue', fontSize: 18, textDecorationLine: 'underline' }}>Dấu hiện nhận biết: </Text>
                             <FlatList
@@ -538,9 +539,14 @@ export default ExplainScreen = ({ navigation, route }) => {
                 <View style={{ padding: 10, borderTopWidth: 1, borderTopColor: '#d9d9d9' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                         <Text>Có {dataComment.length} góp ý</Text>
-                        <TouchableOpacity onPress={() => setisVisible(true)}>
-                            <Text>Xem thêm góp ý</Text>
-                        </TouchableOpacity>
+                        {
+                            dataComment.length >  3 ?
+                                <TouchableOpacity onPress={() => setisVisible(true)}>
+                                    <Text>Xem thêm góp ý</Text>
+                                </TouchableOpacity>
+                                :
+                                null
+                        }
                     </View>
                     <View>
                         <FlatList

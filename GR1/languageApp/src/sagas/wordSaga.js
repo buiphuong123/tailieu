@@ -13,7 +13,6 @@ function* getWord({ payload, navigation }) {
     });
     const { data } = resp;
     if (data.code == 1) {
-        console.log(data.wordData);
         yield put(getListWordSuccess(data.wordData));
         navigation.navigate("WordScreen");
     }
