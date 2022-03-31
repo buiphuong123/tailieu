@@ -154,7 +154,7 @@ export default ChooseAnswer = ({ navigation, route }) => {
             setalertError(true);
             setFalseQuestion(falseQuestion + 1);
         }
-        axios.post('http://192.168.1.7:3002/language/createResult', {
+        axios.post('http://192.168.1.72:3002/language/createResult', {
                 "grammar_id": grammar_id,
                 "user_id": users._id,
                 "question_id": currentQuestion._id,

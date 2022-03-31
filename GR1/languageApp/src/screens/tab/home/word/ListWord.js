@@ -21,6 +21,9 @@ export default ListWord = ({ navigation }) => {
     const [data, setData] = useState(wordList);
     const users = useSelector(state => state.userReducer.user);
     const dispatch = useDispatch();
+    // useEffect(() => {
+    //    Y
+    // }, [wordList]);
     const setMemerize= (userId, wordId) => {
        let objIndex = data.findIndex((e => e._id === wordId));
         if(data[objIndex].memerizes.length === 1) {
@@ -32,7 +35,7 @@ export default ListWord = ({ navigation }) => {
         setData([...data]);
         dispatch(getListWordSuccess(data));
 
-        axios.post('http://192.168.1.7:3002/language/createMemWord', {
+        axios.post('http://192.168.1.72:3002/language/createMemWord', {
             "userId": userId,
             "wordId": wordId
         }, {
@@ -60,7 +63,7 @@ export default ListWord = ({ navigation }) => {
          setData([...data]);
          dispatch(getListWordSuccess(data));
  
-         axios.post('http://192.168.1.7:3002/language/createLikeWord', {
+         axios.post('http://192.168.1.72:3002/language/createLikeWord', {
              "userId": userId,
              "wordId": wordId
          }, {
@@ -79,7 +82,7 @@ export default ListWord = ({ navigation }) => {
 
     const renderWord = ({ item, index }) => {
         return (
-            <View>
+            <TouchableOpacity onPress={() => navigation.navigate("WordScreenDetail", {vocabulary: item})}>
                 <View style={{ borderBottomWidth: 1, borderBottomColor: '#999999', marginTop: 5, width: WIDTH }}>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 5 }}>
                         <View style={{ flexDirection: 'row' }}>
@@ -105,7 +108,7 @@ export default ListWord = ({ navigation }) => {
 
                 </View>
 
-            </View>
+            </TouchableOpacity>
         )
     }
     return (

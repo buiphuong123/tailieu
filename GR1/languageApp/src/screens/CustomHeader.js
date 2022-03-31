@@ -2,11 +2,12 @@ import React from 'react'
 import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from 'react-native-paper';
+import Icons from 'react-native-vector-icons/Fontisto';
 
-const CustomHeader = ({title, isHome, navigation}) => {
+const CustomHeader = ({title, isHome, navigation, icon, action}) => {
     const { colors } = useTheme();
     return (
-        <View style={{flexDirection: 'row', height: 50, backgroundColor: '#009387'}}>
+        <View style={{flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-around'}}>
             <View style={{flex: 1, justifyContent: 'center'}}>
                 {
                     isHome ?
@@ -22,7 +23,11 @@ const CustomHeader = ({title, isHome, navigation}) => {
             <View style={{flex: 1.5, justifyContent: 'center'}}>
                 <Text style={{textAlign: 'center', color: colors.text, fontSize: 18}}>{title}</Text>
             </View>
-            <View style={{flex: 1}}></View>
+
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} onPress={() => action()}>
+                 <Icons name={icon} size={29} style={{color: colors.text}} />
+            </TouchableOpacity>
+            {/* <View style={{flex: 1}}></View> */}
         </View>
     )
 }

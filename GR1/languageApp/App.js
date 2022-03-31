@@ -28,14 +28,27 @@ import { kaka } from './src/apis/user';
 // import { useSelector } from 'react-redux';
 import HomeGrammar from './src/screens/tab/home/HomeGrammar';
 import ResultScreen from './src/screens/tab/home/ResultScreen';
+import Calendar from './src/screens/tab/home/Calendar';
+import AddCalendar from './src/screens/tab/home/AddCalendar';
+import TestScreen from './src/screens/tab/home/TestScreen';
+import Flashcard from './src/screens/tab/home/word/Flashcard';
+import WordScreenDetail from './src/screens/tab/home/word/WordScreenDetail';
+import SettingScreen from './src/screens/tab/setting/SettingScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const store = createStore(
   appReducers,
   applyMiddleware(sagaMiddleware)
 );
-export const socket = io("http://192.168.1.7:3002");
+export const socket = io("http://192.168.1.72:3002");
 const App = () => {
+  const dataTake = async() => {
+    console.log('data take day ne');
+  }
 
+  useEffect(() => {
+    dataTake();
+  })
   // const [token, setToken] = useState("");
  
   // const getToken = async() => {
@@ -85,7 +98,7 @@ const App = () => {
 //   //  console.log('TOKEN DAY NHA', token);
 //     messaging().onMessage(async remoteMessage => {
 //       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-//       axios.post('http://192.168.1.7:3002/language/createNotifi', {
+//       axios.post('http://192.168.1.72:3002/language/createNotifi', {
 //             // "username": user._id,
 //             "content": remoteMessage.notification.body,
 //             "time": remoteMessage.sentTime,
@@ -149,8 +162,9 @@ const App = () => {
   // });
   return (
       <Provider store={store}>
+        {/* <SettingScreen /> */}
         <Home />
-        {/* <ResultScreen /> */}
+        {/* <WordScreenDetail/> */}
         <Toast ref={(ref) => Toast.setRef(ref)} />
         <GlobalLoading />
         {/* <Fetchdata /> */}

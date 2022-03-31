@@ -1,22 +1,19 @@
-import React, {Component}  from 'react'
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native'
+import React, { Component } from 'react'
+import { Text, View, SafeAreaView, TouchableOpacity } from 'react-native'
 import CustomHeader from '../../CustomHeader';
+import { Kanji } from 'react-native-kanji-animation';
 
-const SettingScreen = ({navigation}) => {
+const SettingScreen = ({ navigation }) => {
     return (
-        <SafeAreaView style={{flex: 1}}>
-            {/* <CustomHeader title="Setting" isHome={true} navigation={navigation} /> */}
-            <View>
-                <Text>Setting Screen</Text>
-                <TouchableOpacity 
-                    style={{marginTop: 20}}
-                    onPress={() => navigation.navigate("SettingDetail")}
-                >
-                    <Text>Go to setting detail</Text>
-                </TouchableOpacity>
-            </View>
-
-        </SafeAreaView>
+        <Kanji
+            ref={el => kanjiExample = el}
+            element="私"
+            size={90}
+            placeholder={true}
+            duration={30000}
+            step={3}
+            onPress={() => kanjiExample.animate()}
+        />
     )
 }
 export default SettingScreen;

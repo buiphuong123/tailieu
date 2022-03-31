@@ -1,130 +1,242 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Dimensions, Animated } from 'react-native';
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Carousel from "react-native-snap-carousel";
 import { connect } from 'react-redux';
-import { Container } from 'native-base';
-import { useSelector, useDispatch } from 'react-redux';
+import Item from './Item';
+import * as actions from '../../../../redux/actions/word.action';
+import CustomHeader from '../../../CustomHeader';
 
-const Item = () => {
-    useEffect(() => {
+// class Item extends Component {
+//     constructor (props) {
+//         super(props);
+//         // this.checkwordArr = [{jp: "kaka", vn: "abc"}, {jp: "jp", vn: "vn"}];
+//     }
+//     UNSAFE_componentWillMount() {
 
-        animatedValue = new Animated.Value(0);
-        value = 0;
-        animatedValue.addListener(({ value }) => {
-            value = value;
-        })
-        frontInterpolate = animatedValue.interpolate({
-            inputRange: [0, 180],
-            outputRange: ['0deg', '180deg']
-        })
-        backInterpolate = this.animatedValue.interpolate({
-            inputRange: [0, 180],
-            outputRange: ['180deg', '360deg']
-        })
+//         this.animatedValue = new Animated.Value(0);
+//         this.value = 0;
+//         this.animatedValue.addListener(({ value }) => {
+//             this.value = value;
+//         })
+//         this.frontInterpolate = this.animatedValue.interpolate({
+//             inputRange: [0, 180],
+//             outputRange: ['0deg', '180deg']
+//         })
+//         this.backInterpolate = this.animatedValue.interpolate({
+//             inputRange: [0, 180],
+//             outputRange: ['180deg', '360deg']
+//         })
+//     }
+//     flipCard = () => {
+//         if (this.value >= 90) {
+//             Animated.timing(this.animatedValue, {
+//                 toValue: 0,
+//                 friction: 8,
+//                 tension: 10,
+//                 useNativeDriver: true,
+//             }).start();
+//         } else {
+//             Animated.timing(this.animatedValue, {
+//                 toValue: 180,
+//                 friction: 8,
+//                 tension: 10,
+//                 useNativeDriver: true,
+//             }).start();
+//         }
+
+//     }
+//     actionTest = () => {
+//         console.log('test');
+//         console.log(user);
+//     }
+
+//     setMemerize= (userId, wordId) => {
+//         const {data } = this.props;
+//         let objIndex = data.findIndex((e => e._id === wordId));
+//          if(data[objIndex].memerizes.length === 1) {
+//              data[objIndex].memerizes = [];
+//          }
+//          else if(data[objIndex].memerizes.length === 0) {
+//              data[objIndex].memerizes.push({isMemerize: true});
+//          }
+//         //  setData([...data]);
+//         //  dispatch(getListWordSuccess(data));
+//         // this.props.setState({data: [...data]});
+//         this.props.setWordMemerize(data);
+
+//          axios.post('http://192.168.1.72:3002/language/createMemWord', {
+//              "userId": userId,
+//              "wordId": wordId
+//          }, {
+//              headers: {
+//                  "Accept": "application/json",
+//                  "Content-Type": "application/json"
+//              }
+//          })
+//              .then((response) => {
+//                  console.log('nemWord', response.data.nemWord);
+//              })
+//              .catch(function(error) {
+//                  throw error;
+//              })
+//      }
+
+//     render() {
+//         const frontAnimateStyle = {
+//             transform: [
+//                 { rotateY: this.frontInterpolate }
+//             ]
+//         }
+//         const backAnimatedStyle = {
+//             transform: [
+//                 { rotateY: this.backInterpolate }
+//             ]
+//         }
+//         const { item, count, countWord, data } = this.props;
+
+//         return (
+//             <View>
+//             <TouchableOpacity onPress={() => this.flipCard()} style={styles.cardStyle}>
+//                 <Animated.View style={[frontAnimateStyle, styles.flipCard]}>
+//                     <View style={[styles.flashcardStyle, styles.flashcardStyletop]}>
+//                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+//                             <TouchableOpacity>
+//                                 <Icon style={{ marginTop: 13, marginLeft: 15, color: '#4d88ff' }} name="feedback" size={28} />
+//                             </TouchableOpacity>
+//                             <TouchableOpacity>
+//                                 <Icon style={{ marginTop: 13, marginRight: 15, color: '#4d88ff' }} name="settings" size={28} />
+//                             </TouchableOpacity>
+//                         </View>
+//                         <View />
+//                         <View style={{ alignItems: 'center', justifyContent: 'center', flex: 4 }}>
+//                             <Text style={styles.flipText1}>
+//                                 {item.hira}
+//                             </Text>
+//                         </View>
+//                     </View>
+//                     <View style={[styles.flashcardStyle, styles.flashcardStyledowm]}>
+//                         {/* <Icon style={{ marginLeft: (WIDTH - 50) / 2, marginTop: -70, alignItems: 'center', color: '#999999' }} name="volume-up" size={45} /> */}
+//                         <Text style={{ marginLeft: (WIDTH - 50) / 2, marginBottom: -40 }}>{count+1}/{countWord}</Text>
+//                     </View>
+//                 </Animated.View>
+
+//                 <Animated.View style={[backAnimatedStyle, styles.flipCard, styles.flipCardBack]}>
+//                     <View style={[styles.flashcardStyle, styles.flashcardStyletop]}>
+//                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
+//                             <TouchableOpacity>
+//                                 <Icon style={{ marginTop: 13, marginLeft: 15, color: '#4d88ff' }} name="feedback" size={28} />
+//                             </TouchableOpacity>
+//                             <TouchableOpacity>
+//                                 <Icon style={{ marginTop: 13, marginRight: 15, color: '#4d88ff' }} name="settings" size={28} />
+//                             </TouchableOpacity>
+//                         </View>
+//                         <View />
+//                         <View style={{ alignItems: 'center', justifyContent: 'center', flex: 3 }}>
+//                             <Text style={styles.flipText1}>
+//                                 {item.vn}
+//                             </Text>
+//                         </View>
+//                     </View>
+//                     <View style={[styles.flashcardStyle, styles.flashcardStyledowm, { flex: 2 }]}>
+//                         {/* <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', marginTop: -30, flex: 1 }}>
+//                             <Icon style={{ color: '#999999' }} name="volume-up" size={45} />
+//                         </TouchableOpacity> */}
+//                         <View style={{ flex: 4, width: WIDTH - 50, alignItems: 'center', justifyContent: 'center' }}>
+//                             <Text style={{ fontSize: 30 }}>{item.kanji}</Text>
+//                             <Text style={{ fontSize: 20 }}>{item.hira}</Text>
+//                             <Text style={{ fontSize: 20 }}>{item.vn}</Text>
+//                         </View>
+//                     </View>
+//                 </Animated.View>
+
+//             </TouchableOpacity>
+//             <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 20}}>
+//                     <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#ff0000', marginRight: 110 }]} onPress={() => this.setMemerize(user._id, item._id)}>
+//                         <Text>memorize</Text>
+//                     </TouchableOpacity>
+//                     <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#5cd65c', }]} onPress={() => this.setMemerize(user._id, item._id)}>
+//                         <Text>not memorize</Text>
+//                     </TouchableOpacity>
+//                 </View>
+//             </View>
+//         );
+//     };
+// }
+
+class Search extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            listWord: this.props.checkwordArr,
+            currentCardDetail: {},
+        };
+        // this.checkwordArr = [{jp: "kaka", vn: "abc"}, {jp: "jp", vn: "vn"}];
+        // this.state = {
+        //     data: this.props.checkwordArr
+        // }
     }
-    )
-    flipCard = () => {
-        if (this.value >= 90) {
-            Animated.timing(this.animatedValue, {
-                toValue: 0,
-                friction: 8,
-                tension: 10,
-                useNativeDriver: true,
-            }).start();
-        } else {
-            Animated.timing(this.animatedValue, {
-                toValue: 180,
-                friction: 8,
-                tension: 10,
-                useNativeDriver: true,
-            }).start();
-        }
 
-    }
+
+    // setMemerize= (userId, wordId) => {
+    //     let objIndex = data.findIndex((e => e._id === wordId));
+    //      if(data[objIndex].memerizes.length === 1) {
+    //          data[objIndex].memerizes = [];
+    //      }
+    //      else if(data[objIndex].memerizes.length === 0) {
+    //          data[objIndex].memerizes.push({isMemerize: true});
+    //      }
+    //     //  setData([...data]);
+    //     //  dispatch(getListWordSuccess(data));
+    //     this.props.setState({data: [...data]});
+    //     this.props.setWordMemerize(data);
+
+    //      axios.post('http://192.168.1.72:3002/language/createMemWord', {
+    //          "userId": userId,
+    //          "wordId": wordId
+    //      }, {
+    //          headers: {
+    //              "Accept": "application/json",
+    //              "Content-Type": "application/json"
+    //          }
+    //      })
+    //          .then((response) => {
+    //              console.log('nemWord', response.data.nemWord);
+    //          })
+    //          .catch(function(error) {
+    //              throw error;
+    //          })
+    //  }
+
+    _renderItem = ({ item, index }) => <Item item={item} count={index} countWord={this.props.checkwordArr.length} />
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //       currentCardDetail: {},
+    //       listWord: this.props.checkwordArr
+    //     };
+    //   }  
    
-        const frontAnimateStyle = {
-            transform: [
-                { rotateY: this.frontInterpolate }
-            ]
-        }
-        const backAnimatedStyle = {
-            transform: [
-                { rotateY: this.backInterpolate }
-            ]
-        }
-        const { item, count, countWord } = this.props;
+    check = () => {
+        console.log('ket qua check la', this.state.currentCardDetail);
+    }
+    render() {
+        const { navigation } = this.props;
         return (
-            <TouchableOpacity onPress={() => this.flipCard()} style={styles.cardStyle}>
-                <Animated.View style={[frontAnimateStyle, styles.flipCard]}>
-                    <View style={[styles.flashcardStyle, styles.flashcardStyletop]}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-                            <TouchableOpacity>
-                                <Icon style={{ marginTop: 13, marginLeft: 15, color: '#4d88ff' }} name="feedback" size={28} />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Icon style={{ marginTop: 13, marginRight: 15, color: '#4d88ff' }} name="settings" size={28} />
-                            </TouchableOpacity>
-                        </View>
-                        <View />
-                        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 4 }}>
-                            <Text style={styles.flipText1}>
-                                {item.hira}
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={[styles.flashcardStyle, styles.flashcardStyledowm]}>
-                        <Icon style={{ marginLeft: (WIDTH - 50) / 2, marginTop: -70, alignItems: 'center', color: '#999999' }} name="volume-up" size={45} />
-                        <Text style={{ marginLeft: (WIDTH - 50) / 2, marginBottom: -40 }}>{count+1}/{countWord}</Text>
-                    </View>
-                </Animated.View>
+            <View>
 
-                <Animated.View style={[backAnimatedStyle, styles.flipCard, styles.flipCardBack]}>
-                    <View style={[styles.flashcardStyle, styles.flashcardStyletop]}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1 }}>
-                            <TouchableOpacity>
-                                <Icon style={{ marginTop: 13, marginLeft: 15, color: '#4d88ff' }} name="feedback" size={28} />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Icon style={{ marginTop: 13, marginRight: 15, color: '#4d88ff' }} name="settings" size={28} />
-                            </TouchableOpacity>
-                        </View>
-                        <View />
-                        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 3 }}>
-                            <Text style={styles.flipText1}>
-                                {item.vn}
-                            </Text>
-                        </View>
-                    </View>
-                    <View style={[styles.flashcardStyle, styles.flashcardStyledowm], { flex: 2 }}>
-                        <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', marginTop: -30, flex: 1 }}>
-                            <Icon style={{ color: '#999999' }} name="volume-up" size={45} />
-                        </TouchableOpacity>
-                        <View style={{ flex: 4, width: WIDTH - 50, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 30 }}>{item.kanji}</Text>
-                            <Text style={{ fontSize: 20 }}>{item.hira}</Text>
-                            <Text style={{ fontSize: 20 }}>{item.vn}</Text>
-                        </View>
-                    </View>
-                </Animated.View>
-            </TouchableOpacity>
-        );
-    };
-
-
-export default Flashcard = () => {
-    const wordList = useSelector(state => state.wordReducer.wordList);
-    _renderItem = ({ item, index }) => <Item item={item} count={index} countWord={this.props.checkwordArr.length}/>
-        return (
-            <Container>
                 <View>
+                    <CustomHeader title="Chua thuoc" navigation={navigation} />
                     <Carousel
                         // layout={'tinder'} 
                         // layoutCardOffset={`9`}
-                        data={wordList}
+                        data={this.state.listWord}
                         renderItem={this._renderItem}
+                        onSnapToItem={(index) => {
+                            this.setState({ currentCardDetail: this.state.listWord[index] }) // This works
+                        }}
                         sliderWidth={Dimensions.get('window').width}
                         itemWidth={Dimensions.get('window').width - 40}
                         enableMomentum={false}
@@ -133,17 +245,17 @@ export default Flashcard = () => {
                     />
                 </View>
                 <View style={styles.stylebutton}>
-                    <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#ff0000', marginRight: 110 }]}>
+                    <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#ff0000', marginRight: 110 }]} onPress={() => this.check()}>
                         <Text>memorize</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#5cd65c', }]}>
+                    <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#5cd65c', }]} onPress={() => this.check()}>
                         <Text>not memorize</Text>
                     </TouchableOpacity>
                 </View>
-            </Container>
+            </View>
         );
     }
-
+}
 
 const styles = StyleSheet.create({
     cardStyle: { backgroundColor: '#fff', marginTop: 40 },
@@ -157,4 +269,20 @@ const styles = StyleSheet.create({
     keepStyle: { height: 40, width: 100, alignItems: 'center', justifyContent: 'center', borderRadius: 5 },
 
 })
+const mapStateToProps = state => {
+    return {
+        checkwordArr: state.wordReducer.wordList,
+        user: state.userReducer.user,
+    }
+};
 
+const mapDispatchToProps = dispatch => {
+    return {
+        setWordMemerize: (data) => {
+            dispatch(actions.getListWordSuccess(data));
+        },
+
+    }
+}
+// export default Search;
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

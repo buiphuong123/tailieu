@@ -31,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
             .then(remoteMessage => {
                 if (remoteMessage) {
                     console.log('data chyten sang ben kia la ', remoteMessage.data);
-                    axios.post('http://192.168.1.7:3002/language/editReadNotifi', {
+                    axios.post('http://192.168.1.72:3002/language/editReadNotifi', {
                         "notification_id": remoteMessage.data.notification_id,
                     }, {
                         headers: {

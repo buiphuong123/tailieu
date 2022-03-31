@@ -14,6 +14,7 @@ import ListWord from '../word/ListWord';
 // import Flashcard from '../word/Flashcard';
 import ChooseAnswer from '../ChooseAnswer';
 import HomeGrammar from '../HomeGrammar';
+// import Flashcard from '../word/Flashcard';
 
 const Stack = createStackNavigator();
 

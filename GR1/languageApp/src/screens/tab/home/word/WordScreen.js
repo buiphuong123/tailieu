@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RemoteWord, RemoteAllWord, RemoteHiraWord, RemoteKanjiWord, RemoteMeanWord, RemoteReverseWord, RemoteMemerizeWord, RemoteNotMemerizeWord, RemoteLikeWord } from '../../../../redux/actions/word.action';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ListWord from './ListWord';
+
 export default WordScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const isWord = useSelector(state => state.wordReducer.isWord);
@@ -55,9 +56,13 @@ export default WordScreen = ({ navigation }) => {
         }
         
     }
+
+    const learnFlashcard = () => {
+        navigation.navigate("Flashcard", {navigation: navigation});
+    }
     return (
         <View style={{ flex: 1 }}>
-            <CustomHeader title=" Word" navigation={navigation} />
+            <CustomHeader title=" Word" navigation={navigation} icon="person" action={learnFlashcard} />
             <View style={{ flexDirection: 'row' }}>
                 <View style={styles.checkboxContainer}>
                     <CheckBox

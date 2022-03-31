@@ -10,6 +10,8 @@ import Login from "../screens/user/Login";
 import ChooseAnswer from "../screens/tab/home/ChooseAnswer";
 import ResultScreen from "../screens/tab/home/ResultScreen";
 import ExplainScreen from "../screens/tab/home/ExplainScreen";
+import Flashcard from "../screens/tab/home/word/Flashcard";
+import WordScreenDetail from "../screens/tab/home/word/WordScreenDetail";
 
 const Drawer = createDrawerNavigator();
 
@@ -25,6 +27,9 @@ const DrawerTab = () => {
             <Drawer.Screen name="Homepages" component={HomePages} />
             <Drawer.Screen name="Language" component={Language} />
             <Drawer.Screen name="Login" component={Login} />
+            <Drawer.Screen name="Flashcard" component={Flashcard} />
+            <Drawer.Screen name="WordScreenDetail" component={WordScreenDetail} />
+
         </Drawer.Navigator> 
     )
 }

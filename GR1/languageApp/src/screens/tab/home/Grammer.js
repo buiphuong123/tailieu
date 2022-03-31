@@ -9,8 +9,10 @@ import CustomHeader from '../../CustomHeader';
 import { useSelector, useDispatch } from 'react-redux';
 import { getGrammarSuccess } from '../../../redux/actions';
 import axios from 'axios';
+import { getListCommentRequest, getListCommentSuccess } from '../../../redux/actions/comment.action';
 
 export default Grammer = ({ navigation, route }) => {
+    const {lession} = route.params; 
     const dataGrammar = useSelector(state => state.grammarReducer.grammartList);
     const [data, setData]= useState(dataGrammar);
     const users = useSelector(state => state.userReducer.user);
@@ -28,7 +30,7 @@ export default Grammer = ({ navigation, route }) => {
         setData([...data]);
         dispatch(getGrammarSuccess(data));
 
-        axios.post('http://192.168.1.7:3002/language/createMemGrammar', {
+        axios.post('http://192.168.1.72:3002/language/createMemGrammar', {
             "user_id": userId,
             "grammar_id": grammerId
         }, {
@@ -44,11 +46,16 @@ export default Grammer = ({ navigation, route }) => {
                 throw error;
             })
     }
+
+    const explainGrammar = (item) => {
+        navigation.navigate("ExplainScreen", {word: item});
+        dispatch(getListCommentRequest(item._id, users._id));
+    }
    
     const renderGrammar = ({ item, index }) => {
         return (
             <View>
-            <TouchableOpacity onPress={()=> navigation.navigate("ExplainScreen", {word: item})}>
+            <TouchableOpacity onPress={()=> explainGrammar(item)}>
                 <View style={{ borderBottomWidth: 1, borderBottomColor: '#999999', marginTop: 5, width: WIDTH}}>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 5 }}>
                         <View style={{ flexDirection: 'row' }}>
@@ -100,7 +107,7 @@ export default Grammer = ({ navigation, route }) => {
                 </View>
                 <View>
                     <FlatList
-                        data={memerize ? dataGrammar.filter((e) => e.memerizes.length === 1) : dataGrammar.filter((e) => e.memerizes.length === 0)}
+                        data={ lession ? dataGrammar.filter((e) => e.lession === lession && (memerize ?  e.memerizes.length === 1 :  e.memerizes.length === 0)) :(memerize ? dataGrammar.filter((e) => e.memerizes.length === 1) : dataGrammar.filter((e) => e.memerizes.length === 0))}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={renderGrammar}
                     />

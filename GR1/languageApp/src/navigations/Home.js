@@ -29,7 +29,6 @@ const Home = (props) => {
     const dispatch = useDispatch();
     // AsyncStorage.setItem('@language', isDarkTheme);
     const dataUser = useSelector(state => state.userReducer.user);
-    // const 
     const takeData = async () => {
         const value = await AsyncStorage.getItem("@language");
         user = await AsyncStorage.getItem("@user");
@@ -39,7 +38,6 @@ const Home = (props) => {
         if (value !==null) {
             props.setLanguage(value)
         }
-        
     }
 
     // const takeNotifi = () => {
@@ -47,6 +45,7 @@ const Home = (props) => {
     // } 
 
     useEffect(() => {
+        console.log('vao take data');
         takeData();
     //     console.log('vao day');
     //     messaging().onMessage(async remoteMessage => {

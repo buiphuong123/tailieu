@@ -59,17 +59,17 @@ export default ExplainScreen = ({ navigation, route }) => {
         });
         // }
     }, [dataComment.length !== 0]);
-    useEffect(() => {
-        // AsyncStorage.getItem('@user')
-        //     .then((data) => {
-        //         setDataUser(JSON.parse(data));
-        //         dispatch(getListCommentRequest(word._id, JSON.parse(data)._id));
-        //     });
-        // setDataUser(users);
-        dispatch(getListCommentRequest(word._id, users._id));
-        // console.log('goi lại dispatch');
+    // useEffect(() => {
+    //     // AsyncStorage.getItem('@user')
+    //     //     .then((data) => {
+    //     //         setDataUser(JSON.parse(data));
+    //     //         dispatch(getListCommentRequest(word._id, JSON.parse(data)._id));
+    //     //     });
+    //     // setDataUser(users);
+    //     dispatch(getListCommentRequest(word._id, users._id));
+    //     // console.log('goi lại dispatch');
 
-    }, []);
+    // }, []);
 
     useEffect(() => {
         setdataComment(commentList);
@@ -124,7 +124,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         }
 
         if (index === 0) {
-            axios.post('http://192.168.1.7:3002/language/sendNotiToDevice', {
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
                 "username": users.username,
                 "username_friends": username_friends,
                 "action": "like",
@@ -145,7 +145,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         }
         // else {
         //     if (username_friends !== users.username) {
-        //         axios.post('http://192.168.1.7:3002/language/sendNotiToDevice', {
+        //         axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
         //             "username": users.username,
         //             "username_friends": username_friends,
         //             "action": "like",
@@ -167,7 +167,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         //     }
         // }
 
-        axios.post('http://192.168.1.7:3002/language/createLikeComment', {
+        axios.post('http://192.168.1.72:3002/language/createLikeComment', {
             "comment_id": comment_id,
             "user_id_like": user_id,
             "checkStatus": checkdislike
@@ -268,7 +268,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         }
 
         if (index === 0) {
-            axios.post('http://192.168.1.7:3002/language/sendNotiToDevice', {
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
                 "username": users.username,
                 "username_friends": username_friends,
                 "action": "dislike",
@@ -288,7 +288,7 @@ export default ExplainScreen = ({ navigation, route }) => {
                 })
         }
 
-        axios.post('http://192.168.1.7:3002/language/createDisLikeComment', {
+        axios.post('http://192.168.1.72:3002/language/createDisLikeComment', {
             "comment_id": comment_id,
             "user_id_dislike": user_id,
             "checkStatus": checklike,
@@ -352,7 +352,7 @@ export default ExplainScreen = ({ navigation, route }) => {
         // const kaka = {grammar_id: grammar_id, user_id: users._id, content: comment, time: date, islike: 0, isdislike: 0, like: 0, dislike: 0, review: "not approved" };
         // setdataComment(dataComment.concat(kaka));
         setComment('');
-        axios.post('http://192.168.1.7:3002/language/createComment', {
+        axios.post('http://192.168.1.72:3002/language/createComment', {
             "grammar_id": grammar_id,
             "user_id": users._id,
             "content": comment

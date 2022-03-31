@@ -47,9 +47,14 @@ export default HomeGrammar = ({navigation}) => {
             </View>
         )
     }
+
+    const PressLession = (index) => {
+        console.log('gia tri index la ', index);
+        navigation.navigate("GrammarScr", {lession: index});
+    }
     return (
         <View style={styles.container}>
-            <CustomHeader title="grammar" />
+            <CustomHeader title="grammar" navigation={navigation} />
             <View style={{ justifyContent: 'center', alignItems: 'center', height: 60, backgroundColor: '#009387', }}>
                 <TextInput
                     style={styles.textInput}
@@ -81,7 +86,8 @@ export default HomeGrammar = ({navigation}) => {
                                     paddingLeft: 18,
                                     paddingRight: 18,
 
-                                }}>
+                                }} onPress={() => PressLession(index)}>
+
                                     <Text style={{ fontSize: 17, }}>
                                         {item}
                                     </Text>
