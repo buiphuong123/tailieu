@@ -34,9 +34,11 @@ const sendNotiToDevice = async (req, res) => {
     const { username, username_friends, action, comment_id, word } = req.body;
     console.log(username, username_friends, action, comment_id, word);
     const userfriends = await User.findOne({ username: username_friends });
+    console.log('userfriends LA ', userfriends); //cjppx m
     // console.log(userfriends);
-    const comment = await Comment.findOne({_id: comment_id});
+    const comment = await Comment.findOne({_id: comment_id}); // nó k tìm ddc cái này nè
     // if (userfriends.token === null ) {}
+    
     const content = `${username} ${action} your comment ${comment.content}`;
     var time = new Date();
     const newNotifi = new Notification({ username: username_friends, content, time, action, comment_id, data: word });

@@ -63,7 +63,8 @@ const createComment = async (req, res) => {
     var today = new Date();
     const user = await User.findOne({_id: user_id});
     // var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear() + ' ' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    const newComment = new Comment({ grammar_id, user_id, content, time: today, review: "not approved" });
+    const newComment = new Comment({ grammar_id, user_id: user, content, time: today, review: "not approved" });
+    console.log('NEW COMMENT' , newComment);
     socket.socket.emit("SEVER-SEND-NEWCOMMENT", {
         comment: newComment,
         username: user.username
@@ -79,7 +80,7 @@ const createComment = async (req, res) => {
 }
 
 const createLikeComment = async (req, res) => {
-    const { comment_id, user_id_like } = req.body;
+    const { comment_id, user_id_like, checkStatus } = req.body;
     const check = await ActionLike.findOne({ comment_id, user_id_like });
     ActionDisLike.findOneAndRemove({  comment_id, user_id_dislike: user_id_like }, function (err) {
         if (err) {
@@ -91,7 +92,8 @@ const createLikeComment = async (req, res) => {
                 ActionLike.findOneAndRemove({ comment_id, user_id_like}, function(err) {
                     socket.socket.emit("SEVER-SEND-LIKE", {
                         comment_id: comment_id,
-                        islike: true
+                        islike: true,
+                        isdislike: checkStatus,
                     });
                     return res.json('not like success');
                 })
@@ -104,11 +106,14 @@ const createLikeComment = async (req, res) => {
                     return res.json({ code: 0, error: "network error" });
                 }
                 else {
-                    socket.socket.emit("SEVER-SEND-LIKE", {
-                        comment_id: comment_id,
-                        islike: false
-                    });
-                    return res.json({ code: 1, success: "action success", action: newAction });
+                    
+                        socket.socket.emit("SEVER-SEND-LIKE", {
+                            comment_id: comment_id,
+                            islike: false,
+                            isdislike: checkStatus,
+                        });
+                        return res.json({ code: 1, success: "action success", action: newAction });
+                    
                 }
             })
             }
@@ -131,7 +136,7 @@ const countDisLike = async(req, res) => {
 }
 
 const createDisLikeComment = async (req, res) => {
-    const { comment_id, user_id_dislike } = req.body;
+    const { comment_id, user_id_dislike, checkStatus } = req.body;
     const check = await ActionDisLike.findOne({ comment_id, user_id_dislike });
     ActionLike.findOneAndRemove({  comment_id, user_id_like: user_id_dislike }, function (err) {
         if (err) {
@@ -143,7 +148,8 @@ const createDisLikeComment = async (req, res) => {
                 ActionDisLike.findOneAndRemove({ comment_id, user_id_dislike}, function(err) {
                     socket.socket.emit("SEVER-SEND-DISLIKE", {
                         comment_id: comment_id,
-                        isdislike: true
+                        isdislike: true,
+                        islike: checkStatus,
                     });
                     return res.json('not dislike success');
                 })
@@ -156,11 +162,14 @@ const createDisLikeComment = async (req, res) => {
                     return res.json({ code: 0, error: "loix xay ra, vui long th lai" });
                 }
                 else {
-                    socket.socket.emit("SEVER-SEND-DISLIKE", {
-                        comment_id: comment_id,
-                        isdislike: false
-                    });
-                    return res.json({ code: 1, success: "action success", action: newAction });
+                        socket.socket.emit("SEVER-SEND-DISLIKE", {
+                            comment_id: comment_id,
+                            isdislike: false,
+                            islike: checkStatus
+                        });
+                        return res.json({ code: 1, success: "action success", action: newAction });
+                    
+                    
                 }
             })
             }

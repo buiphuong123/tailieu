@@ -27,7 +27,7 @@ const wordSchema = mongoose.Schema({
     },
     type: {  // hira(1), kanji(2), kata(3)
         type: Number,
-        require: true,
+        require: false,
     },
     typeWord: { // N, V, adj, adv
         type: String,
@@ -44,6 +44,14 @@ const wordSchema = mongoose.Schema({
     typeAdj: { // 1: i, 2: na
         type: Number,
         require: false,
+    },
+    lession: {
+        type: Number,
+        require: true,
+    },
+    example: {
+        type: Array,
+        ref: "wordexample"
     }
 
 }); 

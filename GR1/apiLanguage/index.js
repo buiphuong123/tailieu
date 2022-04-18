@@ -85,6 +85,9 @@ const commentRoute = require('./src/routes/comment.route');
 const notificatiion = require('./src/routes/notification');
 const notifiRoute = require('./src/routes/notifi.route');
 const wordRoute = require('./src/routes/word.route');
+const questiongrammarRoute = require('./src/routes/questiongrammar.route');
+const scheduleRoute = require('./src/routes/schedule.route');
+const wordcommentRoute = require('./src/routes/wordcomment.route')
  // const { messaging } = require('firebase-admin');
 
 const firstParamsRoute = 'language'
@@ -94,6 +97,9 @@ app.use(`/${firstParamsRoute}`, commentRoute)
 app.use(`/${firstParamsRoute}`, notificatiion)
 app.use(`/${firstParamsRoute}`, notifiRoute)
 app.use(`/${firstParamsRoute}`, wordRoute)
+app.use(`/${firstParamsRoute}`, questiongrammarRoute)
+app.use(`/${firstParamsRoute}`, scheduleRoute)
+app.use(`/${firstParamsRoute}`, wordcommentRoute)
 // app.listen(process.env.PORT || 3002);
 
 // socket io
@@ -102,7 +108,7 @@ const {Server} = require('socket.io');
 const io = new Server(server);
 server.listen(3002);
 const ioo = require('socket.io-client');
-const socket = ioo("http://192.168.1.7:3002");
+const socket = ioo("http://192.168.1.8:3002");
 module.exports.socket = socket;
 
 io.on("connection", socket => {

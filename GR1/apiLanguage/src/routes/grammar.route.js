@@ -8,5 +8,7 @@ router.post('/getGrammar', grammarController.getGrammar)
 router.post('/createExample', grammarController.createExample)
 router.post('/GrammarofId', grammarController.GrammarofId)
 router.post('/createMemGrammar', grammarController.createMemGrammar)
+router.get('/getNameGrammar', grammarController.getNameGrammar)
+router.get('/furihira', grammarController.furihira)
 
 module.exports = router
