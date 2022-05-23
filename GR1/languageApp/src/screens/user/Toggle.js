@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         marginRight: 5
     },
     signIn: {
-        width: '100%',
+        width: '90%',
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',

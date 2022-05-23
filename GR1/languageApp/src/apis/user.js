@@ -12,6 +12,12 @@ const urlTest = 'test1';
 const urlNoti = 'getNotifi';
 const urlWord = 'getWord';
 const urlgrammarquestion = 'getQuestion';
+const urlwordcomment = 'getCommentWord';
+// kanji
+const urlkanji = 'getKanji';
+const urlkanjicomment = 'getKanjiComment';
+const urlSchedule = 'getSchedule';
+const urlVocabulary = 'getVocabulary';
 // export const getList = (params = {}) => {
 //   let queryParams = '';
 //   if (Object.keys(params).length > 0) {
@@ -60,6 +66,23 @@ export const allWord = data => {
 
 export const allGrammarQuestion = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlgrammarquestion}`, data);
+}
+
+export const allwordcomment = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlwordcomment}`, data);
+}
+// kanji
+export const allKanji = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlkanji}`, data);
+}
+export const allkanjicomment = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlkanjicomment}`, data);
+}
+export const allSchedule = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlSchedule}`, data);
+}
+export const allVocabulary = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlVocabulary}`, data);
 }
 // http://localhost:3000/tasks/:id METHOD: PUT
 // export const updateTask = (data, taskId) => {

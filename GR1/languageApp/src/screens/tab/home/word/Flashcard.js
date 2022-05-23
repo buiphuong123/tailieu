@@ -67,7 +67,7 @@ import CustomHeader from '../../../CustomHeader';
 //         // this.props.setState({data: [...data]});
 //         this.props.setWordMemerize(data);
 
-//          axios.post('http://192.168.1.72:3002/language/createMemWord', {
+//          axios.post('http://192.168.1.2:3002/language/createMemWord', {
 //              "userId": userId,
 //              "wordId": wordId
 //          }, {
@@ -166,7 +166,7 @@ import CustomHeader from '../../../CustomHeader';
 //     };
 // }
 
-class Search extends Component {
+class Flashcard extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -193,7 +193,7 @@ class Search extends Component {
     //     this.props.setState({data: [...data]});
     //     this.props.setWordMemerize(data);
 
-    //      axios.post('http://192.168.1.72:3002/language/createMemWord', {
+    //      axios.post('http://192.168.1.2:3002/language/createMemWord', {
     //          "userId": userId,
     //          "wordId": wordId
     //      }, {
@@ -223,7 +223,7 @@ class Search extends Component {
         console.log('ket qua check la', this.state.currentCardDetail);
     }
     render() {
-        const { navigation } = this.props;
+        const { navigation, lession } = this.props;
         return (
             <View>
 
@@ -232,7 +232,7 @@ class Search extends Component {
                     <Carousel
                         // layout={'tinder'} 
                         // layoutCardOffset={`9`}
-                        data={this.state.listWord}
+                        data={this.state.listWord.filter(e => e.lession ===lession)}
                         renderItem={this._renderItem}
                         onSnapToItem={(index) => {
                             this.setState({ currentCardDetail: this.state.listWord[index] }) // This works
@@ -285,4 +285,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 // export default Search;
-export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default connect(mapStateToProps, mapDispatchToProps)(Flashcard);

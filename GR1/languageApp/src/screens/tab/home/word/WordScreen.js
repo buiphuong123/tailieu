@@ -8,7 +8,7 @@ import { RemoteWord, RemoteAllWord, RemoteHiraWord, RemoteKanjiWord, RemoteMeanW
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ListWord from './ListWord';
 
-export default WordScreen = ({ navigation }) => {
+export default WordScreen = ({ navigation, route }) => {
     const dispatch = useDispatch();
     const isWord = useSelector(state => state.wordReducer.isWord);
     const isAll = useSelector(state => state.wordReducer.isAll);
@@ -19,7 +19,7 @@ export default WordScreen = ({ navigation }) => {
     const isMemerize = useSelector(state => state.wordReducer.isMemerize);
     const isNotMemerize = useSelector(state => state.wordReducer.isNotMemerize);
     const isLike = useSelector(state => state.wordReducer.isLike);
-
+    const {lession} = route.params;
     const seletwordall = (value) => {
         dispatch(RemoteAllWord(value));
         if(value === true) {
@@ -58,7 +58,7 @@ export default WordScreen = ({ navigation }) => {
     }
 
     const learnFlashcard = () => {
-        navigation.navigate("Flashcard", {navigation: navigation});
+        navigation.navigate("Flashcard", {navigation: navigation, lession: lession});
     }
     return (
         <View style={{ flex: 1 }}>
@@ -150,7 +150,7 @@ export default WordScreen = ({ navigation }) => {
             </View>
             <View style={{ flex: 1 }}>
                 {/* <ListWord /> */}
-                    <ListWord navigation={navigation}/>
+                    <ListWord navigation={navigation} lession={lession}/>
             </View>
 
         </View>

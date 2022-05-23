@@ -1,8 +1,9 @@
 import {call, put, takeLatest, delay } from 'redux-saga/effects';
 import * as types from '../redux/constants/action-types';
-import { showLoading, hideLoading, getGrammarSuccess, getGrammarFail } from '../redux/actions/index';
+import { showLoading, hideLoading } from '../redux/actions/index';
 import { allcomment, getGra } from '../apis/user';
 import {getListCommentSuccess} from '../redux/actions/comment.action'
+import { getGrammarSuccess } from '../redux/actions/grammar.action';
 
 function* getGrammar({ payload, navigation }) {
     const { id } = payload;
@@ -12,10 +13,9 @@ function* getGrammar({ payload, navigation }) {
     });
     const { data } = resp;
     if (data.code == 1) {
-        console.log('VAO REDUCER ROI NHA');
         yield put(getGrammarSuccess(data.grammar));
         // navigation.navigate("GrammarScr");
-        navigation.navigate("HomeGrammar");
+        // navigation.navigate("HomeGrammar");
     }
     else {
         yield put(getGrammarFail(data.error));

@@ -69,7 +69,7 @@ const NotificationStack = ({ navigation }) => {
     const showGamen = (item, index) => {
         if(dataNotifi[index].isRead === false) {
             dataNotifi[index].isRead = true;
-            axios.post('http://192.168.1.72:3002/language/editReadNotifi', {
+            axios.post('http://192.168.1.2:3002/language/editReadNotifi', {
              "notification_id": item._id,
          }, {
              headers: {

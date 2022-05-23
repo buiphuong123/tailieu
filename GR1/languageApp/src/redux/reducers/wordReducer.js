@@ -9,7 +9,36 @@ var wordAc = {
     isMemerize: false, 
     isNotMemerize: false,
     isLike: false,
-    wordList: []
+    wordList: [],
+    wordlevel: [],
+    //flashcard
+    wordBeforeFlashcard: 'checked',
+    meanBeforeFlashcard: 'unchecked',
+    spellBeforeFlashcard: 'unchecked',// phien âm
+    wordAfterFlashcard: true,
+    meanAfterFlashcard: true,
+    spellAfterFlashcard: true,
+    imageFlashcard: true,
+    exampleFlashcard: false,
+    meanExampleFlashcard: false,
+
+    isN5: 'checked',
+    isN4: 'unchecked',
+    isN3: 'unchecked',
+    isN2: 'unchecked',
+
+    isN5test: true,
+    isN4test: false,
+    isN3test: false,
+    isN2test: false,
+
+    isAlltest: 'checked',
+    isMemerizetest: 'unchecked',
+    isNotMemerizetest: 'unchecked',
+    islikeTest: 'unchecked',
+
+    ischooseQuestion: 'checked',
+    isjoinQuestion: 'unchecked',
 };
 
 var wordReducer = (state = wordAc, action) => {
@@ -80,6 +109,158 @@ var wordReducer = (state = wordAc, action) => {
                 wordList: data.wordList,
             }
         }
+
+        case types.GET_LIST_WORD_LEVEL_SUCCESS: {
+            return {
+                ...state,
+                wordlevel: action.wordlevel,
+            }
+        }
+
+        // flashcard
+        case types.WORD_FLASHCARD_BEFORE: {
+            return { 
+                ...state,
+                wordBeforeFlashcard: action.wordBeforeFlashcard,
+            };
+        }
+        case types.MEAN_FLASHCARD_BEFORE: {
+            return { 
+                ...state,
+                meanBeforeFlashcard: action.meanBeforeFlashcard,
+            };
+        }
+        case types.SPELL_FLASHCARD_BEFORE: {
+            return { 
+                ...state,
+                spellBeforeFlashcard: action.spellBeforeFlashcard,
+            };
+        }
+        case types.WORD_FLASHCARD_AFTER: {
+            return { 
+                ...state,
+                wordAfterFlashcard: action.wordAfterFlashcard,
+            };
+        }
+        case types.MEAN_FLASHCARD_AFTER: {
+            return { 
+                ...state,
+                meanAfterFlashcard: action.meanAfterFlashcard,
+            };
+        }
+        case types.SPELL_FLASHCARD_AFTER: {
+            return { 
+                ...state,
+                spellAfterFlashcard: action.spellAfterFlashcard,
+            };
+        }
+        case types.IMAGE_FLASHCARD_AFTER: {
+            return { 
+                ...state,
+                imageFlashcard: action.imageFlashcard,
+            };
+        }
+        case types.EXAMPLE_FLASHCARD_AFTER: {
+            return { 
+                ...state,
+                exampleFlashcard: action.exampleFlashcard,
+            };
+        }
+        case types.MEANEXAMPLE_FLASHCARD_AFTER: {
+            return { 
+                ...state,
+                meanExampleFlashcard: action.meanExampleFlashcard,
+            };
+        }
+        case types.GET_LIST_N5: {
+            return { 
+                ...state,
+                isN5: action.isN5,
+            };
+        }
+        case types.GET_LIST_N4: {
+            return { 
+                ...state,
+                isN4: action.isN4,
+            };
+        }
+        case types.GET_LIST_N3: {
+            return { 
+                ...state,
+                isN3: action.isN3,
+            };
+        }
+        case types.GET_LIST_N2: {
+            return { 
+                ...state,
+                isN2: action.isN2,
+            };
+        }
+        // test word
+        case types.GET_N5_TEST: {
+            return { 
+                ...state,
+                isN5test: action.isN5test,
+            };
+        }
+        case types.GET_N4_TEST: {
+            return { 
+                ...state,
+                isN4test: action.isN4test,
+            };
+        }
+        case types.GET_N3_TEST: {
+            return { 
+                ...state,
+                isN3test: action.isN3test,
+            };
+        }
+        case types.GET_N2_TEST: {
+            return { 
+                ...state,
+                isN2test: action.isN2test,
+            };
+        }
+
+        case types.GET_ALL_WORD_TEST: {
+            return { 
+                ...state,
+                isAlltest: action.isAlltest,
+            };
+        }
+
+        case types.GET_MEMERIZE_WORD_TEST: {
+            return { 
+                ...state,
+                isMemerizetest: action.isMemerizetest,
+            };
+        }
+        case types.GET_NOTMEMERIZE_WORD_TEST: {
+            return { 
+                ...state,
+                isNotMemerizetest: action.isNotMemerizetest,
+            };
+        }
+        case types.GET_LIKE_TEST: {
+            return { 
+                ...state,
+                islikeTest: action.islikeTest,
+            };
+        }
+
+        case types.GET_CHOOSE_QUESTION: {
+            return { 
+                ...state,
+                ischooseQuestion: action.ischooseQuestion,
+            };
+        }
+        case types.GET_JOIN_QUESTION: {
+            return { 
+                ...state,
+                isjoinQuestion: action.isjoinQuestion,
+            };
+        }
+        
 
         default:
             return state;

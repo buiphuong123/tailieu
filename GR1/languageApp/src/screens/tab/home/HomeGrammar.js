@@ -50,7 +50,7 @@ export default HomeGrammar = ({navigation}) => {
 
     const PressLession = (index) => {
         console.log('gia tri index la ', index);
-        navigation.navigate("GrammarScr", {lession: index});
+        navigation.navigate("GrammarScr", {navigation: navigation, lession: index});
     }
     return (
         <View style={styles.container}>

@@ -115,28 +115,6 @@ export function setIsEnd() {
     }
 }
 
-export function getGrammarRequest (id, navigation) { 
-    return {
-      type: types.GET_GRAMMAR,
-      payload: {id},
-      navigation
-      
-    }
-}
-
-export const getGrammarSuccess = (grammartList) => {
-    return {
-        type: types.GET_GRAMMAR_SUCCESS,
-        payload: { grammartList },
-    }
-}
-
-export const getGrammarFail = (error) => {
-    return {
-        type: types.GET_GRAMMAR_FAIL,
-        payload: {error}
-    }
-}
 
 export const showLoading = () => ({
     type: types.SHOW_LOADING,

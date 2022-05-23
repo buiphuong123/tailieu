@@ -259,7 +259,7 @@ const Login = (props) => {
                     }]} i18nKey={'SignUp'}/>
                 </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={() => showUser()}
                     style={[styles.signIn, {
                         borderColor: '#009387',
@@ -270,7 +270,7 @@ const Login = (props) => {
                     <AppText style={[styles.textSign, {
                         color: '#009387'
                     }]} i18nKey={'SignUp'}/>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
             </View>
         </Animated.View>

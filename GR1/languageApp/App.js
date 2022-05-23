@@ -35,12 +35,21 @@ import Flashcard from './src/screens/tab/home/word/Flashcard';
 import WordScreenDetail from './src/screens/tab/home/word/WordScreenDetail';
 import SettingScreen from './src/screens/tab/setting/SettingScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import ModelSelect from './src/screens/tab/home/word/ModelSelect';
+import BeforeFlashcard from './src/screens/tab/home/word/BeforeFlashcard';
+import TestWord from './src/screens/tab/home/word/TestWord';
+import SelectQuestion from './src/screens/tab/home/word/SelectQuestion';
+import TestJoinWord from './src/screens/tab/home/word/TestJoinWord';
+import ExplainKanji from './src/screens/tab/home/kanji/ExplainKanji';
+import TestScreenss from './src/screens/tab/home/word/TestScreen';
+import VocabularyScreen from './src/screens/tab/home/VocabularyScreen';
+import ListWordVocabulary from './src/screens/tab/home/ListWordVocabulary';
+import PracticeScreen from './src/screens/tab/home/practice/PracticeScreen';
 const store = createStore(
   appReducers,
   applyMiddleware(sagaMiddleware)
 );
-export const socket = io("http://192.168.1.72:3002");
+export const socket = io("http://192.168.1.2:3002");
 const App = () => {
   const dataTake = async() => {
     console.log('data take day ne');
@@ -98,7 +107,7 @@ const App = () => {
 //   //  console.log('TOKEN DAY NHA', token);
 //     messaging().onMessage(async remoteMessage => {
 //       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-//       axios.post('http://192.168.1.72:3002/language/createNotifi', {
+//       axios.post('http://192.168.1.2:3002/language/createNotifi', {
 //             // "username": user._id,
 //             "content": remoteMessage.notification.body,
 //             "time": remoteMessage.sentTime,
@@ -162,9 +171,11 @@ const App = () => {
   // });
   return (
       <Provider store={store}>
-        {/* <SettingScreen /> */}
+        {/* <VocabularyScreen /> */}
+        {/* <ListWordVocabulary /> */}
+        {/* <ExplainScreen /> */}
+        {/* <PracticeScreen /> */}
         <Home />
-        {/* <WordScreenDetail/> */}
         <Toast ref={(ref) => Toast.setRef(ref)} />
         <GlobalLoading />
         {/* <Fetchdata /> */}

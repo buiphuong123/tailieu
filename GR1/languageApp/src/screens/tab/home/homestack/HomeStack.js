@@ -15,6 +15,9 @@ import ListWord from '../word/ListWord';
 import ChooseAnswer from '../ChooseAnswer';
 import HomeGrammar from '../HomeGrammar';
 // import Flashcard from '../word/Flashcard';
+import WordLession from '../word/WordLession';
+import KanjiLession from '../kanji/KanjiLession';
+import KanjiScreen from '../kanji/KanjiScreen';
 
 const Stack = createStackNavigator();
 
@@ -62,6 +65,21 @@ const HomeStack = () => {
             <Stack.Screen
                 name='HomeGrammar'
                 component={HomeGrammar}
+            />
+
+            <Stack.Screen
+                name='WordLession'
+                component={WordLession}
+            />
+
+            <Stack.Screen
+                name='KanjiLession'
+                component={KanjiLession}
+            />
+
+            <Stack.Screen
+                name='KanjiScreen'
+                component={KanjiScreen}
             />
 
             {/* <Stack.Screen

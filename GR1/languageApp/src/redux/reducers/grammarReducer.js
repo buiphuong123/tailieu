@@ -1,7 +1,8 @@
 import * as types from './../constants/action-types';
 
 const initState = { 
-    grammartList: [],
+    grammarList: [],
+    grammarlevel: [],
  }
 const grammarReducer = (state = initState, action) => {
     switch (action.type) {
@@ -15,7 +16,14 @@ const grammarReducer = (state = initState, action) => {
             const data = action.payload;
             return {
                 ...state,
-                grammartList: data.grammartList,
+                grammarList: data.grammarList,
+            }
+        }
+
+        case types.GET_LIST_GRAMMAR_LEVEL_SUCCESS: {
+            return {
+                ...state,
+                grammarlevel: action.grammarlevel,
             }
         }
         

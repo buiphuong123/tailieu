@@ -11,10 +11,22 @@ import Modal from 'react-native-modal'; // 2.4.0
 import CheckBox from '@react-native-community/checkbox';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { RadioButton } from 'react-native-paper';
+import { getListScheduleRequest } from '../../../redux/actions/schedule.action';
+import { remoteNoti10before, remoteNoti30before, remoteNoti1hourbefore, remoteNoti1daybefore, remoteNotimail, remoteNotiiphone } from '../../../redux/actions/notifi.action';
 const { height } = Dimensions.get('window');
 
-export default AddCalendar = () => {
+export default AddCalendar = ({ navigation }) => {
+    const dispatch = useDispatch();
+    const noti10mintuesbefore = useSelector(state => state.notifiReducer.noti10mintuesbefore);
+    const noti30mintuesbefore = useSelector(state => state.notifiReducer.noti30mintuesbefore);
+    const noti1hourbefore = useSelector(state => state.notifiReducer.noti1hourbefore);
+    const noti1daybefore = useSelector(state => state.notifiReducer.noti1daybefore);
+    const mailNoti = useSelector(state => state.notifiReducer.mailNoti);
+    const iphoneNoti = useSelector(state => state.notifiReducer.iphoneNoti);
+
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -22,6 +34,8 @@ export default AddCalendar = () => {
     const users = useSelector(state => state.userReducer.user);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModalRecurrence, setModalRecurrence] = useState(false);
+    const [namesche, setNamesche] = useState("");
+    const [note, setNote] = useState("");
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
@@ -35,32 +49,72 @@ export default AddCalendar = () => {
     // const [dateCalen, setdateCalen] = useState(fixDigit(now.getDate()) + '/' + fixDigit(now.getMonth() + 1) + '/' + now.getFullYear());
     // const [timecalen, settimeCalen] = useState(fixDigit(now.getHours()) + ':' + fixDigit(now.getMinutes()));
     const [dateCalen, setdateCalen] = useState(now);
+    const [endDate, setEndDate] = useState(now);
+    const [modeEndDate, setModeEndDate] = useState('date');
+    const [showEndDate, setShowEndDate] = useState(false);
+    const [enddate, setendDate] = useState(new Date());
     // const [timecalen, settimeCalen] = useState(now);
     const onChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShow(false);
         setDate(currentDate);
-
         let tempDate = new Date(currentDate);
-        // let fDate = fixDigit(tempDate.getDate()) + '/' + fixDigit(tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-        // setdateCalen(fDate);
         console.log('temp date laf ', tempDate);
         setdateCalen(tempDate);
-        // let fTime = fixDigit(tempDate.getHours()) + ':' + fixDigit(tempDate.getMinutes());
-        // settimeCalen(fTime);
-        // setText(fDate + '\n' + fTime);
-        // console.log(fDate + '(' + fTime + ')');
+    }
+
+    const onChangeEndDate = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShowEndDate(false);
+        setendDate(currentDate);
+
+        let tempDate = new Date(currentDate);
+        setEndDate(tempDate);
     }
 
     const showMode = (currentMode) => {
         setShow(true);
         setMode(currentMode);
     }
+    const showModeEndDate = (currentMode) => {
+        setShowEndDate(true);
+        setModeEndDate(currentMode);
+    }
 
     const sendSchedule = () => {
-        axios.post('http://192.168.1.72:3002/language/remind', {
-            "date": dateCalen,
-            "user": users.notifiToken
+        var timenoti = 1;
+        var method = 1;
+        if (noti10mintuesbefore) {
+            timenoti = 1;
+        }
+        else if (noti30mintuesbefore) {
+            timenoti = 2;
+        }
+        else if (noti1hourbefore) {
+            timenoti = 3;
+        }
+        else {
+            timenoti = 4;
+        }
+        if (mailNoti && iphoneNoti) {
+            method = 3;
+        }
+        else if (mailNoti && iphoneNoti === false) {
+            method = 1;
+        }
+        else {
+            method = 2;
+        }
+        axios.post('http://192.168.1.2:3002/language/remind', {
+            "nameSchedule": namesche,
+            "note": note,
+            "datestart": fixDigit(dateCalen.getFullYear()) + '-' + fixDigit(dateCalen.getMonth() + 1) + '-' + fixDigit(dateCalen.getDate()),
+            "dateend": fixDigit(endDate.getFullYear()) + '-' + fixDigit(endDate.getMonth() + 1) + '-' + fixDigit(endDate.getDate()),
+            "time": dateCalen.getHours() + ':' + fixDigit(dateCalen.getMinutes()),
+            // "time": dateCalen,
+            "timenoti": timenoti,
+            "method": method,
+            "user": users
         }, {
             headers: {
                 "Accept": "application/json",
@@ -70,13 +124,77 @@ export default AddCalendar = () => {
             .then((response) => {
                 console.log(response.data);
             })
+            .catch(function (error) {
+                throw error;
+            })
+        dispatch(getListScheduleRequest(users._id));
+        navigation.navigate("Calendar");
+    }
 
+    const toggleSwitch10minutes = () => {
+        if (noti10mintuesbefore === 'unchecked') {
+            dispatch(remoteNoti10before('checked'));
+            dispatch(remoteNoti30before('unchecked'));
+            dispatch(remoteNoti1hourbefore('unchecked'));
+            dispatch(remoteNoti1daybefore('unchecked'));
+        }
+    }
+    const toggleSwitch30minutes = () => {
+        if (noti30mintuesbefore === 'unchecked') {
+            dispatch(remoteNoti10before('unchecked'));
+            dispatch(remoteNoti30before('checked'));
+            dispatch(remoteNoti1hourbefore('unchecked'));
+            dispatch(remoteNoti1daybefore('unchecked'));
+        }
+    }
+    const toggleSwitch1hour = () => {
+        if (noti1hourbefore === 'unchecked') {
+            dispatch(remoteNoti10before('unchecked'));
+            dispatch(remoteNoti30before('unchecked'));
+            dispatch(remoteNoti1hourbefore('checked'));
+            dispatch(remoteNoti1daybefore('unchecked'));
+        }
+    }
+    const toggleSwitch1day = () => {
+        if (noti30mintuesbefore === 'unchecked') {
+            dispatch(remoteNoti10before('unchecked'));
+            dispatch(remoteNoti30before('unchecked'));
+            dispatch(remoteNoti1hourbefore('unchecked'));
+            dispatch(remoteNoti1daybefore('checked'));
+        }
+    }
+    const setIphone = () => {
+        if (iphoneNoti === true && mailNoti === false) {
+            dispatch(remoteNotiiphone(false));
+            dispatch(remoteNotimail(true));
+        }
+        else if (iphoneNoti === true && mailNoti === true) {
+            dispatch(remoteNotiiphone(false));
+        }
+        else if (iphoneNoti === false) {
+            dispatch(remoteNotiiphone(true));
+        }
+    }
+
+    const setEmail = () => {
+        if (mailNoti === true && iphoneNoti === false) {
+            dispatch(remoteNotimail(false));
+            dispatch(remoteNotiiphone(true));
+        }
+        else if (mailNoti === true && iphoneNoti === true) {
+            dispatch(remoteNotimail(false));
+        }
+        else if (mailNoti === false) {
+            dispatch(remoteNotimail(true));
+        }
     }
 
     return (
         <View style={{ flex: 1 }}>
             <Card>
-                <AntDesign name={'close'} size={25} style={{ color: 'black', paddingTop: 20, paddingLeft: 20 }} />
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <AntDesign name={'close'} size={25} style={{ color: 'black', paddingTop: 20, paddingLeft: 20 }} />
+                </TouchableOpacity>
                 <Card.Content>
                     <View
                         style={{
@@ -87,6 +205,8 @@ export default AddCalendar = () => {
                         <TextInput
                             style={{ fontSize: 25, padding: 15 }}
                             placeholder="input schedule"
+                            value={namesche}
+                            onChangeText={text => setNamesche(text)}
                         />
                     </View>
                 </Card.Content>
@@ -99,22 +219,34 @@ export default AddCalendar = () => {
                                 <AntDesign name={'calendar'} size={20} style={{ color: 'blue' }} />
                             </TouchableOpacity>
                             {/* <Text style={{ marginLeft: 10 }}>{dateCalen}</Text> */}
-                             <Text style={{ marginLeft: 10 }}>{fixDigit(dateCalen.getDate()) + '/' + fixDigit(dateCalen.getMonth() + 1) + '/' + dateCalen.getFullYear()}</Text>
+                            <Text style={{ marginLeft: 10 }}>{fixDigit(dateCalen.getDate()) + '/' + fixDigit(dateCalen.getMonth() + 1) + '/' + dateCalen.getFullYear()}</Text>
                         </View>
+
                         <View style={{ flexDirection: 'row', marginLeft: 100 }}>
-                            <TouchableOpacity onPress={() => showMode('time')}>
-                                <Icon name={'time-outline'} size={20} style={{ color: 'blue' }} />
+                            <TouchableOpacity onPress={() => showModeEndDate('date')}>
+                                <AntDesign name={'calendar'} size={20} style={{ color: 'blue' }} />
                             </TouchableOpacity>
-                            {/* <Text style={{ marginLeft: 10 }}>{timecalen}</Text> */}
-                            <Text style={{ marginLeft: 10 }}>{fixDigit(dateCalen.getHours()) + ':' + fixDigit(dateCalen.getMinutes())}</Text>
+                            {/* <Text style={{ marginLeft: 10 }}>{dateCalen}</Text> */}
+                            <Text style={{ marginLeft: 10 }}>{fixDigit(endDate.getDate()) + '/' + fixDigit(endDate.getMonth() + 1) + '/' + endDate.getFullYear()}</Text>
                         </View>
+
+
+
+                    </View>
+                </View>
+                <View style={{ borderBottomWidth: 1, borderBottomColor: '#e6e6e6', padding: 20 }}>
+                    <View style={{ flexDirection: 'row', }}>
+                        <TouchableOpacity onPress={() => showMode('time')}>
+                            <Icon name={'time-outline'} size={20} style={{ color: 'blue' }} />
+                        </TouchableOpacity>
+                        <Text style={{ marginLeft: 10 }}>{fixDigit(dateCalen.getHours()) + ':' + fixDigit(dateCalen.getMinutes())}</Text>
                     </View>
                 </View>
 
                 <TouchableOpacity style={{ borderBottomWidth: 1, borderBottomColor: '#e6e6e6', padding: 20 }} onPress={toggleModal}>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity onPress={() => showMode('date')}>
+                            <TouchableOpacity onPress={() => setModalVisible(true)}>
                                 <Icon name={'notifications-outline'} size={20} style={{ color: '#808080' }} />
                             </TouchableOpacity>
                             <Text style={{ marginLeft: 10, color: '#808080' }}>Set notification</Text>
@@ -122,14 +254,26 @@ export default AddCalendar = () => {
                     </View>
                 </TouchableOpacity>
 
+
                 <TouchableOpacity style={{ borderBottomWidth: 1, borderBottomColor: '#e6e6e6', padding: 20 }} onPress={toggleModalRecurrence}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity onPress={() => showMode('date')}>
+                    <View style={{}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            {/* <TouchableOpacity onPress={() => showMode('date')}>
                                 <Icons name={'refresh'} size={25} style={{ color: '#808080' }} />
-                            </TouchableOpacity>
-                            <Text style={{ marginLeft: 10, color: '#808080' }}>Set recurrence</Text>
+                            </TouchableOpacity> */}
+                            <View style={{ marginLeft: 10, }}>
+                                <Text style={{ color: '#808080' }}>Nhắc nhở luyện tập</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity style={{ marginLeft: 40 }} onPress={() => setIphone()}>
+                                    <MaterialIcons name={'phone-iphone'} size={20} style={{ color: iphoneNoti ? 'blue' : '#bfbfbf' }} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => setEmail()}>
+                                    <Entypo name={'mail'} size={20} style={{ color: mailNoti ? 'blue' : '#bfbfbf' }} />
+                                </TouchableOpacity>
+                            </View>
                         </View>
+
                     </View>
                 </TouchableOpacity>
 
@@ -146,27 +290,59 @@ export default AddCalendar = () => {
                                     style={{ padding: 20, paddingTop: 10 }}
                                     multiline={true}
                                     placeholder="Note...."
+                                    value={note}
+                                    onChangeText={text => setNote(text)}
                                 />
                             </View>
                         </View>
                     </View>
                 </View>
-                
-                <TouchableOpacity onPress={() => sendSchedule()}>
-                    <Text>crete schedule</Text>
-                </TouchableOpacity>
-            </ScrollView>
-            {show && (
-                <DateTimePicker
-                    testID='dateTimePicker'
-                    value={date}
-                    mode={mode}
-                    is24Hour={true}
-                    display='default'
-                    onChange={onChange}
-                />
 
-            )}
+                {/* <TouchableOpacity onPress={() => sendSchedule()}>
+                    <Text>crete schedule</Text>
+                </TouchableOpacity> */}
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity
+                        onPress={() => sendSchedule()}
+                        style={[styles.signIn, {
+                            borderColor: '#009387',
+                            borderWidth: 1,
+                            marginTop: 15
+                        }]}
+                    >
+                        <Text style={[styles.textSign, {
+                            color: '#009387'
+                        }]}>Screate Schedule</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+            {
+                show && (
+                    <DateTimePicker
+                        testID='dateTimePicker'
+                        value={date}
+                        mode={mode}
+                        is24Hour={true}
+                        display='default'
+                        onChange={onChange}
+                    />
+
+                )
+            }
+
+            {
+                showEndDate && (
+                    <DateTimePicker
+                        testID='dateTimePicker'
+                        value={enddate}
+                        mode={modeEndDate}
+                        is24Hour={true}
+                        display='default'
+                        onChange={onChangeEndDate}
+                    />
+
+                )
+            }
 
             {/* model */}
             <View style={styles.centeredView}>
@@ -179,8 +355,44 @@ export default AddCalendar = () => {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <Text style={styles.modalText}>Notification</Text>
-                            <View>
-                                <View style={styles.checkboxStyle}>
+                            <View style={{ marginBottom: 10 }}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <RadioButton
+                                        status={noti10mintuesbefore}
+                                        onPress={() => toggleSwitch10minutes()}
+                                    />
+                                    <Text style={styles.centerStyle}>10 minutes before</Text>
+
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <RadioButton
+                                        status={noti30mintuesbefore}
+                                        onPress={() => toggleSwitch30minutes()}
+
+                                    />
+                                    <Text style={styles.centerStyle}>30 minutes before</Text>
+
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <RadioButton
+                                        status={noti1hourbefore}
+                                        onPress={() => toggleSwitch1hour()}
+
+                                    />
+                                    <Text style={styles.centerStyle}>1 hours before</Text>
+
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <RadioButton
+                                        status={noti1daybefore}
+                                        onPress={() => toggleSwitch1day()}
+
+                                    />
+                                    <Text style={styles.centerStyle}>1 days before</Text>
+
+                                </View>
+
+                                {/* <View style={styles.checkboxStyle}>
                                     <CheckBox
                                         style={styles.centerStyle}
                                     // value={isMemerize}
@@ -214,7 +426,7 @@ export default AddCalendar = () => {
                                     // onValueChange={(value) => seletMemerizedall(value)}
                                     />
                                     <Text style={styles.centerStyle}>1 day before</Text>
-                                </View>
+                                </View> */}
                             </View>
                             <TouchableOpacity
                                 style={[styles.button, styles.buttonClose]}
@@ -235,7 +447,8 @@ export default AddCalendar = () => {
             </View>
 
             {/* modeReccurence */}
-            <View style={styles.centeredView}>
+
+            {/* <View style={styles.centeredView}>
                 <Modal
                     // animationType="slide"
                     transparent={true}
@@ -292,13 +505,24 @@ export default AddCalendar = () => {
                         </View>
                     </View>
                 </Modal>
-            </View>
+            </View> */}
 
-        </View>
+        </View >
     )
 }
 
 const styles = StyleSheet.create({
+    signIn: {
+        width: '50%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
+    },
+    textSign: {
+        fontSize: 18,
+        fontWeight: 'bold'
+    },
     checkboxStyle: {
         flexDirection: 'row',
         // justifyContent: 'center',
@@ -308,7 +532,8 @@ const styles = StyleSheet.create({
     centerStyle: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 10
+        marginLeft: 10,
+        marginTop: 8
     },
     centeredView: {
         flex: 1,

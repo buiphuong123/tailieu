@@ -4,8 +4,12 @@ import { all, fork } from 'redux-saga/effects';
 import { watchLoginUser, watchRegisterUser, watchsendMail, watchLogoutUser } from './userSaga';
 import { watchgetComment, watchgetGrammar } from './grammarSaga';
 import { watchgetNotifi } from './notiSaga';
-import { watchgetWord } from './wordSaga';
+import { watchgetWord, watchgetWordComment } from './wordSaga';
 import { watchgetGrammarQuestion } from './grammarquestionSaga';
+import { watchgetKanji, watchgetCommentKanji } from './kanjiSaga';
+import { watchgetSchedule } from './scheduleSaga';
+import { watchgetVocabulary } from './vocabularySaga';
+
 export default function* rootSaga() {
     yield all([
         watchLoginUser(),
@@ -16,6 +20,11 @@ export default function* rootSaga() {
         watchgetComment(),
         watchgetNotifi(),
         watchgetWord(),
+        watchgetWordComment(),
         watchgetGrammarQuestion(),
+        watchgetKanji(),
+        watchgetCommentKanji(),
+        watchgetSchedule(),
+        watchgetVocabulary(),
     ])
 }

@@ -1,10 +1,11 @@
 import {call, put, takeLatest, delay } from 'redux-saga/effects';
 import * as types from '../redux/constants/action-types';
 import { showLoading, hideLoading } from '../redux/actions/index';
-import { allWord } from '../apis/user';
-import {getListWordSuccess} from '../redux/actions/word.action'
+import { allWord, allwordcomment } from '../apis/user';
+import { getListWordCommentSuccess} from '../redux/actions/comment.action'
+import {getListWordRequest, getListWordSuccess, getListWordLevel} from '../redux/actions/word.action';
 
-function* getWord({ payload, navigation }) {
+function* getWord({ payload }) {
     const { id } = payload;
     console.log('id nhan dau vao la', id);
     yield put(showLoading());
@@ -14,7 +15,8 @@ function* getWord({ payload, navigation }) {
     const { data } = resp;
     if (data.code == 1) {
         yield put(getListWordSuccess(data.wordData));
-        navigation.navigate("WordScreen");
+        // navigation.navigate("WordScreen");
+        // navigation.navigate("WordLession");
     }
     else {
         console.log('error');
@@ -23,7 +25,25 @@ function* getWord({ payload, navigation }) {
     yield put(hideLoading());
 }
 
+function* getWordComment({payload}) {
+    const {word_id, user_id} = payload;
+    yield put(showLoading());
+    const resp = yield call(allwordcomment, {
+        word_id,
+        user_id
+    });
+    const { data } = resp;
+    if(data.code === 1) {
+        yield put(getListWordCommentSuccess(data.comment));
+    }
+    yield put(hideLoading());
+}
+
 export function* watchgetWord() {
     yield takeLatest(types.GET_LIST_WORD_REQUEST, getWord);
+}
+
+export function* watchgetWordComment() {
+    yield takeLatest(types.GET_LIST_WORD_COMMENT_REQUEST, getWordComment);
 }
 
