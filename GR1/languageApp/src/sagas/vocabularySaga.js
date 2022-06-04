@@ -13,7 +13,6 @@ function* getListVocabulary({ payload }) {
     });
     const { data } = resp;
     if (data.code == 1) {
-        console.log('DATA VOCABULAY DAY NHE ', data.vocabulary);
         yield put(getListVocaSuccess(data.vocabulary));
     }
     else {

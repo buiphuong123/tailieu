@@ -18,6 +18,8 @@ target 'languageApp' do
 
   pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   target 'languageAppTests' do
     inherit! :complete
     # Pods for testing

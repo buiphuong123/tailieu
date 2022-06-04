@@ -18,6 +18,8 @@ const urlkanji = 'getKanji';
 const urlkanjicomment = 'getKanjiComment';
 const urlSchedule = 'getSchedule';
 const urlVocabulary = 'getVocabulary';
+//post
+const urlPost = 'getPost';
 // export const getList = (params = {}) => {
 //   let queryParams = '';
 //   if (Object.keys(params).length > 0) {
@@ -32,6 +34,7 @@ export const getGra = (data) => {
 };
 
 export const login = data => {
+  console.log(`${API_ENDPOINT}/${urlLogin}`);
   return axiosService.post(`${API_ENDPOINT}/${urlLogin}`, data);
 };
 
@@ -40,7 +43,6 @@ export const register = data => {
 }
 
 export const sendMailPass = data => {
-  console.log('url ne: ',`${API_ENDPOINT}/${urlForgotPassword}` );
   return axiosService.post(`${API_ENDPOINT}/${urlForgotPassword}`, data);
 }
 
@@ -83,6 +85,10 @@ export const allSchedule = data => {
 }
 export const allVocabulary = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlVocabulary}`, data);
+}
+
+export const allPost = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlPost}`, data);
 }
 // http://localhost:3000/tasks/:id METHOD: PUT
 // export const updateTask = (data, taskId) => {

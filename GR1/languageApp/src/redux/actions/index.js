@@ -21,6 +21,13 @@ export const fetchDataSuccess = (user) => {
     }
 }
 
+export const getListUser = (listUser) => {
+    return {
+        type: types.LIST_USER,
+        listUser
+    }
+}
+
 export const fetchDataFailure = (error) => {
     return {
         type: types.SEND_REQUEST_FAILURE,

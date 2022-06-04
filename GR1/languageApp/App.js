@@ -45,11 +45,13 @@ import TestScreenss from './src/screens/tab/home/word/TestScreen';
 import VocabularyScreen from './src/screens/tab/home/VocabularyScreen';
 import ListWordVocabulary from './src/screens/tab/home/ListWordVocabulary';
 import PracticeScreen from './src/screens/tab/home/practice/PracticeScreen';
+import NewPostScreen from './src/screens/tab/contact/NewPostScreen';
+
 const store = createStore(
   appReducers,
   applyMiddleware(sagaMiddleware)
 );
-export const socket = io("http://192.168.1.2:3002");
+export const socket = io("http://192.168.1.72:3002");
 const App = () => {
   const dataTake = async() => {
     console.log('data take day ne');
@@ -107,7 +109,7 @@ const App = () => {
 //   //  console.log('TOKEN DAY NHA', token);
 //     messaging().onMessage(async remoteMessage => {
 //       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-//       axios.post('http://192.168.1.2:3002/language/createNotifi', {
+//       axios.post('http://192.168.1.72:3002/language/createNotifi', {
 //             // "username": user._id,
 //             "content": remoteMessage.notification.body,
 //             "time": remoteMessage.sentTime,
@@ -175,6 +177,7 @@ const App = () => {
         {/* <ListWordVocabulary /> */}
         {/* <ExplainScreen /> */}
         {/* <PracticeScreen /> */}
+        {/* <NewPostScreen /> */}
         <Home />
         <Toast ref={(ref) => Toast.setRef(ref)} />
         <GlobalLoading />

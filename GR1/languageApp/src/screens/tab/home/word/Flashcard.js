@@ -67,7 +67,7 @@ import CustomHeader from '../../../CustomHeader';
 //         // this.props.setState({data: [...data]});
 //         this.props.setWordMemerize(data);
 
-//          axios.post('http://192.168.1.2:3002/language/createMemWord', {
+//          axios.post('http://192.168.1.72:3002/language/createMemWord', {
 //              "userId": userId,
 //              "wordId": wordId
 //          }, {
@@ -193,7 +193,7 @@ class Flashcard extends Component {
     //     this.props.setState({data: [...data]});
     //     this.props.setWordMemerize(data);
 
-    //      axios.post('http://192.168.1.2:3002/language/createMemWord', {
+    //      axios.post('http://192.168.1.72:3002/language/createMemWord', {
     //          "userId": userId,
     //          "wordId": wordId
     //      }, {

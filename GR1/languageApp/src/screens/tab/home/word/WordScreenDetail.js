@@ -3,7 +3,7 @@ import { Text, View, Image, TextInput, StyleSheet, ScrollView, TouchableOpacity,
 import CustomHeader from '../../../CustomHeader';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
-import IconsAnt from 'react-native-vector-icons/AntDesign';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Iconss from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Furi from 'react-native-furi';
@@ -12,9 +12,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getListCommentRequest, getListCommentSuccess } from '../../../redux/actions/comment.action';
 import io from 'socket.io-client';
 import axios from 'axios';
-
+import { Card, Avatar, Button } from 'react-native-paper';
 import { socket } from '../../../../App';
 const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { getListVocaSuccess } from '../../../../redux/actions/vocabulary.action';
 import Modal from 'react-native-modal'; // 2.4.0
 import { cps } from 'redux-saga/effects';
 import { element } from 'prop-types';
@@ -28,11 +31,23 @@ export default WordScreenDetail = ({ navigation, route }) => {
     const [dataWordComment, setDataWordComment] = useState([]);
     const [comment, setComment] = useState("");
     const [name, setName] = useState("");
+    const [isVisibleAddWord, setisVisibleAddWord] = useState(false);
+    const [isVisibleAddWordVocu, setisVisibleAddWordVocu] = useState(false);
+    const colorBack = ["#0000b3", "#005ce6", "#ff9900", "#00b300", "#e67300"];
+    const vocabularyList = useSelector(state => state.vocabularyReducer.vocabularyList);
+    const [dataList, setDataList] = useState(vocabularyList);
+
     const users = useSelector(state => state.userReducer.user);
     var last = new Date(); // ngày hiện tại
     useEffect(() => {
         setDataWordComment(commentWordList);
     }, [commentWordList])
+    useEffect(() => {
+        setDataList(vocabularyList);
+    }, []);
+    const fixDigit = (val) => {
+        return (val < 10 ? '0' : '') + val;
+    }
     const date = new Date();
     const likeaction = (comment_id, user_id, username_friends) => {
         var index = 0;
@@ -67,7 +82,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
         }
 
         if (index === 0) {
-            axios.post('http://192.168.1.2:3002/language/sendNotiToDevice', {
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
                 "username": users.username,
                 "username_friends": username_friends,
                 "action": "like",
@@ -87,7 +102,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        axios.post('http://192.168.1.2:3002/language/createLikeWordComment', {
+        axios.post('http://192.168.1.72:3002/language/createLikeWordComment', {
             "comment_id": comment_id,
             "user_id_like": user_id,
             "checkStatus": checkdislike
@@ -137,7 +152,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
         }
 
         if (index === 0) {
-            axios.post('http://192.168.1.2:3002/language/sendNotiToDevice', {
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
                 "username": users.username,
                 "username_friends": username_friends,
                 "action": "like",
@@ -157,7 +172,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        axios.post('http://192.168.1.2:3002/language/createDisLikeWordComment', {
+        axios.post('http://192.168.1.72:3002/language/createDisLikeWordComment', {
             "comment_id": comment_id,
             "user_id_dislike": user_id,
             "checkStatus": checkdislike
@@ -180,7 +195,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
         if (comment.length === 0 || comment === '') {
             return;
         }
-        axios.post('http://192.168.1.2:3002/language/createWordComment', {
+        axios.post('http://192.168.1.72:3002/language/createWordComment', {
             "word_id": word_id,
             "user_id": users._id,
             "content": comment
@@ -276,7 +291,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                             {/* <Text>like</Text> */}
-                            <IconsAnt
+                            <AntDesign
                                 onPress={() => likeaction(item._id, users._id, item.user_id.username)}
                                 name="like1"
                                 color={item.islike ? 'blue' : '#d9d9d9'}
@@ -285,7 +300,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                             <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.like}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 15 }}>
-                            <IconsAnt
+                            <AntDesign
                                 onPress={() => dislikeaction(item._id, users._id, item.user_id.username)}
                                 name="dislike1"
                                 color={item.isdislike ? 'blue' : '#d9d9d9'}
@@ -332,12 +347,30 @@ export default WordScreenDetail = ({ navigation, route }) => {
         )
     }
 
-    const createVoca = () => {
-        axios.post('http://192.168.1.2:3002/language/createVocabulary', {
-            "user_id": users._id,
-            "name": name,
-            "dataElement": vocabulary,
-            "date": date
+ 
+    const AddWordInVocu = (element) => {
+        const objIndex = dataList.findIndex(e => e._id === element._id);
+        if (objIndex !== -1) {
+            var d = {};
+            d.word = vocabulary.word;
+            d.vn = vocabulary.vn;
+            d.translate = vocabulary.translate;
+            d.date = last;
+            d.type = "Hán tự";
+            d.explain = vocabulary;
+            dataList[objIndex].data.push(d);
+            setDataList([...dataList]);
+            getListVocaSuccess([...dataList]);
+            setisVisibleAddWord(false);
+            axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+            "id": element._id,
+            "word": vocabulary.word,
+            "vn": vocabulary.vn,
+            "translate": vocabulary.translate,
+            "type": "Từ vựng",
+            "date": last,
+            "explain": vocabulary,
+
         }, {
             headers: {
                 "Accept": "application/json",
@@ -350,6 +383,66 @@ export default WordScreenDetail = ({ navigation, route }) => {
             .catch(function (error) {
                 throw error;
             })
+        }
+    }
+
+    const createVocaAndAddWord = () => {
+        axios.post('http://192.168.1.72:3002/language/createVocabulary', {
+            "user_id": users._id,
+            "name": name,
+            // "dataElement": vocabulary,
+            "date": last
+        }, {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => {
+                console.log(response.data);
+                const listData = dataList.concat(response.data.vocabulary);
+                // const voca 
+                setDataList([...dataList.concat(response.data.vocabulary)]);
+                const objIndex = listData.findIndex(e => e.name === name);
+                setisVisibleAddWordVocu(false);
+                var d = {};
+                d.word = vocabulary.word;
+                d.vn = vocabulary.vn;
+                d.type = "Từ vựng";
+                d.date = last;
+                d.translate = vocabulary.translate;
+                d.explain = vocabulary;
+                listData[objIndex].data.push(d);
+                setDataList([...listData]);
+                getListVocaSuccess([...listData]);
+                setisVisibleAddWord(false);
+                setName("");
+                axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                    "id": listData[objIndex]._id,
+                    "word": vocabulary.word,
+                    "vn": vocabulary.vn,
+                    "translate": vocabulary.translate,
+                    "type": "Từ vựng",
+                    "date": last,
+                    "explain": vocabulary,
+                }, {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then((response1) => {
+                        console.log(response1.data);
+                    })
+                    .catch(function (error) {
+                        throw error;
+                    })
+                // objIndex = dataList.concat(response.data.vocabulary).findIndex(e => e.name === name);
+            })
+            .catch(function (error) {
+                throw error;
+            })
+
     }
 
     return (
@@ -367,7 +460,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                                 size={25}
                             />
                             <Icon
-                                onPress={() => setisVisibleAdd(true)}
+                                onPress={() => setisVisibleAddWord(true)}
                                 style={{ marginRight: 20 }}
                                 name="add-circle-outline"
                                 // color={'#d9d9d9'}
@@ -383,7 +476,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
 
                     <View style={{ marginTop: 10, flexDirection: 'row', paddingRight: 50, marginRight: 20 }}>
                         {/* {vocabulary.typeWord !== undefined ? */}
-                        <IconsAnt
+                        <AntDesign
                             // onPress={() => sendComment(word._id)}
                             style={{ marginRight: 10, marginTop: 5 }}
                             name="staro"
@@ -543,10 +636,90 @@ export default WordScreenDetail = ({ navigation, route }) => {
                 </Modal>
             </View>
 
-            {/* add vocabulary */}
+
+            <TouchableOpacity
+                style={{ borderWidth: 1, width: 50, borderRadius: 30, backgroundColor: '#009387', borderColor: '#009387', bottom: 60, right: 20, position: 'absolute', zIndex: 1 }}
+                onPress={() => quesSc()}>
+                <Entypo name={'triangle-right'} size={50} style={{ color: 'white' }} />
+            </TouchableOpacity>
+
+            <View style={[styles.container]}>
+                <Modal
+                    isVisible={isVisibleAddWord}
+                    swipeDirection="down"
+                    style={{ justifyContent: 'flex-end', margin: 0 }}
+                    onRequestClose={() => setisVisibleAddWord(false)}
+                    deviceWidth={WIDTH}
+                    deviceHeight={HEIGHT}
+                >
+                    <View style={styles.modalContentadd}>
+                        <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-between' }}>
+                            <AntDesign name={'close'} size={20} color={'#fff'}
+                                onPress={() => setisVisibleAddWord(false)}
+                                style={{ paddingTop: 15, paddingRight: 20, marginLeft: 10 }} />
+                            <View style={{ paddingTop: 15 }}>
+                                <Text style={{ color: '#fff', fontSize: 20 }}>Thêm từ "{vocabulary.word}"</Text>
+                            </View>
+                            <TouchableOpacity style={{ justifyContent: 'center', marginRight: 20 }} onPress={() => setisVisibleAddWordVocu(true)}>
+                                <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            {
+                                dataList.length === 0 ?
+                                    <View style={{ padding: 20 }}>
+                                        <Text>Gợi ý </Text>
+                                        <Text>- Nhấn nút dấu "+" góc trên bên phải để thêm nhóm từ mới.</Text>
+                                        <Text>- Bên cạnh nhóm từ có nút đẻ sửa xóa nhóm từ
+                                        </Text>
+                                    </View>
+                                    :
+                                    <ScrollView style={{ marginBottom: 40 }}>
+                                        {
+                                            dataList.map((element, key) => {
+                                                return (
+                                                    <TouchableOpacity key={key} onPress={() => AddWordInVocu(element)}>
+                                                        <Card style={{ marginTop: 10, margin: 10 }}>
+                                                            <Card.Content>
+                                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                                    <View style={{ flexDirection: 'row' }}>
+                                                                        <View style={{ backgroundColor: colorBack[Math.floor(Math.random() * colorBack.length)], borderRadius: 30 }}>
+                                                                            <Text style={{ paddingTop: 15, paddingBottom: 15, paddingLeft: 20, paddingRight: 20, color: '#fff' }}>{element.name.charAt(0)}</Text>
+                                                                        </View>
+                                                                        {/* <Avatar.Image size={40} style={{padding: 10}} source={('https://www.google.com/url?sa=i&url=https%3A%2F%2Fvi.m.wikipedia.org%2Fwiki%2FT%25E1%25BA%25ADp_tin%3AImage_created_with_a_mobile_phone.png&psig=AOvVaw3T9sYalA9E5MRsYwkeGOWj&ust=1652583018117000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJDa-8_93fcCFQAAAAAdAAAAABAD')} /> */}
+                                                                        <View
+                                                                            style={{
+                                                                                marginLeft: 10,
+                                                                                height: 30,
+                                                                                marginBottom: 10
+                                                                            }}>
+
+                                                                            <Text style={{ fontSize: 20 }}>{element.name}</Text>
+                                                                            <Text>{element.data.length} items</Text>
+                                                                        </View>
+                                                                    </View>
+
+                                                                </View>
+                                                                <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                                    <Text>{new Date(element.date).getFullYear() + '/' + fixDigit(new Date(element.date).getMonth()) + '/' + fixDigit(new Date(element.date).getDate())}</Text>
+                                                                </View>
+                                                            </Card.Content>
+                                                        </Card>
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
+                            }
+                        </View>
+                    </View>
+
+                </Modal>
+            </View>
+
             <View style={styles.container}>
                 <Modal
-                    isVisible={isVisibleAdd}
+                    isVisible={isVisibleAddWordVocu}
                     animationInTiming={1000}
                     animationOutTiming={1000}
                     backdropTransitionInTiming={1000}
@@ -564,12 +737,12 @@ export default WordScreenDetail = ({ navigation, route }) => {
                             />
                             <View style={styles.stylebutton}>
                                 <TouchableOpacity
-                                    onPress={() => setisVisibleAdd(false)}
+                                    onPress={() => setisVisibleAddWordVocu(false)}
                                     style={[styles.keepStyle, { backgroundColor: '#999999', marginRight: 110 }]}>
                                     <Text style={{ color: '#fff' }}>Đóng</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#1a75ff', }]}
-                                    onPress={() => createVoca()}
+                                    onPress={() => createVocaAndAddWord()}
                                 >
                                     <Text style={{ color: '#fff' }}>Tạo</Text>
                                 </TouchableOpacity>
@@ -577,20 +750,9 @@ export default WordScreenDetail = ({ navigation, route }) => {
 
                         </View>
 
-                        {/* <TouchableOpacity onPress={() => setisVisibleAdd(false)}>
-                            <View style={styles.button}>
-                                <Text>Close</Text>
-                            </View>
-                        </TouchableOpacity> */}
                     </View>
                 </Modal>
             </View>
-
-            <TouchableOpacity
-                style={{ borderWidth: 1, width: 50, borderRadius: 30, backgroundColor: '#009387', borderColor: '#009387', bottom: 60, right: 20, position: 'absolute', zIndex: 1 }}
-                onPress={() => quesSc()}>
-                <Entypo name={'triangle-right'} size={50} style={{ color: 'white' }} />
-            </TouchableOpacity>
         </View>
     )
 };
@@ -622,6 +784,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 30,
         padding: 40,
+    },
+    modalContentadd: {
+        flex: 1,
+        backgroundColor: 'white',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
     },
     stylebutton: { flexDirection: 'row', justifyContent: 'space-around', flex: 4, marginTop: 20 },
     keepStyle: { height: 40, width: 100, alignItems: 'center', justifyContent: 'center', borderRadius: 5 },

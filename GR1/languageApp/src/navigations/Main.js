@@ -9,6 +9,15 @@ import NotificationStack from '../screens/tab/notification/NotificationStack';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
+const getTabBarVisible = (route) => {
+    const params = route.params;
+    if (params) {
+      if (params.tabBarVisible === false) {
+        return false;
+      }
+    }
+    return true;
+  };
     const Main = () => {
             const notifiList = useSelector(state => state.notifiReducer.notifiList);
             var count = notifiList.reduce((pre, cur) => (cur.isRead === false) ? ++pre : pre, 0);          
@@ -36,6 +45,7 @@ const Tab = createBottomTabNavigator();
                     activeTintColor: 'tomato',
                     inactiveTintColor: 'gray',
                 }}
+                
             >
                 <Tab.Screen 
                     name="Home" 
@@ -50,6 +60,9 @@ const Tab = createBottomTabNavigator();
                <Tab.Screen 
                     name="Contact" 
                     component={ContactStack} 
+                    options={({ route }) => ({
+                        tabBarVisible: getTabBarVisible(route),
+                      })}
                 />
                 
                  <Tab.Screen 

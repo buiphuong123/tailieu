@@ -142,7 +142,7 @@ class Item extends Component {
         this.setState({ data: [...this.state.data] });
         this.props.setWordMemerize(this.state.data);
 
-        axios.post('http://192.168.1.72:3002/language/createMemWord', {
+        axios.post('http://192.168.1.722:3002/language/createMemWord', {
             "userId": userId,
             "wordId": wordId
         }, {

@@ -42,7 +42,7 @@ const MoveVocabulary = ({ navigation, route }) => {
                 setDataList([...dataList]);
                 getListVocaSuccess([... dataList]);
             }
-            axios.post('http://192.168.1.2:3002/language/deleteWordInVoca', {
+            axios.post('http://192.168.1.72:3002/language/deleteWordInVoca', {
                 "id": word._id,
                 "word": dataword.word
             }, {
@@ -60,7 +60,7 @@ const MoveVocabulary = ({ navigation, route }) => {
 
 
 
-            axios.post('http://192.168.1.2:3002/language/create', {
+            axios.post('http://192.168.1.72:3002/language/create', {
                 "id": element._id,
                 "worddata": dataword
             }, {

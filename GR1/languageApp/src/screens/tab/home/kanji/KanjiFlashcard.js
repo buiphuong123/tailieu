@@ -53,7 +53,7 @@ class KanjiFlashcard extends Component {
         this.setState({ listkanjilevel: [...this.state.listkanjilevel] });
         this.props.setWordMemerize(this.state.listkanjilevel);
 
-        axios.post('http://192.168.1.2:3002/language/createMemKanji', {
+        axios.post('http://192.168.1.72:3002/language/createMemKanji', {
             "userId": userId,
             "kanjiId": kanjiId
         }, {

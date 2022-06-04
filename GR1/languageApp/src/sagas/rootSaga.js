@@ -9,6 +9,7 @@ import { watchgetGrammarQuestion } from './grammarquestionSaga';
 import { watchgetKanji, watchgetCommentKanji } from './kanjiSaga';
 import { watchgetSchedule } from './scheduleSaga';
 import { watchgetVocabulary } from './vocabularySaga';
+import {watchgetPost} from './postSaga';
 
 export default function* rootSaga() {
     yield all([
@@ -26,5 +27,6 @@ export default function* rootSaga() {
         watchgetCommentKanji(),
         watchgetSchedule(),
         watchgetVocabulary(),
+        watchgetPost(),
     ])
 }

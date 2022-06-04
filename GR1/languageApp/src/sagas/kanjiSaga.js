@@ -32,7 +32,6 @@ function* getKanjiComment({payload}) {
     const { data } = resp;
     if(data.code === 1) {
         yield put(getListKanjiCommentSuccess(data.comment));
-        console.log('DATA KANJI COMMEN ', data.comment);
     }
     else {
         console.log('error');

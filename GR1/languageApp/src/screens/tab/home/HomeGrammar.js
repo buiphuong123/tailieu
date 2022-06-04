@@ -11,18 +11,18 @@ import Modal from 'react-native-modal'; // 2.4.0
 
 export default HomeGrammar = ({navigation}) => {
     const [dataSource] = useState(['tat ca', 'bai 1', 'bai 2', 'bai 3', 'bai 4', 'bai 5', 'bai 6', 'bai 7', 'bai 8', 'bai 9', 'bai 10'])
-    const [filtered, setFiltered] = useState(dataSource)
+   
     const [searching, setSearching] = useState(false)
     const [isVisible, setisVisible] = useState(false);
-    const dataGrammar = useSelector(state => state.grammarReducer.grammartList);
-
+    const dataGrammar = useSelector(state => state.grammarReducer.grammarList);
+    const [filtered, setFiltered] = useState(dataGrammar)
     const onSearch = (text) => {
         if (text) {
             setSearching(true)
             const temp = text.toLowerCase()
 
             const tempList = dataGrammar.filter(item => {
-                if (item.grammar.match(temp) || item.translation.match(temp))
+                if (item.grammar.match(temp))
                     return item
             })
             setFiltered(tempList)

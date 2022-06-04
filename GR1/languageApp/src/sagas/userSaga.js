@@ -19,9 +19,9 @@ function* loginUs({ payload, props }) {
     const { username, password, notifiToken } = payload;
     yield put(showLoading());
     const resp = yield call(login, {
-        username,
-        password,
-        notifiToken
+        username: username,
+        password: password,
+        notifiToken: notifiToken
     });
     const { data } = resp;
     if (data.code == 1) {

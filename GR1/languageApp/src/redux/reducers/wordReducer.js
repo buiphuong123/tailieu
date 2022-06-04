@@ -39,10 +39,18 @@ var wordAc = {
 
     ischooseQuestion: 'checked',
     isjoinQuestion: 'unchecked',
+
+    textVocabulary: ""
 };
 
 var wordReducer = (state = wordAc, action) => {
     switch (action.type) {
+        case types.WORD_VOCABULARY : {
+            return {
+                ...state,
+                textVocabulary: action.textVocabulary,
+            }
+        }
         case types.WORD: {
             return { 
                 ...state,

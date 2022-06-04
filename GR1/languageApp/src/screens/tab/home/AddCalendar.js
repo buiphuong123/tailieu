@@ -105,7 +105,7 @@ export default AddCalendar = ({ navigation }) => {
         else {
             method = 2;
         }
-        axios.post('http://192.168.1.2:3002/language/remind', {
+        axios.post('http://192.168.1.72:3002/language/remind', {
             "nameSchedule": namesche,
             "note": note,
             "datestart": fixDigit(dateCalen.getFullYear()) + '-' + fixDigit(dateCalen.getMonth() + 1) + '-' + fixDigit(dateCalen.getDate()),

@@ -85,7 +85,7 @@ export default Calendar = ({navigation}) => {
   }
 
   const deleteCalen = (item) => {
-    axios.post('http://192.168.1.72:3002/language/deleteschedule', {
+    axios.post('http://192.168.1.722:3002/language/deleteschedule', {
       "id": item._id,
     }, {
       headers: {

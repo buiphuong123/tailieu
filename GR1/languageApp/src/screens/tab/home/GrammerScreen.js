@@ -24,7 +24,7 @@ export default GrammarScreen = ({ count, word, navigation }) => {
         setData([...data, word]);
         dispatch(getGrammarSuccess(data));
 
-        axios.post('http://192.168.1.72:3002/language/createMemGrammar', {
+        axios.post('http://192.168.1.722:3002/language/createMemGrammar', {
             "user_id": userId,
             "grammar_id": grammerId
         }, {

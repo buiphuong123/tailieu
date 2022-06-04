@@ -24,6 +24,7 @@ import KanjiFlashcard from "../screens/tab/home/kanji/KanjiFlashcard";
 import VocabularyScreen from "../screens/tab/home/VocabularyScreen";
 import ListWordVocabulary from "../screens/tab/home/ListWordVocabulary";
 import MoveVocabulary from "../screens/tab/home/MoveVocabulary";
+import EditPost from "../screens/tab/contact/EditPost";
 const Drawer = createDrawerNavigator();
 
 const DrawerTab = () => {
@@ -52,6 +53,7 @@ const DrawerTab = () => {
             <Drawer.Screen name="VocabularyScreen" component={VocabularyScreen} />
             <Drawer.Screen name="ListWordVocabulary" component={ListWordVocabulary} />
             <Drawer.Screen name="MoveVocabulary" component={MoveVocabulary} />
+            <Drawer.Screen name="EditPost" component={EditPost} />
 
         </Drawer.Navigator> 
     )

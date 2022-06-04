@@ -8,6 +8,7 @@ export const REGISTER_FAIL = 'REGISTER_FAIL';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const TYPE_ISEND = 'TYPE_ISEND';
+export const LIST_USER = 'LIST_USER';
 // language
 export const CHANGE_LANGUAGE = 'CHANGE_LANGUAGE';
 
@@ -128,3 +129,10 @@ export const GET_SCHEDULE_SUCCESS = 'GET_SCHEDULE_SUCCESS';
 // vocabulary
 export const GET_LIST_VOCABULARY_REQUEST = 'GET_LIST_VOCABULARY_REQUEST';
 export const GET_LIST_VOCABULARY_SUCCESS = 'GET_LIST_VOCABULARY_SUCCESS';
+
+
+//post
+export const GET_POST = 'GET_POST';
+export const GET_POST_SUCCESS = 'GET_POST_SUCCESS';
+
+export const WORD_VOCABULARY = 'WORD_VOCABULARY';

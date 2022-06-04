@@ -34,7 +34,7 @@ export default Grammer = ({ navigation, route }) => {
         setData([...data]);
         dispatch(getGrammarSuccess(data));
 
-        axios.post('http://192.168.1.2:3002/language/createMemGrammar', {
+        axios.post('http://192.168.1.72:3002/language/createMemGrammar', {
             "user_id": userId,
             "grammar_id": grammerId
         }, {

@@ -233,3 +233,10 @@ export const RemoteJoinQuestion = (isjoinQuestion)=> {
         isjoinQuestion
     }
 }
+
+export const RemoteTextVocabulary = (textVocabulary) => {
+    return {
+        type: types.WORD_VOCABULARY,
+        textVocabulary
+    }
+}

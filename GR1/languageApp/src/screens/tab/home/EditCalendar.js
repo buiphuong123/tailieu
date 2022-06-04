@@ -211,7 +211,7 @@ export default EditCalendar = ({ navigation, route }) => {
 
         })
 
-        axios.post('http://192.168.1.72:3002/language/editschedule', {
+        axios.post('http://192.168.1.722:3002/language/editschedule', {
             "id": calen._id,
             "nameSchedule": namesche,
             "note": note,

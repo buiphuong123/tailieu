@@ -23,6 +23,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { loginUserSuccess } from '../redux/actions/index';
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
+import { getListUser } from "./../redux/actions/index";
 
 const Home = (props) => {
     const [isDarkTheme, setIsDarkTheme] = React.useState(false);

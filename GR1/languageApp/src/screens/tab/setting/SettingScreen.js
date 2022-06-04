@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, View, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native'
 import CustomHeader from '../../CustomHeader';
 import { Kanji } from 'react-native-kanji-animation';
@@ -25,6 +25,15 @@ const SettingScreen = ({ navigation }) => {
         dispatch(getListVocaRequest(users._id));
         navigation.navigate("VocabularyScreen", { navigation: navigation });
     }
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         dispatch(getListVocaRequest(users._id));
+    //       //Put your Data loading function here instead of my loadData()
+    //     });
+    
+    //     return unsubscribe;
+    //   }, [navigation]);
+
     return (
         <View>
             <View>

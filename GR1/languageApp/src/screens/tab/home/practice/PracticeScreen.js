@@ -268,7 +268,7 @@ const PracticeScreen = ({ }) => {
     }
     const checkDAtaGrammar = () => {
         console.log('vao check');
-        axios.post('http://192.168.1.2:3002/language/getKanji', {
+        axios.post('http://192.168.1.72:3002/language/getKanji', {
             "id": "61590bbd7463724428b252d2",
         }, {
             headers: {

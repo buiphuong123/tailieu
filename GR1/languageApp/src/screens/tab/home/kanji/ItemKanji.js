@@ -147,7 +147,7 @@ class ItemKanji extends Component {
         this.setState({ data: [...this.state.data] });
         this.props.setWordMemerize(this.state.data);
 
-        axios.post('http://192.168.1.2:3002/language/createMemKanji', {
+        axios.post('http://192.168.1.72:3002/language/createMemKanji', {
             "userId": userId,
             "kanjiId": kanjiId
         }, {

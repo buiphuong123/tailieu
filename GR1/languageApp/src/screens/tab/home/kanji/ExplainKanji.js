@@ -12,11 +12,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getListKanjiCommentSuccess } from '../../../../redux/actions/comment.action';
 import { socket } from '../../../../App';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { Card, Avatar, Button } from 'react-native-paper';
+
 const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
+
 import Modal from 'react-native-modal'; // 2.4.0
 import { cps } from 'redux-saga/effects';
 import { element } from 'prop-types';
 import SeeMore from 'react-native-see-more-inline';
+import { getListVocaSuccess } from '../../../../redux/actions/vocabulary.action';
 
 export default ExplainKanji = ({ navigation, route }) => {
     const [isVisible, setisVisible] = useState(false);
@@ -27,28 +34,39 @@ export default ExplainKanji = ({ navigation, route }) => {
     const users = useSelector(state => state.userReducer.user);
     var last = new Date(); // ngày hiện tại
     const [dataKanjiComment, setDataKanjiComment] = useState([]);
+    const [isVisibleAddWord, setisVisibleAddWord] = useState(false);
+    const [isVisibleAddWordVocu, setisVisibleAddWordVocu] = useState(false);
+    const vocabulary = useSelector(state => state.vocabularyReducer.vocabularyList);
+    const [dataList, setDataList] = useState(vocabulary);
+    const colorBack = ["#0000b3", "#005ce6", "#ff9900", "#00b300", "#e67300"];
+    const [name, setName] = useState("");
 
     useEffect(() => {
         setDataKanjiComment(commentKanjiList);
     }, [commentKanjiList])
-
-     const likeaction = (comment_id, user_id, username_friends) => {
+    useEffect(() => {
+        setDataList(vocabulary);
+    }, []);
+    const fixDigit = (val) => {
+        return (val < 10 ? '0' : '') + val;
+    }
+    const likeaction = (comment_id, user_id, username_friends) => {
         var index = 0;
         var checkdislike = false;
         const idx = dataKanjiComment.map(object => object._id).indexOf(comment_id);
-        if(idx >= 0) {
-            if(dataKanjiComment[idx].islike === true) {
-                index =1;
+        if (idx >= 0) {
+            if (dataKanjiComment[idx].islike === true) {
+                index = 1;
                 dataKanjiComment[idx].islike = false;
-                dataKanjiComment[idx].like = dataKanjiComment[idx].like -1;
+                dataKanjiComment[idx].like = dataKanjiComment[idx].like - 1;
                 setDataKanjiComment([...dataKanjiComment]);
             }
             else {
-                if(dataKanjiComment[idx].isdislike === true) {
+                if (dataKanjiComment[idx].isdislike === true) {
                     dataKanjiComment[idx].isdislike = false;
                     checkdislike = true;
-                    dataKanjiComment[idx].dislike = dataKanjiComment[idx].dislike -1;
-                    dataKanjiComment[idx].like = dataKanjiComment[idx].like+1;
+                    dataKanjiComment[idx].dislike = dataKanjiComment[idx].dislike - 1;
+                    dataKanjiComment[idx].like = dataKanjiComment[idx].like + 1;
                     dataKanjiComment[idx].islike = true;
                     setDataKanjiComment([...dataKanjiComment]);
                 }
@@ -59,12 +77,12 @@ export default ExplainKanji = ({ navigation, route }) => {
                 }
             }
         }
-        if(username_friends === users.username) {
-            index =1;
+        if (username_friends === users.username) {
+            index = 1;
         }
 
-        if(index === 0) {
-            axios.post('http://192.168.1.2:3002/language/sendNotiToDevice', {
+        if (index === 0) {
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
                 "username": users.username,
                 "username_friends": username_friends,
                 "action": "like",
@@ -84,7 +102,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        axios.post('http://192.168.1.2:3002/language/createLikeKanjiComment', {
+        axios.post('http://192.168.1.72:3002/language/createLikeKanjiComment', {
             "comment_id": comment_id,
             "user_id_like": user_id,
             "checkStatus": checkdislike
@@ -101,25 +119,25 @@ export default ExplainKanji = ({ navigation, route }) => {
                 throw error;
             })
 
-     }
+    }
 
-     const dislikeaction = (comment_id, user_id, username_friends) => {
+    const dislikeaction = (comment_id, user_id, username_friends) => {
         var index = 0;
         var checkdislike = false;
         const idx = dataKanjiComment.map(object => object._id).indexOf(comment_id);
-        if(idx >= 0) {
-            if(dataKanjiComment[idx].isdislike === true) {
-                index =1;
+        if (idx >= 0) {
+            if (dataKanjiComment[idx].isdislike === true) {
+                index = 1;
                 dataKanjiComment[idx].isdislike = false;
-                dataKanjiComment[idx].dislike = dataKanjiComment[idx].dislike -1;
+                dataKanjiComment[idx].dislike = dataKanjiComment[idx].dislike - 1;
                 setDataKanjiComment([...dataKanjiComment]);
             }
             else {
-                if(dataKanjiComment[idx].islike === true) {
+                if (dataKanjiComment[idx].islike === true) {
                     dataKanjiComment[idx].islike = false;
                     checkdislike = true;
-                    dataKanjiComment[idx].like = dataKanjiComment[idx].like -1;
-                    dataKanjiComment[idx].dislike = dataKanjiComment[idx].dislike+1;
+                    dataKanjiComment[idx].like = dataKanjiComment[idx].like - 1;
+                    dataKanjiComment[idx].dislike = dataKanjiComment[idx].dislike + 1;
                     dataKanjiComment[idx].isdislike = true;
                     setDataKanjiComment([...dataKanjiComment]);
                 }
@@ -130,12 +148,12 @@ export default ExplainKanji = ({ navigation, route }) => {
                 }
             }
         }
-        if(username_friends === users.username) {
-            index =1;
+        if (username_friends === users.username) {
+            index = 1;
         }
 
-        if(index === 0) {
-            axios.post('http://192.168.1.2:3002/language/sendNotiToDevice', {
+        if (index === 0) {
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
                 "username": users.username,
                 "username_friends": username_friends,
                 "action": "dislike",
@@ -156,7 +174,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        axios.post('http://192.168.1.2:3002/language/createDisLikeKanjiComment', {
+        axios.post('http://192.168.1.72:3002/language/createDisLikeKanjiComment', {
             "comment_id": comment_id,
             "user_id_dislike": user_id,
             "checkStatus": checkdislike
@@ -172,10 +190,10 @@ export default ExplainKanji = ({ navigation, route }) => {
             .catch(function (error) {
                 throw error;
             })
-     }
+    }
 
 
-    
+
 
     const time = (dt) => {
         const result = (last.getTime() - dt.getTime()) / 1000;
@@ -204,7 +222,7 @@ export default ExplainKanji = ({ navigation, route }) => {
         }
     }
     const renderComment = ({ item, index }) => {
-         var dt = new Date(item.time);
+        var dt = new Date(item.time);
         return (
             <View style={{ marginTop: 10, borderBottomWidth: 1, borderBottomColor: '#d9d9d9' }}>
                 <Text>{item.content}</Text>
@@ -255,10 +273,10 @@ export default ExplainKanji = ({ navigation, route }) => {
     }
     const sendKanjiComment = (kanji_id) => {
         //  console.log()
-         if (comment.length === 0 || comment === '') {
-             return;
-         }
-         axios.post('http://192.168.1.2:3002/language/createKanjiComment', {
+        if (comment.length === 0 || comment === '') {
+            return;
+        }
+        axios.post('http://192.168.1.72:3002/language/createKanjiComment', {
             "kanji_id": kanji_id,
             "user_id": users._id,
             "content": comment
@@ -272,17 +290,112 @@ export default ExplainKanji = ({ navigation, route }) => {
                 console.log('gia tri nhan duowcj la', response.data.comment);
                 const newComment = response.data.comment;
                 const kaka = { _id: newComment._id, kanji_id: newComment.kanji_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: users.username };
-            setDataKanjiComment(dataKanjiComment.concat(kaka));
+                setDataKanjiComment(dataKanjiComment.concat(kaka));
             })
-            setComment('');
-            console.log(dataKanjiComment);
-            // console.log('so luong',dataKanjiComment.length);
-     }
+        setComment('');
+        console.log(dataKanjiComment);
+        // console.log('so luong',dataKanjiComment.length);
+    }
 
-     const check = () => {
-         console.log(dataKanjiComment);
-     }
-    
+    const check = () => {
+        console.log(dataKanjiComment);
+    }
+
+    const addKanjiInVocu = () => {
+        setisVisibleAddWord(true);
+    }
+
+    const AddWordInVocu = (element) => {
+        const objIndex = dataList.findIndex(e => e._id === element._id);
+        if (objIndex !== -1) {
+            var d = {};
+            d.word = kanjiword.kanji;
+            d.vn = kanjiword.mean;
+            d.type = "Hán tự";
+            d.date= last;
+            d.explain = kanjiword;
+            dataList[objIndex].data.push(d);
+            setDataList([...dataList]);
+            getListVocaSuccess([...dataList]);
+            setisVisibleAddWord(false);
+            axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+            "id": element._id,
+            "word": kanjiword.kanji,
+            "vn": kanjiword.mean,
+            "type": "Hán tự",
+            "date": last,
+            "explain": kanjiword,
+        }, {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                throw error;
+            })
+        }
+    }
+
+    const createVocaAndAddWord = () => {
+        axios.post('http://192.168.1.72:3002/language/createVocabulary', {
+            "user_id": users._id,
+            "name": name,
+            // "dataElement": vocabulary,
+            "date": last
+        }, {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => {
+                console.log(response.data);
+                const listData = dataList.concat(response.data.vocabulary);
+                // const voca 
+                setDataList([...dataList.concat(response.data.vocabulary)]);
+                const objIndex = listData.findIndex(e => e.name === name);
+                setisVisibleAddWordVocu(false);
+                var d = {};
+                d.word = kanjiword.kanji;
+                d.vn = kanjiword.mean;
+                d.type = "Hán tự";
+                d.explain = kanjiword;
+                d.date= last;
+                listData[objIndex].data.push(d);
+                setDataList([...listData]);
+                getListVocaSuccess([...listData]);
+                setisVisibleAddWord(false);
+                setName("");
+                axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                    "id": listData[objIndex]._id,
+                    "word": kanjiword.kanji,
+                    "vn": kanjiword.mean,
+                    "type": "Hán tự",
+                    "date": last,
+                    "explain": kanjiword,
+                }, {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then((response1) => {
+                        console.log(response1.data);
+                    })
+                    .catch(function (error) {
+                        throw error;
+                    })
+                // objIndex = dataList.concat(response.data.vocabulary).findIndex(e => e.name === name);
+            })
+            .catch(function (error) {
+                throw error;
+            })
+
+    }
     return (
         <View style={{ flexGrow: 1, flex: 1 }}>
             <CustomHeader title={kanjiword.kanji} navigation={navigation} />
@@ -296,7 +409,7 @@ export default ExplainKanji = ({ navigation, route }) => {
 
                         <View >
                             <Icon
-                                // onPress={() => sendComment(word._id)}
+                                onPress={() => addKanjiInVocu()}
                                 style={{ marginRight: 20 }}
                                 name="add-circle-outline"
                                 // color={'#d9d9d9'}
@@ -324,14 +437,14 @@ export default ExplainKanji = ({ navigation, route }) => {
                         <Text style={{}}>Bộ thành phần:</Text>
                         {
                             kanjiword.compDetail === null ?
-                            null:
-                            kanjiword.compDetail.map((element, key) => {
-                                return (
-                                    <View style={{ marginLeft: 10 }}>
-                                        <Text>{element.w} {element.h}</Text>
-                                    </View>
-                                )
-                            })
+                                null :
+                                kanjiword.compDetail.map((element, key) => {
+                                    return (
+                                        <View style={{ marginLeft: 10 }}>
+                                            <Text>{element.w} {element.h}</Text>
+                                        </View>
+                                    )
+                                })
                         }
                     </View>
                     <View style={{ marginRight: 10 }}>
@@ -359,107 +472,107 @@ export default ExplainKanji = ({ navigation, route }) => {
                     <View>
                         <Text>Ví dụ phân loại theo cách đọc</Text>
                         <View>
-                            <View style={{backgroundColor: '#e6e6ff'}}>
-                            <Text style={{padding: 5}}>Kunyomi</Text>
+                            <View style={{ backgroundColor: '#e6e6ff' }}>
+                                <Text style={{ padding: 5 }}>Kunyomi</Text>
                             </View>
                             {
                                 kanjiword.example_kun !== undefined ?
-                                Object.keys(kanjiword.example_kun).map((key) => {
-                                    return (
-                                        <View>
-                                            <Text>{key}</Text>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View>
-                                                   {
-                                                       kanjiword.example_kun[key].map((element, key) => {
-                                                           return (
-                                                               <View key={key} style={{flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#e6e6e6', justifyContent: 'space-evenly'}}>
-                                                                    <View style={{borderRightWidth: 1, borderRightColor: '#e6e6e6', width: '20%', paddingTop: 10, paddingRight: 10, paddingBottom: 10, paddingLeft: 5}}>
-                                                                        <Text>{element.w}</Text>
-                                                                        {/* {element.w.split("").filter((e) => e === kanjiword.kanji) ? <Text></Text>} */}
-                                                                        <Text>{element.p}</Text>
-                                                                    </View>
-                                                                    <View style={{padding: 10, width: '70%'}}>
-                                                                        <Text>{element.m}</Text>
-                                                                    </View>
+                                    Object.keys(kanjiword.example_kun).map((key) => {
+                                        return (
+                                            <View>
+                                                <Text>{key}</Text>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <View>
+                                                        {
+                                                            kanjiword.example_kun[key].map((element, key) => {
+                                                                return (
+                                                                    <View key={key} style={{ flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#e6e6e6', justifyContent: 'space-evenly' }}>
+                                                                        <View style={{ borderRightWidth: 1, borderRightColor: '#e6e6e6', width: '20%', paddingTop: 10, paddingRight: 10, paddingBottom: 10, paddingLeft: 5 }}>
+                                                                            <Text>{element.w}</Text>
+                                                                            {/* {element.w.split("").filter((e) => e === kanjiword.kanji) ? <Text></Text>} */}
+                                                                            <Text>{element.p}</Text>
+                                                                        </View>
+                                                                        <View style={{ padding: 10, width: '70%' }}>
+                                                                            <Text>{element.m}</Text>
+                                                                        </View>
 
-                                                               </View>
-                                                        //     <View>
-                                                        //     <Text>{element.w}</Text>
-                                                        // <Text>{element.p}</Text>
-                                                        // <Text>{element.m}</Text>
-                                                        // </View>
-                                                           )
-                                                       })
-                                                   }
-                                                    {/* <Text>{kanjiword.example_kun[key].w}</Text>
+                                                                    </View>
+                                                                    //     <View>
+                                                                    //     <Text>{element.w}</Text>
+                                                                    // <Text>{element.p}</Text>
+                                                                    // <Text>{element.m}</Text>
+                                                                    // </View>
+                                                                )
+                                                            })
+                                                        }
+                                                        {/* <Text>{kanjiword.example_kun[key].w}</Text>
                                                     <Text>{kanjiword.example_kun[key].p}</Text>
                                                 </View>
                                                 <View>
                                                     <Text>{kanjiword.example_kun[key].m}</Text> */}
+                                                    </View>
+
                                                 </View>
-
                                             </View>
-                                        </View>
-                                    )
+                                        )
 
-                                })
-                                :
-                                null
+                                    })
+                                    :
+                                    null
                             }
-                            
+
                         </View>
 
                         <View>
-                            <View style={{backgroundColor: '#e6e6ff'}}>
-                            <Text style={{padding: 5}}>Onyomi</Text>
+                            <View style={{ backgroundColor: '#e6e6ff' }}>
+                                <Text style={{ padding: 5 }}>Onyomi</Text>
                             </View>
                             {
                                 kanjiword.example_on !== undefined ?
-                                Object.keys(kanjiword.example_on).map((key) => {
-                                    return (
-                                        <View>
-                                            <Text>{key}</Text>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <View>
-                                                   {
-                                                       kanjiword.example_on[key].map((element, key) => {
-                                                           return (
-                                                               <View key={key} style={{flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#e6e6e6', justifyContent: 'space-evenly'}}>
-                                                                    <View style={{borderRightWidth: 1, borderRightColor: '#e6e6e6', width: '20%', paddingTop: 10, paddingRight: 10, paddingBottom: 10, paddingLeft: 5}}>
-                                                                        <Text>{element.w}</Text>
-                                                                        {/* {element.w.split("").filter((e) => e === kanjiword.kanji) ? <Text></Text>} */}
-                                                                        <Text>{element.p}</Text>
-                                                                    </View>
-                                                                    <View style={{padding: 10, width: '70%'}}>
-                                                                        <Text>{element.m}</Text>
-                                                                    </View>
+                                    Object.keys(kanjiword.example_on).map((key) => {
+                                        return (
+                                            <View>
+                                                <Text>{key}</Text>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <View>
+                                                        {
+                                                            kanjiword.example_on[key].map((element, key) => {
+                                                                return (
+                                                                    <View key={key} style={{ flexDirection: 'row', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#e6e6e6', justifyContent: 'space-evenly' }}>
+                                                                        <View style={{ borderRightWidth: 1, borderRightColor: '#e6e6e6', width: '20%', paddingTop: 10, paddingRight: 10, paddingBottom: 10, paddingLeft: 5 }}>
+                                                                            <Text>{element.w}</Text>
+                                                                            {/* {element.w.split("").filter((e) => e === kanjiword.kanji) ? <Text></Text>} */}
+                                                                            <Text>{element.p}</Text>
+                                                                        </View>
+                                                                        <View style={{ padding: 10, width: '70%' }}>
+                                                                            <Text>{element.m}</Text>
+                                                                        </View>
 
-                                                               </View>
-                                                        //     <View>
-                                                        //     <Text>{element.w}</Text>
-                                                        // <Text>{element.p}</Text>
-                                                        // <Text>{element.m}</Text>
-                                                        // </View>
-                                                           )
-                                                       })
-                                                   }
-                                                    {/* <Text>{kanjiword.example_kun[key].w}</Text>
+                                                                    </View>
+                                                                    //     <View>
+                                                                    //     <Text>{element.w}</Text>
+                                                                    // <Text>{element.p}</Text>
+                                                                    // <Text>{element.m}</Text>
+                                                                    // </View>
+                                                                )
+                                                            })
+                                                        }
+                                                        {/* <Text>{kanjiword.example_kun[key].w}</Text>
                                                     <Text>{kanjiword.example_kun[key].p}</Text>
                                                 </View>
                                                 <View>
                                                     <Text>{kanjiword.example_kun[key].m}</Text> */}
+                                                    </View>
+
                                                 </View>
-
                                             </View>
-                                        </View>
-                                    )
+                                        )
 
-                                })
-                                : 
-                                null
+                                    })
+                                    :
+                                    null
                             }
-                            
+
                         </View>
                     </View>
                 </View>
@@ -467,13 +580,13 @@ export default ExplainKanji = ({ navigation, route }) => {
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                         <Text>Có {dataKanjiComment.length} góp ý</Text>
                         {
-                            dataKanjiComment.length >  3 ?
-                        <TouchableOpacity onPress={() => setisVisible(true)}>
-                            <Text>Xem thêm góp ý</Text>
-                        </TouchableOpacity>
-                         :
+                            dataKanjiComment.length > 3 ?
+                                <TouchableOpacity onPress={() => setisVisible(true)}>
+                                    <Text>Xem thêm góp ý</Text>
+                                </TouchableOpacity>
+                                :
                                 null
-                        } 
+                        }
                     </View>
                     <View>
                         <FlatList
@@ -482,7 +595,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                             keyExtractor={item => item._id}
                             renderItem={renderComment}
                         />
-                        
+
 
 
                         <View style={{ marginTop: 20 }}>
@@ -545,6 +658,117 @@ export default ExplainKanji = ({ navigation, route }) => {
             >
                 <Entypo name={'triangle-right'} size={50} style={{ color: 'white' }} />
             </TouchableOpacity>
+
+            <View style={[styles.container]}>
+                <Modal
+                    isVisible={isVisibleAddWord}
+                    swipeDirection="down"
+                    style={{ justifyContent: 'flex-end', margin: 0 }}
+                    onRequestClose={() => setisVisibleAddWord(false)}
+                    deviceWidth={WIDTH}
+                    deviceHeight={HEIGHT}
+                >
+                    <View style={styles.modalContentadd}>
+                        <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-between' }}>
+                            <AntDesign name={'close'} size={20} color={'#fff'}
+                                onPress={() => setisVisibleAddWord(false)}
+                                style={{ paddingTop: 15, paddingRight: 20, marginLeft: 10 }} />
+                            <View style={{ paddingTop: 15 }}>
+                                <Text style={{ color: '#fff', fontSize: 20 }}>Thêm từ "{kanjiword.kanji}"</Text>
+                            </View>
+                            <TouchableOpacity style={{ justifyContent: 'center', marginRight: 20 }} onPress={() => setisVisibleAddWordVocu(true)}>
+                                <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            {
+                                dataList.length === 0 ?
+                                    <View style={{ padding: 20 }}>
+                                        <Text>Gợi ý </Text>
+                                        <Text>- Nhấn nút dấu "+" góc trên bên phải để thêm nhóm từ mới.</Text>
+                                        <Text>- Bên cạnh nhóm từ có nút đẻ sửa xóa nhóm từ
+                                        </Text>
+                                    </View>
+                                    :
+                                    <ScrollView style={{ marginBottom: 40 }}>
+                                        {
+                                            dataList.map((element, key) => {
+                                                return (
+                                                    <TouchableOpacity key={key} onPress={() => AddWordInVocu(element)}>
+                                                        <Card style={{ marginTop: 10, margin: 10 }}>
+                                                            <Card.Content>
+                                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                                    <View style={{ flexDirection: 'row' }}>
+                                                                        <View style={{ backgroundColor: colorBack[Math.floor(Math.random() * colorBack.length)], borderRadius: 30 }}>
+                                                                            <Text style={{ paddingTop: 15, paddingBottom: 15, paddingLeft: 20, paddingRight: 20, color: '#fff' }}>{element.name.charAt(0)}</Text>
+                                                                        </View>
+                                                                        {/* <Avatar.Image size={40} style={{padding: 10}} source={('https://www.google.com/url?sa=i&url=https%3A%2F%2Fvi.m.wikipedia.org%2Fwiki%2FT%25E1%25BA%25ADp_tin%3AImage_created_with_a_mobile_phone.png&psig=AOvVaw3T9sYalA9E5MRsYwkeGOWj&ust=1652583018117000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJDa-8_93fcCFQAAAAAdAAAAABAD')} /> */}
+                                                                        <View
+                                                                            style={{
+                                                                                marginLeft: 10,
+                                                                                height: 30,
+                                                                                marginBottom: 10
+                                                                            }}>
+
+                                                                            <Text style={{ fontSize: 20 }}>{element.name}</Text>
+                                                                            <Text>{element.data.length} items</Text>
+                                                                        </View>
+                                                                    </View>
+
+                                                                </View>
+                                                                <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                                    <Text>{new Date(element.date).getFullYear() + '/' + fixDigit(new Date(element.date).getMonth()) + '/' + fixDigit(new Date(element.date).getDate())}</Text>
+                                                                </View>
+                                                            </Card.Content>
+                                                        </Card>
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
+                            }
+                        </View>
+                    </View>
+
+                </Modal>
+            </View>
+
+            <View style={styles.container}>
+                <Modal
+                    isVisible={isVisibleAddWordVocu}
+                    animationInTiming={1000}
+                    animationOutTiming={1000}
+                    backdropTransitionInTiming={1000}
+                    backdropTransitionOutTiming={1000}
+                    deviceWidth={WIDTH}
+                >
+                    <View style={[styles.modalContent, { marginTop: 50, minHeight: 170 }]}>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Tạo nhóm từ</Text>
+                            <TextInput
+                                style={{ borderBottomWidth: 1, borderBottomColor: '#80b3ff', alignItems: 'center', justifyContent: 'center' }}
+                                placeholder="Nhập nhóm từ cần lưu"
+                                value={name}
+                                onChangeText={text => setName(text)}
+                            />
+                            <View style={styles.stylebutton}>
+                                <TouchableOpacity
+                                    onPress={() => setisVisibleAddWordVocu(false)}
+                                    style={[styles.keepStyle, { backgroundColor: '#999999', marginRight: 110 }]}>
+                                    <Text style={{ color: '#fff' }}>Đóng</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#1a75ff', }]}
+                                    onPress={() => createVocaAndAddWord()}
+                                >
+                                    <Text style={{ color: '#fff' }}>Tạo</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
+
+                    </View>
+                </Modal>
+            </View>
         </View>
     )
 };
@@ -564,6 +788,13 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
     modalContent: {
+        // flex: 1,
+        backgroundColor: 'white',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    modalContentadd: {
+        flex: 1,
         backgroundColor: 'white',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -576,5 +807,9 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 30,
         padding: 40,
-    }
+    },
+    keepStyle: { height: 40, width: 100, alignItems: 'center', justifyContent: 'center', borderRadius: 5 },
+    stylebutton: { flexDirection: 'row', justifyContent: 'space-around', flex: 4, marginTop: 20 },
+
+
 });

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     TouchableOpacity,
     StyleSheet,
@@ -7,26 +7,24 @@ import {
     Text,
     TextInput,
     FlatList,
-    Dimensions
+    Dimensions,
+    Alert
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {RemoteTextVocabulary} from '../../../redux/actions/word.action';
 const WIDTH = Dimensions.get('window').width;
-import { getListCommentRequest, getListCommentSuccess } from '../../../redux/actions/comment.action';
+import axios from 'axios';
 
-export default function SearchDropDown(props) {
+export default function SearchDropDownUser(props) {
+    const { dataGrammar, navigation  } = props;
     const dispatch = useDispatch();
-    const { dataGrammar, navigation } = props
-    const searchData = (item) => {
-        // console.log(item);
-        // const grammar = dataGrammar.filter(grammar => grammar._id === item._id);
-        // console.log('grammar chuan bij truyen di la ', grammar);
-        navigation.navigate("ExplainScreen", {word: item})
-    }
-  
-    const renderGrammar = ({item}) => {
+    useEffect(() => {
+        console.log('DATA FILETER LA ', dataGrammar);
+    }, []);
+    const renderWord = ({ item }) => {
         return (
-            <TouchableOpacity style={styles.itemView} onPress={() => searchData(item)}>
-                <Text style={styles.itemText}>{item.grammar} : {item.translation}</Text>
+            <TouchableOpacity style={styles.itemView}>
+                <Text style={styles.itemText}>{item.email}</Text>
             </TouchableOpacity>
         )
     }
@@ -35,23 +33,21 @@ export default function SearchDropDown(props) {
             onPress={props.onPress}
             style={styles.container}>
 
-            <View style={styles.subContainer}>
+                <View>
                 {
                     dataGrammar.length ?
                         <ScrollView>
                             <FlatList
-                                style={{}}
+                                // style={{}}
+                                style={styles.subContainer}
                                 data={dataGrammar}
                                 keyExtractor={item => item.id}
-                                renderItem={renderGrammar}
+                                renderItem={renderWord}
                             />
                         </ScrollView>
 
                         : 
-                        <View
-                            style={styles.noResultView}>
-                            <Text style={styles.noResultText}>No search items matched</Text>
-                        </View>
+                        <Text></Text>
                 }
 
             </View>
@@ -64,13 +60,15 @@ export default function SearchDropDown(props) {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        // top: '23%',
         left: 0, right: 0, bottom: 0,
-        top: WIDTH/3.8,
-        width: WIDTH +10, 
+        // top: 130,
+        top: WIDTH / 4,
+        width: WIDTH,
+        zIndex: 1,
+        minHeight: WIDTH/2
     },
     subContainer: {
-        minHeight: 200,
+        minHeight: 150,
         backgroundColor: '#fff',
         paddingTop: 10,
         marginHorizontal: 20,

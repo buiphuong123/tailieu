@@ -19,6 +19,8 @@ import { getListVocaRequest } from '../../../redux/actions/vocabulary.action';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {getPostRequest}  from '../../../redux/actions/post.action';
+import { getListUser } from '../../../redux/actions';
 
 const HomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
@@ -33,11 +35,26 @@ const HomeScreen = ({ navigation }) => {
     // const GrammarRequest = () => dispatch(getGrammarRequest(users._id, navigation));
     // const WordRequest = () => dispatch(getListWordRequest(users._id, navigation));
     useEffect(() => {
+        axios.get('http://192.168.1.72:3002/language/getListUser',{
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        } )
+        .then((response) => {
+            console.log(response.data.user);
+            dispatch(getListUser(response.data.user));
+        })
+        .catch(function (error) {
+            throw error;
+        })
+
         dispatch(getListNotifiRequest(users.username));
         dispatch(getListKanjiRequest(users._id, navigation));
         dispatch(getListWordRequest(users._id));
         dispatch(getListVocaRequest(users._id));
         dispatch(getGrammarRequest(users._id));
+        dispatch(getPostRequest(users._id));
            
         messaging().onMessage(async remoteMessage => {
             dispatch(getListNotifiRequest(users.username));
@@ -51,37 +68,32 @@ const HomeScreen = ({ navigation }) => {
             console.log('Message handled in the background!', remoteMessage);
         });
         toggleSwitchN5 = () => {
-            if(isN5 === 'unchecked') {
                 dispatch(RemoteN5('checked'));
                 dispatch(RemoteN4('unchecked'));
                 dispatch(RemoteN3('unchecked'));
                 dispatch(RemoteN2('unchecked'));
-            }
+            
         }
         toggleSwitchN4 = () => {
-            console.log('isN4 day la ', isN4);
-            if(isN4 === 'unchecked') {
                 dispatch(RemoteN5('unchecked'));
                 dispatch(RemoteN4('checked'));
                 dispatch(RemoteN3('unchecked'));
                 dispatch(RemoteN2('unchecked'));
-            }
+            
         }
         toggleSwitchN3 = () => {
-            if(isN3 === 'unchecked') {
                 dispatch(RemoteN5('unchecked'));
                 dispatch(RemoteN4('unchecked'));
                 dispatch(RemoteN3('checked'));
                 dispatch(RemoteN2('unchecked'));
-            }
+            
         }
         toggleSwitchN2 = () => {
-            if(isN2 === 'unchecked') {
                 dispatch(RemoteN5('unchecked'));
                 dispatch(RemoteN4('unchecked'));
                 dispatch(RemoteN3('unchecked'));
                 dispatch(RemoteN2('checked'));
-            }
+            
         }
 
         
@@ -90,7 +102,7 @@ const HomeScreen = ({ navigation }) => {
             .then(remoteMessage => {
                 if (remoteMessage) {
                     console.log('data chyten sang ben kia la ', remoteMessage.data);
-                    axios.post('http://192.168.1.2:3002/language/editReadNotifi', {
+                    axios.post('http://192.168.1.72:3002/language/editReadNotifi', {
                         "notification_id": remoteMessage.data.notification_id,
                     }, {
                         headers: {
@@ -123,8 +135,7 @@ const HomeScreen = ({ navigation }) => {
         }
         else if(isN2=== 'checked') {
             level =2;
-        }
-        console.log('GRAMMAR LIST LA ', grammarList);   
+        } 
         // dispatch(getListKanjiRequest(users._id, level, navigation));
         dispatch(getListGrammarLevel(grammarList.filter((e)=>e.level === level)));
         navigation.navigate("HomeGrammar");

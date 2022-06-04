@@ -32,7 +32,7 @@ export default ListWord = ({ navigation, lession }) => {
         setData([...data]);
         dispatch(getListKanjiLevel(data));
 
-        axios.post('http://192.168.1.2:3002/language/createMemKanji', {
+        axios.post('http://192.168.1.72:3002/language/createMemKanji', {
             "userId": userId,
             "kanjiId": kanjiId
         }, {
@@ -60,7 +60,7 @@ export default ListWord = ({ navigation, lession }) => {
         setData([...data]);
         dispatch(getListKanjiLevel(data));
 
-        axios.post('http://192.168.1.2:3002/language/createLikeKanji', {
+        axios.post('http://192.168.1.72:3002/language/createLikeKanji', {
             "userId": userId,
             "kanjiId": kanjiId
         }, {

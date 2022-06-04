@@ -2,6 +2,7 @@ import * as types from './../constants/action-types';
 import { showToastSuccess, showToastError } from '../../helpers/toastHelper';
 const initState = { 
     user: {},
+    listUser: [],
  }
 const userReducer = (state = initState, action) => {
     switch (action.type) {
@@ -78,6 +79,12 @@ const userReducer = (state = initState, action) => {
             return {
                 ...state,
                 isEnd: false,
+            }
+        }
+        case types.LIST_USER: {
+            return {
+                ...state,
+                listUser: action.listUser
             }
         }
         
