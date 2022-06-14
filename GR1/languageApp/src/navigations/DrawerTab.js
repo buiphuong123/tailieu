@@ -25,6 +25,13 @@ import VocabularyScreen from "../screens/tab/home/VocabularyScreen";
 import ListWordVocabulary from "../screens/tab/home/ListWordVocabulary";
 import MoveVocabulary from "../screens/tab/home/MoveVocabulary";
 import EditPost from "../screens/tab/contact/EditPost";
+import AssetsComment from "../screens/tab/manage/AssetsComment";
+import AssetsPost from "../screens/tab/manage/AssetsPost";
+import ShareAll from "../screens/tab/home/word/ShareAll"; 
+import ErrorScreen from "../screens/tab/contact/ErrorScreen";
+import MemberScreen from "../screens/tab/manage/MemberScreen";
+import WordLevel from "../screens/tab/home/word/WordLevel";
+import ListAllWordLevel from "../screens/tab/home/word/ListAllWordLevel";
 const Drawer = createDrawerNavigator();
 
 const DrawerTab = () => {
@@ -54,6 +61,13 @@ const DrawerTab = () => {
             <Drawer.Screen name="ListWordVocabulary" component={ListWordVocabulary} />
             <Drawer.Screen name="MoveVocabulary" component={MoveVocabulary} />
             <Drawer.Screen name="EditPost" component={EditPost} />
+            <Drawer.Screen name="AssetsComment" component={AssetsComment} />
+            <Drawer.Screen name="AssetsPost" component={AssetsPost} />
+            <Drawer.Screen name="ShareAll" component={ShareAll} />
+            <Drawer.Screen name="ErrorScreen" component={ErrorScreen} />
+            <Drawer.Screen name="MemberScreen" component={MemberScreen} />
+            <Drawer.Screen name="WordLevel" component={WordLevel} />
+            <Drawer.Screen name="ListAllWordLevel" component={ListAllWordLevel} />
 
         </Drawer.Navigator> 
     )

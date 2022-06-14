@@ -19,8 +19,7 @@ const HEIGHT = Dimensions.get('window').height;
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getListVocaSuccess } from '../../../../redux/actions/vocabulary.action';
 import Modal from 'react-native-modal'; // 2.4.0
-import { cps } from 'redux-saga/effects';
-import { element } from 'prop-types';
+
 
 export default WordScreenDetail = ({ navigation, route }) => {
     const [isVisible, setisVisible] = useState(false);
@@ -28,7 +27,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
     const [isVisibleAdd, setisVisibleAdd] = useState(false);
     const { vocabulary } = route.params;
     const commentWordList = useSelector(state => state.commentReducer.commentWordList);
-    const [dataWordComment, setDataWordComment] = useState([]);
+    const [dataWordComment, setDataWordComment] = useState(commentWordList.filter(e => e.review === 1));
     const [comment, setComment] = useState("");
     const [name, setName] = useState("");
     const [isVisibleAddWord, setisVisibleAddWord] = useState(false);
@@ -36,11 +35,15 @@ export default WordScreenDetail = ({ navigation, route }) => {
     const colorBack = ["#0000b3", "#005ce6", "#ff9900", "#00b300", "#e67300"];
     const vocabularyList = useSelector(state => state.vocabularyReducer.vocabularyList);
     const [dataList, setDataList] = useState(vocabularyList);
-
+    const [isVisibleAction, setisVisibleAction] = useState(false);
+    const isManage = useSelector(state => state.manageReducer.isManage);
+    const [isdelete, setisdelete] = useState(false);
     const users = useSelector(state => state.userReducer.user);
     var last = new Date(); // ngày hiện tại
     useEffect(() => {
-        setDataWordComment(commentWordList);
+
+        setDataWordComment(commentWordList.filter(e => e.review === 1).map(e => ({ ...e, checked: false })));
+
     }, [commentWordList])
     useEffect(() => {
         setDataList(vocabularyList);
@@ -49,9 +52,10 @@ export default WordScreenDetail = ({ navigation, route }) => {
         return (val < 10 ? '0' : '') + val;
     }
     const date = new Date();
-    const likeaction = (comment_id, user_id, username_friends) => {
+    const likeaction = (comment_id, userlist) => {
         var index = 0;
         var checkdislike = false;
+        const list = [];
         const idx = dataWordComment.map(object => object._id).indexOf(comment_id);
         console.log('gia tri idx la ', idx);
         if (idx >= 0) {
@@ -77,18 +81,34 @@ export default WordScreenDetail = ({ navigation, route }) => {
                 }
             }
         }
-        if (username_friends === users.username) {
+        if (userlist.username === users.username) {
             index = 1;
         }
 
         if (index === 0) {
-            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
-                "username": users.username,
-                "username_friends": username_friends,
-                "action": "like",
+            list.push(comment_id);
+            axios.post('http://192.168.1.72:3002/language/createLikeWordComment', {
                 "comment_id": comment_id,
-                "word": vocabulary,
-                "noti": "word",
+                "user_id_like": users._id,
+                "checkStatus": checkdislike
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDeviceAsset', {
+                "list_user": list,
+                "action": "like",
+                "noti": "comment",
+                "type": "word",
+                "username": users.username
             }, {
                 headers: {
                     "Accept": "application/json",
@@ -102,27 +122,14 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        axios.post('http://192.168.1.72:3002/language/createLikeWordComment', {
-            "comment_id": comment_id,
-            "user_id_like": user_id,
-            "checkStatus": checkdislike
-        }, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch(function (error) {
-                throw error;
-            })
+       
     }
 
-    const dislikeaction = (comment_id, user_id, username_friends) => {
+    const dislikeaction = (comment_id, userlist) => {
+        console.log('vao dislike action', userlist.username);
         var index = 0;
         var checkdislike = false;
+        const list = [];
         const idx = dataWordComment.map(object => object._id).indexOf(comment_id);
         if (idx >= 0) {
             if (dataWordComment[idx].isdislike === true) {
@@ -147,18 +154,57 @@ export default WordScreenDetail = ({ navigation, route }) => {
                 }
             }
         }
-        if (username_friends === users.username) {
+        if (userlist.username === users.username) {
             index = 1;
         }
 
         if (index === 0) {
-            axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
-                "username": users.username,
-                "username_friends": username_friends,
-                "action": "like",
+            // axios.post('http://192.168.1.72:3002/language/sendNotiToDevice', {
+            //     "username": users.username,
+            //     "username_friends": username_friends,
+            //     "action": "like",
+            //     "comment_id": comment_id,
+            //     "word": vocabulary,
+            //     "noti": "word",
+            // }, {
+            //     headers: {
+            //         "Accept": "application/json",
+            //         "Content-Type": "application/json"
+            //     }
+            // })
+            //     .then((response) => {
+            //         console.log(response.data);
+            //     })
+            //     .catch(function (error) {
+            //         throw error;
+            //     })
+            list.push(comment_id);
+
+
+            axios.post('http://192.168.1.72:3002/language/createDisLikeWordComment', {
                 "comment_id": comment_id,
-                "word": vocabulary,
-                "noti": "word",
+                "user_id_dislike": users._id,
+                "checkStatus": checkdislike
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
+
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDeviceAsset', {
+                "list_user": list,
+                "action": "dislike",
+                "noti": "comment",
+                "type": "word",
+                "username": users.username
+
             }, {
                 headers: {
                     "Accept": "application/json",
@@ -172,33 +218,22 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        axios.post('http://192.168.1.72:3002/language/createDisLikeWordComment', {
-            "comment_id": comment_id,
-            "user_id_dislike": user_id,
-            "checkStatus": checkdislike
-        }, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch(function (error) {
-                throw error;
-            })
     }
 
     const sendWordComment = (word_id) => {
-        //  console.log()
         if (comment.length === 0 || comment === '') {
             return;
+        }
+        var requ = 2;
+
+        if (isManage === false || users.role===1 || users.role===2) {
+            requ = 1;
         }
         axios.post('http://192.168.1.72:3002/language/createWordComment', {
             "word_id": word_id,
             "user_id": users._id,
-            "content": comment
+            "content": comment,
+            "requ": requ,
         }, {
             headers: {
                 "Accept": "application/json",
@@ -209,10 +244,9 @@ export default WordScreenDetail = ({ navigation, route }) => {
                 // console.log('gia tri nhan duowcj la', response.data.comment);
                 const newComment = response.data.comment;
                 const kaka = { _id: newComment._id, word_id: newComment.word_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: users.username };
-                setDataWordComment(dataWordComment.concat(kaka));
+                setDataWordComment([...dataWordComment.concat(kaka)]);
             })
         setComment('');
-        console.log(dataWordComment);
     }
     const time = (dt) => {
         const result = (last.getTime() - dt.getTime()) / 1000;
@@ -282,39 +316,159 @@ export default WordScreenDetail = ({ navigation, route }) => {
         }
         return arr.toString();
     }
+
+    const refuseComment = (item) => {
+        const list = [];
+        const objIndex = dataWordComment.findIndex(e => e._id === item._id);
+        if (objIndex !== -1) {
+            list.push(item._id);
+            dataWordComment[objIndex].review = 0;
+            setDataWordComment([...dataWordComment]);
+            axios.post('http://192.168.1.72:3002/language/refuseComment', {
+                "list": list,
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
+        }
+        else {
+            return;
+        }
+    }
+    const deletecomment =(item)=> {
+        const objindex = dataWordComment.findIndex(e => e._id === item._id);
+        console.log(objindex);
+        if(dataWordComment[objindex].checked === false) {
+            dataWordComment[objindex].checked = true;
+        }
+        else  {
+            dataWordComment[objindex].checked = false;
+        }
+        setDataWordComment([...dataWordComment]);
+        // setDataWordComment(dataWordComment.map(p => {
+        //     if (p._id === item._id) {
+        //         return { ...p, checked: !item.checked}
+        //     }
+        //     return p;
+        // }))
+    }
     const renderComment = ({ item, index }) => {
         var dt = new Date(item.time);
         return (
-            <View style={{ marginTop: 10, borderBottomWidth: 1, borderBottomColor: '#d9d9d9' }}>
-                <Text>{item.content}</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 15, paddingBottom: 8 }}>
+            <View key={index}>
+                <View style={{ zIndex: 0, marginTop: 10, borderBottomWidth: 1, borderBottomColor: '#d9d9d9', backgroundColor: item.review === 2 ? '#f2f2f2' : 'white', padding: item.review === 2 ? 5 : 0 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            {/* <Text>like</Text> */}
-                            <AntDesign
-                                onPress={() => likeaction(item._id, users._id, item.user_id.username)}
-                                name="like1"
-                                color={item.islike ? 'blue' : '#d9d9d9'}
-                                size={17}
-                            />
-                            <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.like}</Text>
+                        <Text>{item.content}</Text>
+                        {
+                            users.role === 1 || users.role === 2?
+                            // bấm vào đây 
+                                <TouchableOpacity style={{}} onPress={() => deletecomment(item)
+                                   }>
+                                    <Entypo name={'dots-three-vertical'} size={20} />
+                                </TouchableOpacity>
+
+
+                                : null
+                        }
+                    </View>
+                    {/* <View style={{flexDirection: 'row', backgroundColor: '#f2f2f2', padidng: 10, justifyContent: 'flex-end', }}>
+                    <Text>xoa binh luan</Text>
+                </View> */}
+                    {item.review === 1 ?
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 15, paddingBottom: 8 }}>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    {/* <Text>like</Text> */}
+                                    <AntDesign
+                                        onPress={() => likeaction(item._id, item.user_id)}
+                                        name="like1"
+                                        color={item.islike ? 'blue' : '#d9d9d9'}
+                                        size={17}
+                                    />
+                                    <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.like}</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 15 }}>
+                                    <AntDesign
+                                        onPress={() => dislikeaction(item._id, item.user_id)}
+                                        name="dislike1"
+                                        color={item.isdislike ? 'blue' : '#d9d9d9'}
+                                        size={17}
+                                    />
+                                    <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.dislike} </Text>
+                                </View>
+
+                            </View>
+
+
+                            <View style={{ marginLeft: 20 }}>
+                                {/* <Text>name</Text> */}
+                                <Text>{item.user_id.username === undefined ? item.username : item.user_id.username} ({time(dt)})</Text>
+                            </View>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 15 }}>
-                            <AntDesign
-                                onPress={() => dislikeaction(item._id, users._id, item.user_id.username)}
-                                name="dislike1"
-                                color={item.isdislike ? 'blue' : '#d9d9d9'}
-                                size={17}
-                            />
-                            <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.dislike} </Text>
+                        :
+                        <View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#e6e6e6' }}>
+                                <View style={{ flexDirection: 'row', paddingTop: 15, paddingBottom: 8 }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                        {/* <Text>like</Text> */}
+                                        <AntDesign
+                                            // onPress={() => likeaction(item._id, users._id, item.user_id.username)}
+                                            name="like1"
+                                            color={item.islike ? 'blue' : '#d9d9d9'}
+                                            size={17}
+                                        />
+                                        <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.like}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginLeft: 15 }}>
+                                        <AntDesign
+                                            // onPress={() => dislikeaction(item._id, users._id, item.user_id.username)}
+                                            name="dislike1"
+                                            color={item.isdislike ? 'blue' : '#d9d9d9'}
+                                            size={17}
+                                        />
+                                        <Text style={{ marginLeft: 5, marginTop: -2 }}>{item.dislike} </Text>
+                                    </View>
+                                </View>
+                                <View style={{ marginLeft: 20, flexDirection: 'row', justifyContent: 'flex-end', paddingTop: 15 }}>
+                                    {/* <Text>name</Text> */}
+                                    <Text>{item.user_id.username === undefined ? item.username : item.user_id.username} ({time(dt)})</Text>
+                                </View>
+
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 8 }}>
+                                <View style={{ fontSize: 16, width: '50%' }}>
+                                    <Text>Cảm ơn bạn đã kiên nhẫn</Text>
+                                    <Text>Quản trị viên xét duyệt xong thì bài viết của bạn mới hiển thị trong nhóm</Text>
+                                </View>
+                                <View style={{ width: '50%', alignItems: 'center', justifyContent: 'center' }}>
+                                    <TouchableOpacity style={{ backgroundColor: '#e6f0ff', height: 30, minWidth: 60, paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5, justifyContent: 'center', alignContent: 'center' }}>
+                                        <Text style={{ color: '#3333ff' }}>Quản lý bài viết</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
 
-                    </View>
-                    <View style={{ marginLeft: 20 }}>
-                        {/* <Text>name</Text> */}
-                        <Text>{item.user_id.username === undefined ? item.username : item.user_id.username} ({time(dt)})</Text>
-                    </View>
+                    }
                 </View>
+                {
+                    // hien model day
+                    item.checked === true ?
+                        <TouchableOpacity 
+                        onPress={() => refuseComment(item)}
+                        style={{position: 'absolute', zIndex: 1, alignItems: 'center', justifyContent: 'center', padding: 10, width: '40%', top: 10, right: 15, backgroundColor: '#f2f2f2' }}>
+                            <Text>Delete</Text>
+                        </TouchableOpacity>
+                    : null
+                }
             </View>
         )
     }
@@ -347,7 +501,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
         )
     }
 
- 
+
     const AddWordInVocu = (element) => {
         const objIndex = dataList.findIndex(e => e._id === element._id);
         if (objIndex !== -1) {
@@ -363,26 +517,26 @@ export default WordScreenDetail = ({ navigation, route }) => {
             getListVocaSuccess([...dataList]);
             setisVisibleAddWord(false);
             axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
-            "id": element._id,
-            "word": vocabulary.word,
-            "vn": vocabulary.vn,
-            "translate": vocabulary.translate,
-            "type": "Từ vựng",
-            "date": last,
-            "explain": vocabulary,
+                "id": element._id,
+                "word": vocabulary.word,
+                "vn": vocabulary.vn,
+                "translate": vocabulary.translate,
+                "type": "Từ vựng",
+                "date": last,
+                "explain": vocabulary,
 
-        }, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-            .then((response) => {
-                console.log(response.data);
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
             })
-            .catch(function (error) {
-                throw error;
-            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
         }
     }
 
@@ -447,7 +601,23 @@ export default WordScreenDetail = ({ navigation, route }) => {
 
     return (
         <View style={{ flexGrow: 1, flex: 1 }}>
-            <CustomHeader title={vocabulary.word} navigation={navigation} />
+            {/* <CustomHeader title={vocabulary.word} navigation={navigation} /> */}
+            <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-between' }}>
+                <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.goBack()}>
+                    <Icon name={'arrow-back'} size={29} style={{ color: '#fff', marginLeft: 5 }} />
+                </TouchableOpacity>
+                <View style={{ justifyContent: 'center' }}>
+                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 18 }}>{vocabulary.word}</Text>
+                </View>
+                {
+                    users.role === 1 ?
+                        <TouchableOpacity style={{ justifyContent: 'center', marginRight: 10 }} onPress={() => setisVisibleAction(true)}>
+                            <Entypo name={'dots-three-vertical'} size={20} style={{ color: '#fff' }} />
+                        </TouchableOpacity>
+                        :
+                        <View />
+                }
+            </View>
             <ScrollView>
                 <View style={{ marginTop: 20, marginLeft: 15 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -485,7 +655,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                         />
                         {/* : null} */}
                         {
-                            vocabulary.kind.length !== 0 ?
+                            vocabulary.kind !== undefined && vocabulary.kind.length !== 0 ?
                                 vocabulary.kind.map((element, key) => {
                                     return (
                                         <View style={{ marginTop: 5 }}>
@@ -499,14 +669,16 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     </View>
 
                     {
-                        vocabulary.means.map((element, key) => {
-                            return (
-                                <View key={key} style={{ marginTop: 15, flexDirection: 'row' }}>
-                                    <Text style={{ fontSize: 20, color: 'blue', marginTop: -10 }}>.</Text>
-                                    <Text style={{ color: 'blue', marginLeft: 3 }}>{element}</Text>
-                                </View>
-                            )
-                        })
+                        vocabulary.means !== undefined ?
+                            vocabulary.means.map((element, key) => {
+                                return (
+                                    <View key={key} style={{ marginTop: 15, flexDirection: 'row' }}>
+                                        <Text style={{ fontSize: 20, color: 'blue', marginTop: -10 }}>.</Text>
+                                        <Text style={{ color: 'blue', marginLeft: 3 }}>{element}</Text>
+                                    </View>
+                                )
+                            })
+                            : null
                     }
                     {/* <View style={{ marginTop: 15, flexDirection: 'row' }}>
                         <Text style={{fontSize: 20, color: 'blue'}}>.</Text>
@@ -514,6 +686,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     </View> */}
 
                     <View style={{ marginTop: 15, marginBottom: 10 }}>
+                        <Text>Ví dụ: </Text>
                         {/* <Text style={{ color: 'red', fontSize: 18 }}>Ví dụtieengs nhaatj </Text>
                         <Text style={{ fontStyle: 'italic', color: 'gray' }}>nghia</Text> */}
                         <FlatList
@@ -539,7 +712,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                     <View>
                         <FlatList
                             style={{ padding: 5 }}
-                            data={dataWordComment.slice(0, 3)}
+                            data={dataWordComment.filter(e=>e.review===1 || e.review ===2).slice(0, 3)}
                             keyExtractor={item => item._id}
                             renderItem={renderComment}
                         />
@@ -582,7 +755,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
                         <ScrollView>
                             <FlatList
                                 style={{ padding: 5 }}
-                                data={dataWordComment.slice(3, dataWordComment.length)}
+                                data={dataWordComment.filter(e=>e.review===1|| e.review===2).slice(3, dataWordComment.length)}
                                 keyExtractor={item => item._id}
                                 renderItem={renderComment}
                             />
@@ -611,18 +784,20 @@ export default WordScreenDetail = ({ navigation, route }) => {
                         <ScrollView>
                             <View>
                                 {
-                                    vocabulary.images.map((element, key) => {
-                                        return (
-                                            <View key={key} style={{ borderWidth: 1 }}>
-                                                <Image
-                                                    style={{ width: '100%', minHeight: 200 }}
-                                                    source={{
-                                                        uri: element,
-                                                    }}
-                                                />
-                                            </View>
-                                        )
-                                    })
+                                    vocabulary.images !== undefined ?
+                                        vocabulary.images.map((element, key) => {
+                                            return (
+                                                <View key={key} style={{ borderWidth: 1 }}>
+                                                    <Image
+                                                        style={{ width: '100%', minHeight: 200 }}
+                                                        source={{
+                                                            uri: element,
+                                                        }}
+                                                    />
+                                                </View>
+                                            )
+                                        })
+                                        : null
                                 }
                             </View>
                         </ScrollView>
@@ -752,6 +927,39 @@ export default WordScreenDetail = ({ navigation, route }) => {
 
                     </View>
                 </Modal>
+            </View>
+            {/* modal action */}
+            <View style={styles.container}>
+                <Modal
+                    isVisible={isVisibleAction}
+                    swipeDirection="down"
+                    style={{ justifyContent: 'flex-end', margin: 0, }}
+                    // onRequestClose={() => setisVisibleAction(false)}
+                    deviceWidth={WIDTH}
+                >
+                    <View style={[styles.modalContent, { marginLeft: 10, marginRight: 10 }]}>
+
+                        <TouchableOpacity
+                            onPress={() => deleteAction(vocabulary)}
+                            style={{ borderBottomWidth: 1, padding: 10, justifyContent: 'center', alignItems: 'center', borderBottomColor: '#e6e6e6' }}>
+                            <Text style={{ color: 'red' }}>Xóa</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate("EditWord", { vocabulary: vocabulary })}
+                            style={{ borderBottomWidth: 1, padding: 10, justifyContent: 'center', alignItems: 'center', borderBottomColor: '#e6e6e6' }}>
+                            <Text style={{ color: 'blue' }}>Chỉnh sửa</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => setisVisibleAction(false)}
+                        style={{ backgroundColor: '#fff', marginTop: 10, marginLeft: 10, marginRight: 10, marginBottom: 10, padding: 10, alignItems: 'center', justifyContent: 'center' }}
+                    >
+                        <Text style={{ color: 'blue' }}>Huỷ</Text>
+                    </TouchableOpacity>
+
+                </Modal>
+
             </View>
         </View>
     )

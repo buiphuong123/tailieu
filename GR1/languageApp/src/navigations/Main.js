@@ -7,6 +7,7 @@ import SetStack from '../screens/tab/setting/setstack/SetStack';
 import ContactStack from '../screens/tab/contact/ContactStack';
 import NotificationStack from '../screens/tab/notification/NotificationStack';
 import { useSelector, useDispatch } from 'react-redux';
+import ManageStack from '../screens/tab/manage/ManageStack';
 
 const Tab = createBottomTabNavigator();
 const getTabBarVisible = (route) => {
@@ -32,7 +33,7 @@ const getTabBarVisible = (route) => {
                             iconName = focused ? 'settings-outline' : 'settings-outline';
                         }else if (route.name === 'Contact') {
                             iconName = focused ? 'people' : 'people';
-                        }else if (route.name === 'JLPT') {
+                        }else if (route.name === 'Manage') {
                             iconName = focused ? 'md-bookmarks-sharp' : 'md-bookmarks-sharp';
                         }
                         else if (route.name === 'Notification') {
@@ -53,8 +54,8 @@ const getTabBarVisible = (route) => {
                 />
 
                 <Tab.Screen 
-                    name="JLPT" 
-                    component={ContactStack} 
+                    name="Manage" 
+                    component={ManageStack} 
                 />
 
                <Tab.Screen 

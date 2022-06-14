@@ -43,7 +43,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
     const [value, setValue] = useState("Từ vựng");
     const wordoptions = ["Từ vựng", "Hán tự", "Ngữ pháp"];
     const [note, setNote] = useState("");
-    const { listdata, status } = route.params;
+    const { listdata } = route.params;
     const [word, setWord] = useState({});
     const [newEdit, setNewEdit] = useState("");
     const dateCreate = new Date();
@@ -55,7 +55,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
     const [isVisibleEdit, setisVisibleEdit] = useState(false);
     const [searching, setSearching] = useState(false);
     const [filtered, setFiltered] = useState(wordList)
-    const [isVisibleAdd, setisVisibleAdd] = useState(status);
+    const [isVisibleAdd, setisVisibleAdd] = useState(false);
     const [isVisibleShare, setisVisibleShare] = useState(false);
     const [textInput, setTextInput] = useState(textVocabulary);
     const [inputUser, setInputUser] = useState("");
@@ -78,6 +78,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             setisVisibleAdd(false);
+            setisVisibleShare(false);
             //   setWord(listdata);
             console.log('focus lai man hinh nha');
             //Put your Data loading function here instead of my loadData()
@@ -199,7 +200,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
         d.type = value;
         d.note = note;
         word.data.push(d);
-        setWord({...word});
+        setWord({ ...word });
         axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
             "id": word._id,
             "word": wordD,
@@ -231,6 +232,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
         return (val < 10 ? '0' : '') + val;
     }
     const addVocu = () => {
+        setSearching(false);
         setisVisibleAdd(true);
         dispatch(RemoteTextVocabulary(""));
     }
@@ -276,7 +278,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
                         }
                         else {
                             word.data.splice(objectIndex, 1);
-                            setWord({...word} );
+                            setWord({ ...word });
                             axios.post('http://192.168.1.72:3002/language/deleteWordInVoca', {
                                 "id": word._id,
                                 "word": element.word
@@ -382,12 +384,12 @@ const ListWordVocabulary = ({ navigation, route }) => {
     }
 
     const toggleSwitchSort1 = () => {
-        if(sort1 === 'unchecked'){
-            word.data.sort(function sortComparer(a,b){
+        if (sort1 === 'unchecked') {
+            word.data.sort(function sortComparer(a, b) {
                 return a.vn.localeCompare(b.vn)
             });
             console.log('DATA KHI SORT LA', word.data);
-            setWord({...word});
+            setWord({ ...word });
             setSort1('checked');
             setSort2('unchecked');
             setSort3('unchecked');
@@ -395,12 +397,12 @@ const ListWordVocabulary = ({ navigation, route }) => {
         }
     }
     const toggleSwitchSort2 = () => {
-        if(sort2 === 'unchecked'){
-            word.data.sort(function(a,b){
+        if (sort2 === 'unchecked') {
+            word.data.sort(function (a, b) {
                 return new Date(b.date) - new Date(a.date);
-              })
-              console.log('DATA KHI SORT LA', word.data);
-              setWord({...word});
+            })
+            console.log('DATA KHI SORT LA', word.data);
+            setWord({ ...word });
             setSort1('unchecked');
             setSort2('checked');
             setSort3('unchecked');
@@ -408,11 +410,11 @@ const ListWordVocabulary = ({ navigation, route }) => {
         }
     }
     const toggleSwitchSort3 = () => {
-        if(sort3 === 'unchecked'){
-            word.data.sort(function(a,b){
+        if (sort3 === 'unchecked') {
+            word.data.sort(function (a, b) {
                 return new Date(a.date) - new Date(b.date);
-              })
-              setWord({...word});
+            })
+            setWord({ ...word });
             setSort1('unchecked');
             setSort2('unchecked');
             setSort3('checked');
@@ -420,11 +422,11 @@ const ListWordVocabulary = ({ navigation, route }) => {
         }
     }
     const toggleSwitchSort4 = () => {
-        if(sort4 === 'unchecked'){
-            word.data.sort(function sortComparer(a,b){
+        if (sort4 === 'unchecked') {
+            word.data.sort(function sortComparer(a, b) {
                 return b.vn.localeCompare(a.vn)
             });
-            setWord({...word});
+            setWord({ ...word });
             setSort1('unchecked');
             setSort2('unchecked');
             setSort3('unchecked');
@@ -433,7 +435,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
     }
 
     const toggleSwitchSortAll = () => {
-        if(sortAll === 'unchecked'){
+        if (sortAll === 'unchecked') {
             setSortAll('checked');
             setSortWord('unchecked');
             setSortGrammar('unchecked');
@@ -441,7 +443,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
         }
     }
     const toggleSwitchSortWord = () => {
-        if(sortword === 'unchecked'){
+        if (sortword === 'unchecked') {
             // const dataa = word.data.filter(e => e.type === "Từ vựng");
             // setWordCenter([...dataa]);
             setSortAll('unchecked');
@@ -452,7 +454,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
     }
     const toggleSwitchSortGrammar = () => {
         // // setWord(listdata);
-        if(sortgrammar === 'unchecked'){
+        if (sortgrammar === 'unchecked') {
             // const dataa = word.data.filter(e => e.type === "Ngữ pháp");
             // setWordCenter([...dataa]);
             setSortAll('unchecked');
@@ -463,7 +465,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
     }
     const toggleSwitchSortKanji = () => {
         // // setWord(listdata);
-        if(sortkanji === 'unchecked'){
+        if (sortkanji === 'unchecked') {
             // const dataa = wordCenter.data.filter(e => e.type === "Hán tự");
             // setWordCenter([...dataa]);
             setSortAll('unchecked');
@@ -472,6 +474,197 @@ const ListWordVocabulary = ({ navigation, route }) => {
             setSortKanji('checked');
         }
     }
+    const renderWord = ({ item }) => {
+        return (
+            <TouchableOpacity style={styles.itemView} onPress={() => searchData(item)}>
+                <Text style={styles.itemText}>{item.word}: {item.vn}</Text>
+            </TouchableOpacity>
+        )
+    }
+    const searchData = (item) => {
+        dispatch(RemoteTextVocabulary(item.word));
+         Alert.alert(
+             "Alert",
+             "Do you want to use "+item.word + "in the app's vocabulary?",
+             [
+                 {
+                     text: "No",
+                     // onPress: () => {
+                     //     // props.press();
+                     //     console.log("Cancel Pressed");
+                         
+                     //     dispatch(RemoteTextVocabulary(item.grammar.split("=>")[0]));
+                     // },
+                     onPress: () => setSearching(false),
+                     style: "cancel"
+ 
+                 },
+                 {
+                     text: "Yes", onPress: () => {
+                         var d= {};
+                         d.word = item.word;
+                         d.vn = item.vn;
+                         d.explain = item;
+                         d.type = "Từ vựng"
+                         word.data.push(d);
+                        //  navigation.goBack();
+                        setisVisibleAdd(false);
+                         // navigation.navigate("ListWordVocabulary", {navigation: navigation, listdata: dataVocu});
+                         axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                             "id": word._id,
+                             "word": item.word,
+                             "vn": item.vn,
+                             "type": "Từ vựng",
+                             "explain": item,
+                         }, {
+                             headers: {
+                                 "Accept": "application/json",
+                                 "Content-Type": "application/json"
+                             }
+                         })
+                             .then((response) => {
+                                 console.log(response.data);
+                             })
+                             .catch(function (error) {
+                                 throw error;
+                             })
+                         // navigation.navigate("ListWordVocabulary", {navigation: navigation, listdata: dataVocu, status: false});
+                     }
+                 },
+                 {
+                     text: "Xem từ vựng", onPress: () => {
+                         navigation.navigate("WordScreenDetail", {vocabulary: item});
+                     }
+                 }
+             ]
+         )
+     }
+     const renderGrammar = ({ item }) => {
+        return (
+            <TouchableOpacity style={styles.itemView} onPress={() => searchDataGRammar(item)}>
+                <Text style={styles.itemText}>{item.grammar}</Text>
+            </TouchableOpacity>
+        )
+    }
+    const searchDataGRammar = (item) => {
+        dispatch(RemoteTextVocabulary(item.grammar.split("=>")[0]));
+         Alert.alert(
+             "Alert",
+             "Do you want to use "+item.grammar+ "the app's vocabulary?",
+             [
+                 {
+                     text: "No",
+                     // onPress: () => {
+                     //     // props.press();
+                     //     console.log("Cancel Pressed");
+                         
+                     //     dispatch(RemoteTextVocabulary(item.grammar.split("=>")[0]));
+                     // },
+                     onPress: () => setSearching(false),
+                     style: "cancel"
+ 
+                 },
+                 {
+                     text: "Yes", onPress: () => {
+                         var d= {};
+                         d.word = item.grammar.split("=>")[0];
+                         d.vn = item.grammar.split("=>")[1];
+                         d.type="Ngữ pháp";
+                         d.explain = item;
+                         word.data.push(d);
+                         setisVisibleAdd(false);
+                         axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                             "id": word._id,
+                             "word": item.grammar.split("=>")[0],
+                             "vn": item.grammar.split("=>")[1],
+                             "type": "Ngữ pháp",
+                             "explain": item,
+                         }, {
+                             headers: {
+                                 "Accept": "application/json",
+                                 "Content-Type": "application/json"
+                             }
+                         })
+                             .then((response) => {
+                                 console.log(response.data);
+                             })
+                             .catch(function (error) {
+                                 throw error;
+                             })
+                         
+                     }
+                 },
+                 {
+                     text: "Xem ngữ pháp", onPress: () => {
+                         navigation.navigate("ExplainScreen", {word: item});
+                     }
+                 }
+             ]
+         )
+     }
+     const renderKanji = ({ item }) => {
+        return (
+            <TouchableOpacity style={styles.itemView} onPress={() => searchDataKanji(item)}>
+                <Text style={styles.itemText}>{item.kanji}: {item.mean}</Text>
+            </TouchableOpacity>
+        )
+    }
+    const searchDataKanji = (item) => {
+        dispatch(RemoteTextVocabulary(item.kanji));
+         Alert.alert(
+             "Alert",
+             "Do you want to use "+item.kanji + "in the app's vocabulary?",
+             [
+                 {
+                     text: "No",
+                     // onPress: () => {
+                     //     // props.press();
+                     //     console.log("Cancel Pressed");
+                         
+                     //     dispatch(RemoteTextVocabulary(item.grammar.split("=>")[0]));
+                     // },
+                     onPress: () => setSearching(false),
+                     style: "cancel"
+ 
+                 },
+                 {
+                     text: "Yes", onPress: () => {
+                         var d= {};
+                         d.word = item.kanji;
+                         d.vn = item.mean;
+                         d.type="Hán tự";
+                         d.explain = item;
+                         word.data.push(d);
+                         setisVisibleAdd(false);
+                         axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                             "id": word._id,
+                             "word": item.kanji,
+                             "vn": item.mean,
+                             "type": "Hán tự",
+                             "explain": item,
+                         }, {
+                             headers: {
+                                 "Accept": "application/json",
+                                 "Content-Type": "application/json"
+                             }
+                         })
+                             .then((response) => {
+                                 console.log(response.data);
+                             })
+                             .catch(function (error) {
+                                 throw error;
+                             })
+                        
+                     }
+                 },
+                 {
+                     text: "Xem kanji", onPress: () => {
+                         navigation.navigate("ExplainKanji", {navigation: navigation, kanjiword: item});
+                     }
+                 }
+             ]
+         )
+     }
 
     return (
         <View style={{ flex: 1 }}>
@@ -498,10 +691,10 @@ const ListWordVocabulary = ({ navigation, route }) => {
                                 <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={{ justifyContent: 'center', }} onPress={() => setisVisibleShare(true)}>
+                <TouchableOpacity style={{ justifyContent: 'center', }} onPress={() => {setisVisibleShare(true), setSearching(false)}}>
                                 <AntDesign name={"sharealt"} size={29} style={{ color: '#fff', marginLeft: 10 }} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ justifyContent: 'center', }} onPress={() =>  setisVisibleSetting(true)}>
+                            <TouchableOpacity style={{ justifyContent: 'center', }} onPress={() => setisVisibleSetting(true)}>
                                 <Feather name={"settings"} size={29} style={{ color: '#fff', marginLeft: 10 }} />
                             </TouchableOpacity>
                         </View>
@@ -526,43 +719,43 @@ const ListWordVocabulary = ({ navigation, route }) => {
             {word.data !== undefined && word.data.length !== 0 ?
                 <ScrollView style={{ margin: 10 }}>
                     {
-                        (sortword ==='checked' ? word.data.filter(e => e.type ==="Từ vựng"): 
-                        sortgrammar ==='checked'? word.data.filter(e => e.type ==="Ngữ pháp"): 
-                        sortkanji ==='checked'? word.data.filter(e => e.type ==="Hán tự")
-                        : word.data)
-                        .map((element, key) => {
-                            return (
-                                <TouchableOpacity key={key} style={{ borderBottomColor: '#cccccc', borderBottomWidth: 1, paddingBottom: 10, paddingTop: 10 }} onPress={() => explainWord(element)}>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <View>
-                                            <Text>{key + 1}. {element.word} [{element.translate}]</Text>
-                                            <Text style={{ marginTop: 5 }}>{element.vn}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                            <TouchableOpacity onPress={() => editVocaAction(element)}>
-                                                <AntDesign name={'edit'} size={20} style={{ color: 'black' }} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => deleteWordVocu(element)}>
-                                                <Iconss name={'delete-outline'} size={20} style={{ color: 'red' }} />
-                                            </TouchableOpacity>
+                        (sortword === 'checked' ? word.data.filter(e => e.type === "Từ vựng") :
+                            sortgrammar === 'checked' ? word.data.filter(e => e.type === "Ngữ pháp") :
+                                sortkanji === 'checked' ? word.data.filter(e => e.type === "Hán tự")
+                                    : word.data)
+                            .map((element, key) => {
+                                return (
+                                    <TouchableOpacity key={key} style={{ borderBottomColor: '#cccccc', borderBottomWidth: 1, paddingBottom: 10, paddingTop: 10 }} onPress={() => explainWord(element)}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <View>
+                                                <Text>{key + 1}. {element.word} [{element.translate}]</Text>
+                                                <Text style={{ marginTop: 5 }}>{element.vn}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                <TouchableOpacity onPress={() => editVocaAction(element)}>
+                                                    <AntDesign name={'edit'} size={20} style={{ color: 'black' }} />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => deleteWordVocu(element)}>
+                                                    <Iconss name={'delete-outline'} size={20} style={{ color: 'red' }} />
+                                                </TouchableOpacity>
 
-                                            <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => moveDiffVocu(element)}>
-                                                <MaterialIcons name={"drive-file-move"} size={20} style={{}} />
-                                            </TouchableOpacity>
+                                                <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => moveDiffVocu(element)}>
+                                                    <MaterialIcons name={"drive-file-move"} size={20} style={{}} />
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
-                                    </View>
-                                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                                        {
-                                            element.date !== undefined ?
-                                                <Text >{new Date(element.date).getFullYear() + '/' + fixDigit(new Date(element.date).getMonth()) + '/' + fixDigit(new Date(element.date).getDate())}</Text>
-                                                :
-                                                null
-                                        }
-                                    </View>
-                                </TouchableOpacity>
+                                        <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                                            {
+                                                element.date !== undefined ?
+                                                    <Text >{new Date(element.date).getFullYear() + '/' + fixDigit(new Date(element.date).getMonth()) + '/' + fixDigit(new Date(element.date).getDate())}</Text>
+                                                    :
+                                                    null
+                                            }
+                                        </View>
+                                    </TouchableOpacity>
 
-                            )
-                        })
+                                )
+                            })
                     }
                 </ScrollView>
                 :
@@ -607,33 +800,105 @@ const ListWordVocabulary = ({ navigation, route }) => {
                                 {/* <View> */}
                                 {
                                     searching && value === "Ngữ pháp" &&
-                                    <SearchDropDownGrammar
+                                    // <SearchDropDownGrammar
+                                    //     onPress={() => setSearching(false)}
+                                    //     dataGrammar={filtered}
+                                    //     navigation={navigation}
+                                    //     dataVocu={word}
+                                    // />
+                                    <TouchableOpacity
                                         onPress={() => setSearching(false)}
-                                        dataGrammar={filtered}
-                                        navigation={navigation}
-                                        dataVocu={word}
-                                    />
+                                        style={styles.containerDropdown}>
+
+                                        <View>
+                                            {
+                                                filtered.length ?
+                                                    <ScrollView>
+                                                        <FlatList
+                                                            // style={{}}
+                                                            style={styles.subContainer}
+                                                            data={filtered}
+                                                            keyExtractor={item => item.id}
+                                                            renderItem={renderGrammar}
+                                                        />
+                                                    </ScrollView>
+
+                                                    :
+                                                    <Text></Text>
+                                            }
+
+                                        </View>
+                                    </TouchableOpacity>
+
 
                                 }
                                 {
                                     searching && value === "Từ vựng" &&
-                                    <SearchDropDownWord
+                                    // <SearchDropDownWord
+                                    //     onPress={() => setSearching(false)}
+                                    //     dataGrammar={filtered}
+                                    //     navigation={navigation}
+                                    //     dataVocu={word}
+                                    // />
+
+                                    <TouchableOpacity
                                         onPress={() => setSearching(false)}
-                                        dataGrammar={filtered}
-                                        navigation={navigation}
-                                        dataVocu={word}
-                                    />
+                                        style={styles.containerDropdown}>
+
+                                        <View>
+                                            {
+                                                filtered.length ?
+                                                    <ScrollView>
+                                                        <FlatList
+                                                            // style={{}}
+                                                            style={styles.subContainer}
+                                                            data={filtered}
+                                                            keyExtractor={item => item.id}
+                                                            renderItem={renderWord}
+                                                        />
+                                                    </ScrollView>
+
+                                                    :
+                                                    <Text></Text>
+                                            }
+
+                                        </View>
+                                    </TouchableOpacity>
+
 
                                 }
 
                                 {
                                     searching && value === "Hán tự" &&
-                                    <SearchDropDownKanji
-                                        onPress={() => setSearching(false)}
-                                        dataGrammar={filtered}
-                                        navigation={navigation}
-                                        dataVocu={word}
-                                    />
+                                    // <SearchDropDownKanji
+                                    //     onPress={() => {setSearching(false), setisVisibleAdd(false)}}
+                                    //     dataGrammar={filtered}
+                                    //     navigation={navigation}
+                                    //     dataVocu={word}
+                                    // />
+                                    <TouchableOpacity
+                                    onPress={() => setSearching(false)}
+                                    style={styles.containerDropdown}>
+
+                                    <View>
+                                        {
+                                            filtered.length ?
+                                                <ScrollView>
+                                                    <FlatList
+                                                        // style={{}}
+                                                        style={styles.subContainer}
+                                                        data={filtered}
+                                                        keyExtractor={item => item.id}
+                                                        renderItem={renderKanji}
+                                                    />
+                                                </ScrollView>
+
+                                                :
+                                                <Text></Text>
+                                        }
+
+                                    </View>
+                                </TouchableOpacity>
 
                                 }
 
@@ -828,7 +1093,7 @@ const ListWordVocabulary = ({ navigation, route }) => {
                             {/* <AppText i18nKey={"word"} style={styles.label} /> */}
                             <Text style={{ marginTop: 5 }}>Thông báo cho những người này</Text>
                         </View>
-                        <TouchableOpacity style={{ marginLeft: 10 }}>
+                        <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => navigation.navigate("ShareAll", { navigation: navigation, datavocu: word })}>
                             <Text style={{ color: 'blue', fontStyle: "italic" }}>Chia sẻ với tất cả người dùng</Text>
                         </TouchableOpacity>
 
@@ -861,9 +1126,9 @@ const ListWordVocabulary = ({ navigation, route }) => {
                                 onPress={() => setisVisibleSetting(false)}
                                 style={{ marginTop: 5, marginRight: 10 }} />
                         </View>
-                        <View style={[styles.modalContent, {flexDirection: 'row'}]}>
-                            <View style={{width: '50%'}}>
-                                <Text style={{marginLeft: 5, marginTop: 5}}>Sắp xếp theo:</Text>
+                        <View style={[styles.modalContent, { flexDirection: 'row' }]}>
+                            <View style={{ width: '50%' }}>
+                                <Text style={{ marginLeft: 5, marginTop: 5 }}>Sắp xếp theo:</Text>
                                 <View>
                                     <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
                                         <RadioButton
@@ -896,8 +1161,8 @@ const ListWordVocabulary = ({ navigation, route }) => {
                                     </View>
                                 </View>
                             </View>
-                            <View style={{width: '50%'}}>
-                                <Text style={{marginTop: 5}}>Lọc: </Text>
+                            <View style={{ width: '50%' }}>
+                                <Text style={{ marginTop: 5 }}>Lọc: </Text>
                                 <View>
                                     <View style={{ flexDirection: 'row', paddingTop: 10, paddingBottom: 10 }}>
                                         <RadioButton

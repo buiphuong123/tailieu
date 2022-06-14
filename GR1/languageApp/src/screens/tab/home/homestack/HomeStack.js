@@ -18,6 +18,7 @@ import HomeGrammar from '../HomeGrammar';
 import WordLession from '../word/WordLession';
 import KanjiLession from '../kanji/KanjiLession';
 import KanjiScreen from '../kanji/KanjiScreen';
+import EditWord from '../word/EditWord';
 
 const Stack = createStackNavigator();
 
@@ -80,6 +81,10 @@ const HomeStack = () => {
             <Stack.Screen
                 name='KanjiScreen'
                 component={KanjiScreen}
+            />
+            <Stack.Screen
+                name='EditWord'
+                component={EditWord}
             />
 
             {/* <Stack.Screen

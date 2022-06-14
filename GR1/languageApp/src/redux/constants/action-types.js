@@ -136,3 +136,11 @@ export const GET_POST = 'GET_POST';
 export const GET_POST_SUCCESS = 'GET_POST_SUCCESS';
 
 export const WORD_VOCABULARY = 'WORD_VOCABULARY';
+
+//admin
+export const ALL_COMMENT_WORD = 'ALL_COMMENT_WORD';
+export const ALL_COMMENT_GRAMMAR = 'ALL_COMMENT_GRAMMAR';
+export const ALL_COMMENT_KANJI = 'ALL_COMMENT_KANJI';
+
+//manage
+export const IS_MANAGE = 'IS_MANAGE';

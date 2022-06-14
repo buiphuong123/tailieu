@@ -12,6 +12,7 @@ import kanjiReducer from "./kanjiReducer";
 import scheduleReducer from "./scheduleReducer";
 import vocabularyReducer from "./vocabularyReducer";
 import postReducer from "./postReducer";
+import manageReducer from "./manageReducer";
 
 const appReducers = combineReducers({
     userReducer,
@@ -26,7 +27,8 @@ const appReducers = combineReducers({
     kanjiReducer,
     scheduleReducer,
     vocabularyReducer,
-    postReducer
+    postReducer,
+    manageReducer
 });
 
 export default appReducers;

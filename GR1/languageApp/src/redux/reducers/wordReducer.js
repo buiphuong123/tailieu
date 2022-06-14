@@ -1,14 +1,14 @@
 import * as types from './../constants/action-types';
 var wordAc = {
     isWord: true, 
-    isAll: true,
+    isAll: 'checked',
     isHira: true,
     isKanji: false,
     isMean: true,
     isReverse: false,
-    isMemerize: false, 
-    isNotMemerize: false,
-    isLike: false,
+    isMemerize: 'unchecked', 
+    isNotMemerize: 'unchecked',
+    isLike: 'unchecked',
     wordList: [],
     wordlevel: [],
     //flashcard

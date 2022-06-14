@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from 'react'
-import { Text, View, SafeAreaView, KeyboardAvoidingView, ScrollView, FlatList, TouchableOpacity, Image, TouchableWithoutFeedback, Alert, StyleSheet, Dimensions, TextInput } from 'react-native'
+import { Text, View, Platform, TextInput, KeyboardAvoidingView, SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { actions, RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useTheme } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -7,58 +7,35 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { getListPostSuccess } from '../../../redux/actions/post.action';
+import { getListPostSuccess } from '../../../../redux/actions/post.action';
 
-const EditPost = ({navigation, route }) => {
-    const { item} = route.params;
-    const [titleSearch, setTitleSearch] = useState(item.title);
-    const [selectedChoose, setSelectedChoose] = useState(["Tất cả","Góc chia sẻ", "Học tiếng Nhật", "Du học Nhật Bản", "Việc làm tiếng Nhật", "Văn hóa Nhật Bản", "Tìm bạn học", "Khác"]);
-    const [chooseSelected, setChooseSelected] = useState(selectedChoose.findIndex(e => e === item.theme));
+const ShareAll = ({ navigation, route }) => {
     const richText = React.useRef();
-    const [contentHTML, setContentHTML] = useState(item.content);
-    const listPost = useSelector(state => state.postReducer.listPost);
-    const [dataP, setDataP] = useState(listPost);
     const [data, setData] = useState({ html: `` });
+    const [titleSearch, setTitleSearch] = useState("");
+    const [selectedChoose, setSelectedChoose] = useState(["Tất cả","Góc chia sẻ", "Học tiếng Nhật", "Du học Nhật Bản", "Việc làm tiếng Nhật", "Văn hóa Nhật Bản", "Tìm bạn học", "Khác"]);
+    const { datavocu } = route.params;
+    const users = useSelector(state => state.userReducer.user);
+    const listPost = useSelector(state => state.postReducer.listPost);
+    const [dataPost, setDataPost] = useState(listPost.filter(e=> e.review ===1));
+    const dispatch = useDispatch();
+    const vocabulary = useSelector(state => state.vocabularyReducer.vocabularyList);
+    const [dataListVocu, setdataListVocu] = useState(vocabulary);
     useEffect(() => {
-        setTitleSearch(item.title);
-        setChooseSelected(selectedChoose.findIndex(e => e === item.theme));
-        setContentHTML(item.content);
-    }, [item]);
-    useEffect(() => {
-        setDataP(listPost);
+        setDataPost(listPost.filter(e=> e.review ===1));
     }, [listPost]);
-    const onEditorInitialized = () => {
-        console.log('initalised');
-    }
-    // const [update, setUpdate] = useState(item.content);
-    
-    const handleChange = (html) => {
-        console.log(html);
-    }
+  
 
-    const editP = () => {
-        console.log('vao day roi nhe');
-        var time = new Date();
+    const sharePostAllUser = () => {
         setData({ ...data });
-        const objIndex = dataP.findIndex(e=> e._id === item._id);
-        if(dataP[objIndex].title === titleSearch && dataP[objIndex].content.html === data.html && dataP[objIndex].theme === selectedChoose[chooseSelected]) {
-            return;
-        }
-        else {
-            dataP[objIndex].title = titleSearch;
-            dataP[objIndex].content = data;
-            dataP[objIndex].theme = selectedChoose[chooseSelected];
-            dataP[objIndex].time = time
-            console.log('data day ne ', dataP);
-            setDataP([...dataP]);
-            getListPostSuccess(dataP);
-            navigation.goBack();
-            axios.post('http://192.168.1.72:3002/language/editPost', {
-            "id": item._id,
+        axios.post('http://192.168.1.72:3002/language/createPost', {
+            "userId": users,
             "title": titleSearch,
-            "theme": selectedChoose[chooseSelected],
+            "theme": selectedChoose[1],
             "content": data,
+            "dataVocuShare": datavocu._id,
 
         }, {
             headers: {
@@ -67,45 +44,66 @@ const EditPost = ({navigation, route }) => {
             }
         })
             .then((response) => {
-                console.log( response.data);
+                console.log('gia tri nhan duowcj la', response.data.newPost);
+                const kaka = response.data.newPost;
+                kaka.likeposts = [];
+                setDataPost(dataPost.concat(kaka));
+                dispatch(getListPostSuccess(dataPost.concat(kaka)));
+                const objectIndex = dataListVocu.findIndex(e =>e._id === datavocu._id);
+                if(objectIndex !== -1) {
+                    dataListVocu[objectIndex].share = {username: "all"};
+                    console.log('data list vocu ', dataListVocu);
+                    setdataListVocu([...dataListVocu]);
+                    navigation.goBack();
+                }
             })
-
-        }
     }
     return (
         <View style={{ flex: 1 }}>
+            {/* <Modal
+            isVisible={isVisible}
+            swipeDirection="down"
+            style={{ justifyContent: 'flex-end', margin: 0 }}
+            onRequestClose={() => setisVisible(false)}
+            deviceWidth={WIDTH}
+            deviceHeight={HEIGHT}
+        > */}
             <View>
-                <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', backgroundColor: '#009387', padding: 10, justifyContent: 'space-between' }}>
                     <AntDesign name={'close'} size={20} color={'#fff'}
                         onPress={() => navigation.goBack()}
-                        style={{ paddingTop: 15, paddingRight: 20, marginLeft: 10 }} />
-                    <TouchableOpacity style={{ justifyContent: 'center', marginRight: 20 }} onPress={() => editP()}>
-                        <Text style={{ fontSize: 20, color: '#fff' }}>Chỉnh sửa</Text>
+                        style={{}} />
+                    <TouchableOpacity style={{ marginRight: 20, }} onPress={() => sharePostAllUser()}>
+                        <Text style={{ color: '#fff', fontSize: 20 }}>Chia sẻ</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ backgroundColor: '#f2f2f2' }}>
                     <TextInput
                         style={{ marginLeft: 10, fontSize: 18, backgroundColor: '#fff', borderWidth: 1, borderColor: '#e6e6e6', margin: 10 }}
                         placeholder="Nhập tiêu đề bài viết"
-                        value={titleSearch}
-                        onChangeText={text => setTitleSearch(text)}
+                    value={titleSearch}
+                    onChangeText={text => setTitleSearch(text)}
                     />
 
                 </View>
-                <View style={{ padding: 10 }}>
+
+                <SafeAreaView style={{ padding: 10 }}>
                     <ScrollView>
                         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, minHeight: 200 }}>
-                            <Text>Description:</Text>
-                            <Text>{contentHTML.html}</Text>
+                            <View style={{flexDirection: 'row'}}>
+                                <Text>Bộ từ vựng: </Text>
+                                <TouchableOpacity style={{marginLeft: 5}} onPress={() => navigation.navigate("ListWordVocabulary", { navigation: navigation, listdata: datavocu })}>
+                                    <Text style={{color: 'blue', fontStyle: 'italic'}}> {datavocu.name}</Text>
+                                </TouchableOpacity>
+                            </View>
                             <RichEditor
                                 ref={richText}
-                                placeholder="Write your cool content here :)"
-                                androidHardwareAccelerationDisabled={true}
-                                initialContentHTML={contentHTML.html}
-                                initialFocus={true}
-                                editorInitializedCallback={() => onEditorInitialized()}
                                 onChange={descriptionText => {
+                                    // console.log("descriptionText:", descriptionText);
+                                    // setText(descriptionText);
                                     data.html = descriptionText;
+                                    console.log(data);
+                                    // console.log('data ne ', data);
                                     setData({ ...data });
                                 }}
                             />
@@ -113,6 +111,7 @@ const EditPost = ({navigation, route }) => {
 
                         </KeyboardAvoidingView>
                     </ScrollView>
+
                     <RichToolbar
                         editor={richText}
                         // onPressAddImage={insertImage}
@@ -159,7 +158,7 @@ const EditPost = ({navigation, route }) => {
 
                     />
 
-                </View>
+                </SafeAreaView>
 
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                     <Text style={{ textDecorationLine: 'underline' }}>Câu hỏi của bạn thuộc chủ để </Text>
@@ -167,8 +166,8 @@ const EditPost = ({navigation, route }) => {
                         {
                             selectedChoose.map((element, key) => {
                                 return (
-                                    <TouchableOpacity key={key} onPress={() => setChooseSelected(key)} style={{ width: '45%', alignItems: 'center', marginLeft: 5, marginTop: 5, justifyContent: 'center', padding: 10, backgroundColor: key === chooseSelected ? '#0000cc' : '#fff' }}>
-                                        <Text style={{ color: key === chooseSelected ? '#fff' : 'black' }}>{element}</Text>
+                                    <TouchableOpacity key={key} style={{ alignItems: 'center', margin: 10, justifyContent: 'center', padding: 10, backgroundColor: key === 1 ? '#0000cc' : '#fff' }}>
+                                        <Text style={{ color: key === 1 ? '#fff' : 'black' }}>{element}</Text>
                                     </TouchableOpacity>
                                 )
                             })
@@ -177,8 +176,34 @@ const EditPost = ({navigation, route }) => {
                 </View>
 
             </View>
+            {/* </Modal> */}
         </View>
+
+
     )
 }
 
-export default EditPost;
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F5FCFF',
+    },
+    nav: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginHorizontal: 5,
+    },
+    rich: {
+        minHeight: 300,
+        flex: 1
+    },
+    richBar: {
+        height: 50,
+        backgroundColor: '#F5FCFF'
+    },
+    scroll: {
+        backgroundColor: '#ffffff'
+    }
+});
+
+export default ShareAll;

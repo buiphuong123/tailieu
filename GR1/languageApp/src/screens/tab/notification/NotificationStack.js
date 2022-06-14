@@ -86,7 +86,16 @@ const NotificationStack = ({ navigation }) => {
              dispatch(getListNotifiRequest(users.username));
 
         }
-        navigation.navigate("ExplainScreen", {word: item.data});
+        // navigation.navigate("ExplainScreen", {word: item.data});
+        if(item.typeNoti === 'word') {
+            navigation.navigate("WordScreenDetail", { vocabulary: item.data });
+        }
+        else if(item.typeNoti === 'kanji') {
+            navigation.navigate("ExplainKanji", { navigation: navigation, kanjiword: item.data });
+        }
+        else {
+            navigation.navigate("ExplainScreen", { word: item.data });
+        }
     }
     const renderNotifi = ({ item, index }) => {
         var dt = new Date(item.time);

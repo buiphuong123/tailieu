@@ -9,30 +9,52 @@ import Modal from 'react-native-modal'; // 2.4.0
 import CustomHeader from '../../../CustomHeader';
 
 export default KanjiLession = ({navigation}) => {
-    const [dataSource] = useState(['tat ca', 'bai 1', 'bai 2', 'bai 3', 'bai 4', 'bai 5', 'bai 6', 'bai 7', 'bai 8', 'bai 9', 'bai 10'])
-    const [filtered, setFiltered] = useState(dataSource)
+    const [dataSource, setDataSource] = useState(['tất cả'])
     const [searching, setSearching] = useState(false)
     const [isVisible, setisVisible] = useState(false);
+    const kanjiList = useSelector(state => state.kanjiReducer.kanjiList);
     const kanjilevel = useSelector(state => state.kanjiReducer.kanjilevel);
-
+    const [filtered, setFiltered] = useState(kanjiList);
+    const [searchName, setSearchName] = useState("");
     const onSearch = (text) => {
+        setSearchName(text);
         if (text) {
             setSearching(true)
-            const temp = text.toLowerCase()
-
-            const tempList = kanjilevel.filter(item => {
-                if (item.kanji.match(temp) || item.mean.match(temp))
+            // const temp = text.toLowerCase()
+            const tempList = kanjiList.filter(item => {
+                if ( item.mean.match(text.toUpperCase())) {
                     return item
+                }
             })
             setFiltered(tempList)
         }
         else {
             setSearching(false)
-            setFiltered()
+            setFiltered(kanjiList)
         }
 
     }
+    useEffect(() => {
+        setSearching(false);
+        // console.log(wordlevel);
+        console.log(kanjilevel.filter(w => !w.lesson).map(w => w.lession))
+        const max = Math.max(...kanjilevel.map(w => w.lession ?? 1));
+        for (var i = 1; i <= max; i++) {
+            dataSource.push("bài " + i);
 
+        }
+        setDataSource([...dataSource]);
+        console.log(dataSource);
+    }, []);
+
+    useEffect(() => {
+        console.log('vao focus');
+        const unsubscribe = navigation.addListener('focus', () => {
+            setSearching(false);
+        });
+
+        return unsubscribe;
+    }, [navigation]);
     const renderLession = ({ item }) => {
         return (
             <View style={{ backgroundColor: '#fff', padding: 10 }}>
@@ -58,7 +80,8 @@ export default KanjiLession = ({navigation}) => {
                     style={styles.textInput}
                     placeholder="Search a grammar"
                     placeholderTextColor='#cccccc'
-                    onChangeText={onSearch}
+                    value={searchName}
+                    onChangeText={(text) => onSearch(text)}
 
                 />
             </View>
@@ -145,12 +168,66 @@ export default KanjiLession = ({navigation}) => {
                     navigation = {navigation}
                     />
             } */}
+             {
+                searching &&
+                    <ScrollView style={styles.itemSearch}>
+                        {
+                            filtered.length !== 0 ?
+                            filtered.map((element, key) => {
+                                return (
+                                    <TouchableOpacity key={key} style={styles.itemView} onPress={() =>  navigation.navigate("ExplainKanji", { navigation: navigation, kanjiword: element })}>
+                                    <Text style={styles.itemText}>{element.kanji} : {element.mean}</Text>
+                                </TouchableOpacity>
+                                )
+                            })
+                            :
+                            <View
+                                style={styles.noResultView}>
+                                <Text style={styles.noResultText}>No search items matched</Text>
+                            </View>
+                        }
+                    </ScrollView>
+                    
+               
+            }
         </View>
     )
 }
 
 
 const styles = StyleSheet.create({
+    itemSearch: {
+        position: 'absolute', zIndex: 1, top: 100,
+        width: WIDTH-40, left: 20 ,backgroundColor: '#fff',
+        minHeight: 100, maxHeight: 300
+    },
+    noResultView: {
+        alignSelf: 'center',
+        height: 100,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    noResultText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'red'
+    },
+    itemView: {
+        borderBottomColor: '#cccccc',
+        borderBottomWidth: 1,
+        backgroundColor: 'white',
+        height: 30,
+        width: WIDTH,
+        marginBottom: 10,
+        justifyContent: 'center',
+        borderRadius: 4,
+    },
+    itemText: {
+        color: 'black',
+        paddingHorizontal: 10,
+    },
     container: {
         //   justifyContent: 'center',
         //   alignItems: 'center',

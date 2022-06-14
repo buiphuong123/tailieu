@@ -18,22 +18,26 @@ const storeData = async (value) => {
 function* loginUs({ payload, props }) {
     const { username, password, notifiToken } = payload;
     yield put(showLoading());
-    const resp = yield call(login, {
-        username: username,
-        password: password,
-        notifiToken: notifiToken
-    });
-    const { data } = resp;
-    if (data.code == 1) {
-       storeData(data.user);
-        yield put(loginUserSuccess(data.user));
-        props.navigation.navigate("Drawer");
+    try {
+        const resp = yield call(login, {
+            username: username,
+            password: password,
+            notifiToken: notifiToken
+        });
+        const { data } = resp;
+        if (data.code == 1) {
+        storeData(data.user);
+            yield put(loginUserSuccess(data.user));
+            props.navigation.navigate("Drawer");
+        }
+        else {
+            yield put(loginUserFail(data.error));
+        }
+        yield delay(100);
+        yield put(hideLoading());
+    } catch (e) {
+        console.log('error', JSON.stringify(e));
     }
-    else {
-        yield put(loginUserFail(data.error));
-    }
-    yield delay(100);
-    yield put(hideLoading());
 }
 
 function *registerUs({ payload }) {

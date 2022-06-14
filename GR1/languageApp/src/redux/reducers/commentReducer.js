@@ -3,7 +3,10 @@ import * as types from './../constants/action-types';
 const initState = { 
     commentList: [],
     commentWordList: [],
-    commentKanjiList: []
+    commentKanjiList: [],
+    allCommentWord: [],
+    allCommentKanji: [],
+    allCommentGrammar: [],
  }
 const commentReducer = (state = initState, action) => {
     switch (action.type) {
@@ -48,6 +51,27 @@ const commentReducer = (state = initState, action) => {
                 commentKanjiList: data.commentKanjiList,
             }
         }
+
+        case types.ALL_COMMENT_WORD: {
+            return {
+                ...state,
+                allCommentWord: action.allCommentWord,
+            };
+        }
+        case types.ALL_COMMENT_GRAMMAR: {
+            return {
+                ...state,
+                allCommentGrammar: action.allCommentGrammar,
+            };
+        }
+        case types.ALL_COMMENT_KANJI: {
+            return {
+                ...state,
+                allCommentKanji: action.allCommentKanji,
+            };
+        }
+
+
         
         default: 
             return state;

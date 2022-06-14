@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, Platform } from 'react-native';
+import { View, Text, Platform, Button } from 'react-native';
 import Home from './src/navigations/Home';
 import { createStore, applyMiddleware, compose  } from 'redux';
 import { Provider } from 'react-redux';
@@ -46,6 +46,7 @@ import VocabularyScreen from './src/screens/tab/home/VocabularyScreen';
 import ListWordVocabulary from './src/screens/tab/home/ListWordVocabulary';
 import PracticeScreen from './src/screens/tab/home/practice/PracticeScreen';
 import NewPostScreen from './src/screens/tab/contact/NewPostScreen';
+import axios from 'axios';
 
 const store = createStore(
   appReducers,
@@ -55,6 +56,7 @@ export const socket = io("http://192.168.1.72:3002");
 const App = () => {
   const dataTake = async() => {
     console.log('data take day ne');
+    
   }
 
   useEffect(() => {
@@ -179,6 +181,7 @@ const App = () => {
         {/* <PracticeScreen /> */}
         {/* <NewPostScreen /> */}
         <Home />
+        {/* <Button onPress={dataTake} title="Hello" /> */}
         <Toast ref={(ref) => Toast.setRef(ref)} />
         <GlobalLoading />
         {/* <Fetchdata /> */}

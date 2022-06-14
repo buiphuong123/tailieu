@@ -47,3 +47,22 @@ export const getListKanjiCommentSuccess = (commentKanjiList) => {
         payload: {commentKanjiList},
     }
 };
+
+export const getAllcommentWord = (allCommentWord) => {
+    return {
+        type: types.ALL_COMMENT_WORD,
+        allCommentWord
+    }
+}
+export const getAllcommentGrammar = (allCommentGrammar) => {
+    return {
+        type: types.ALL_COMMENT_GRAMMAR,
+        allCommentGrammar
+    }
+}
+export const getAllcommentKanji = (allCommentKanji) => {
+    return {
+        type: types.ALL_COMMENT_KANJI,
+        allCommentKanji
+    }
+}

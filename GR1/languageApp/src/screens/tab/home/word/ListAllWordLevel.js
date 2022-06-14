@@ -11,8 +11,8 @@ import { getListWordCommentRequest } from '../../../../redux/actions/comment.act
 import Entypo from 'react-native-vector-icons/Entypo';
 import Modal from 'react-native-modal'; // 2.4.0
 
-export default ListWord = ({ navigation, lession }) => {
-    const wordlevel = useSelector(state => state.wordReducer.wordlevel);
+export default ListAllWordLeVel = ({ navigation, route }) => {
+    const {level} = route.params;
     const isReverse = useSelector(state => state.wordReducer.isReverse);
     const isMemerize = useSelector(state => state.wordReducer.isMemerize);
     const isNotMemerize = useSelector(state => state.wordReducer.isNotMemerize);
@@ -22,20 +22,18 @@ export default ListWord = ({ navigation, lession }) => {
     const isKanji = useSelector(state => state.wordReducer.isKanji);
     const isMean = useSelector(state => state.wordReducer.isMean);
     const isAll = useSelector(state => state.wordReducer.isAll);
-    const isN5 = useSelector(state => state.wordReducer.isN5);
-    const isN4 = useSelector(state => state.wordReducer.isN4);
-    const isN3 = useSelector(state => state.wordReducer.isN3);
-    const isN2 = useSelector(state => state.wordReducer.isN2);
-    const [data, setData] = useState(wordlevel);
     const users = useSelector(state => state.userReducer.user);
     const dispatch = useDispatch();
+    const wordList = useSelector(state => state.wordReducer.wordList);
     const [currentWord, setCurrentWord] = useState({});
     const [isVisibleAction, setisVisibleAction] = useState(false);
     const [isVisibleDelete, setisVisibleDelete] = useState(false);
     // const {lession} = route.params;
+    const [data, setData] = useState([]);
+
     useEffect(() => {
-        setData(wordlevel);
-    }, [wordlevel]);
+        setData(wordList.filter(e=>e.level === level));
+    }, [wordList]);
     const setMemerize = (userId, wordId) => {
         let objIndex = data.findIndex((e => e._id === wordId));
         if (data[objIndex].memerizes.length === 1) {
@@ -46,7 +44,7 @@ export default ListWord = ({ navigation, lession }) => {
         }
         setData([...data]);
         // dispatch(getListWordSuccess(data));
-        dispatch(getListWordLevel(data));
+        dispatch(getListWordSuccess(data));
 
         axios.post('http://192.168.1.72:3002/language/createMemWord', {
             "userId": userId,
@@ -66,7 +64,6 @@ export default ListWord = ({ navigation, lession }) => {
     }
 
     const setLike = (userId, wordId) => {
-        console.log(data.slice(20 * lession - 20, 20 * lession).length);
         let objIndex = data.findIndex((e => e._id === wordId));
         if (data[objIndex].likes.length === 1) {
             data[objIndex].likes = [];
@@ -75,7 +72,7 @@ export default ListWord = ({ navigation, lession }) => {
             data[objIndex].likes.push({ isLike: true });
         }
         setData([...data]);
-        dispatch(getListWordLevel(data));
+        dispatch(getListWordSuccess(data));
 
         axios.post('http://192.168.1.72:3002/language/createLikeWord', {
             "userId": userId,
@@ -99,58 +96,11 @@ export default ListWord = ({ navigation, lession }) => {
         // console.log('item cua word la ', item);
         navigation.navigate("WordScreenDetail", { vocabulary: item });
     }
-    const deleteWord = (item) => {
-        console.log('DELETE NE');
-        setCurrentWord(item);
-        setisVisibleAction(true);
-    }
-    const deleteAction = (currentWord) => {
-        Alert.alert(
-            "Alert",
-            "Are you sure delete" + currentWord.word + "?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                },
-                {
-                    text: "OK", onPress: () => {
-                        const objectIndex = data.findIndex(e => e._id === currentWord._id);
-                        if (objectIndex === -1) {
-
-                        }
-                        else {
-                            data.splice(objectIndex, 1);
-                            setData([...data]);
-                            dispatch(getListWordLevel(data));
-                            axios.post('http://192.168.1.72:3002/language/deleteWord', {
-                                "id": currentWord._id,
-                                
-                            }, {
-                                headers: {
-                                    "Accept": "application/json",
-                                    "Content-Type": "application/json"
-                                }
-                            })
-                                .then((response) => {
-                                    console.log(response.data);
-                                })
-                                .catch(function (error) {
-                                    throw error;
-                                })
-                        }
-                    }
-                }
-            ]
-        )
-    }
-
+ 
     const renderWord = ({ item, index }) => {
         return (
             <TouchableOpacity
                 onPress={() => wordDetail(item)}
-                onLongPress={() => users.role === 1 ? deleteWord(item) : null}
             >
                 <View style={{ borderBottomWidth: 1, borderBottomColor: '#999999', marginTop: 5, width: WIDTH }}>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginBottom: 5 }}>
@@ -180,46 +130,15 @@ export default ListWord = ({ navigation, lession }) => {
             </TouchableOpacity>
         )
     }
-    const dataaRender = (data) => {
-        if(lession ===0){
-            if(isAll === 'checked') {
-                return data;
-            }
-            else if(isMemerize ==='checked') {
-                return data.filter(e=> e.memerizes.length ===1);
-            }
-            else if(isNotMemerize ==='checked' ) {
-                return data.filter(e=> e.memerizes.length ===0);
-            }
-            else if(isLike === 'checked') {
-                return data.filter(e=> e.likes.length ===1);
-            }
-        }
-        else {
-           const data1 = data.filter(e=>e.lession === lession);
-            if(isAll === 'checked') {
-                return data1;
-            }
-            else if(isMemerize ==='checked') {
-                return data1.filter(e=> e.memerizes.length ===1);
-            }
-            else if(isNotMemerize ==='checked' ) {
-                return data1.filter(e=> e.memerizes.length ===0);
-            }
-            else if(isLike === 'checked') {
-                return data1.filter(e=> e.likes.length ===1);
-            }
-        }
-    }
     return (
         <View>
             <FlatList
                 inverted={isReverse ? true : false}
                 // data={lession === 0&&isAll==='checked' ? data : lession !== 0 && isAll === 'unchecked' ? data.filter((e) => e.likes.length !== 2 &&
                 //     (isMemerize==='checked' ? e.memerizes.length === 1 : e.memerizes.length === 0) && (isLike==='checked' ? e.likes.length === 1 : data.filter(e => e.lession === lession))) : data.filter((e) => e.likes.length !== 2 && e.lession === lession)}
-                // data={lession === 0&&isAll==='checked' ? data :  isAll === 'unchecked' ? data.filter((e) => e.likes.length !== 2 && e.le
-                // (isMemerize==='checked' ? e.memerizes.length === 1 : e.memerizes.length === 0) && (isLike==='checked' ? data.filter(e => e.likes.length===1&& e.lession === lession) : data.filter(e => e.lession === lession))) : data.filter((e) => e.likes.length !== 2 && e.lession === lession)}
-                data={dataaRender(data)}
+                data={isAll==='checked' ? data :  isAll === 'unchecked' ? data.filter((e) => e.likes.length !== 2 &&
+                (isMemerize==='checked' ? e.memerizes.length === 1 : e.memerizes.length === 0) && (isLike==='checked' ? e.likes.length === 1 : data)) : data.filter((e) => e.likes.length !== 2)}
+
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderWord}
 

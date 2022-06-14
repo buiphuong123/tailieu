@@ -44,6 +44,8 @@ export default function SearchDropDownWord(props) {
                         d.explain = item;
                         d.type = "Từ vựng"
                         dataVocu.data.push(d);
+                        navigation.goBack();
+                        // navigation.navigate("ListWordVocabulary", {navigation: navigation, listdata: dataVocu});
                         axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
                             "id": dataVocu._id,
                             "word": item.word,
@@ -62,7 +64,7 @@ export default function SearchDropDownWord(props) {
                             .catch(function (error) {
                                 throw error;
                             })
-                        navigation.navigate("ListWordVocabulary", {navigation: navigation, listdata: dataVocu, status: false});
+                        // navigation.navigate("ListWordVocabulary", {navigation: navigation, listdata: dataVocu, status: false});
                     }
                 },
                 {

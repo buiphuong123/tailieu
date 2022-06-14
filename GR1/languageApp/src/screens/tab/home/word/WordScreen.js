@@ -7,6 +7,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RemoteWord, RemoteAllWord, RemoteHiraWord, RemoteKanjiWord, RemoteMeanWord, RemoteReverseWord, RemoteMemerizeWord, RemoteNotMemerizeWord, RemoteLikeWord } from '../../../../redux/actions/word.action';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ListWord from './ListWord';
+import { RadioButton } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Icons from 'react-native-vector-icons/Fontisto';
 
 export default WordScreen = ({ navigation, route }) => {
     const dispatch = useDispatch();
@@ -19,50 +22,57 @@ export default WordScreen = ({ navigation, route }) => {
     const isMemerize = useSelector(state => state.wordReducer.isMemerize);
     const isNotMemerize = useSelector(state => state.wordReducer.isNotMemerize);
     const isLike = useSelector(state => state.wordReducer.isLike);
-    const {lession} = route.params;
-    const seletwordall = (value) => {
-        dispatch(RemoteAllWord(value));
-        if(value === true) {
-            dispatch(RemoteMemerizeWord(false)); 
-            dispatch(RemoteNotMemerizeWord(false));
-            dispatch(RemoteLikeWord(false)); 
-        }
-        
+    const { lession } = route.params;
+
+    const seletMemerizedall = () => {
+        dispatch(RemoteAllWord('unchecked'));
+        dispatch(RemoteMemerizeWord('checked'));
+        dispatch(RemoteNotMemerizeWord('unchecked'));
+        dispatch(RemoteLikeWord('unchecked'));
+
     }
-    const seletMemerizedall = (value) => {
-        dispatch(RemoteMemerizeWord(value)); 
-        if(value===true) {
-            dispatch(RemoteAllWord(false));
-            dispatch(RemoteNotMemerizeWord(false));
-            dispatch(RemoteLikeWord(false)); 
-        }
-        
+    const seletNotMemerizedall = () => {
+        dispatch(RemoteAllWord('unchecked'));
+        dispatch(RemoteMemerizeWord('unchecked'));
+        dispatch(RemoteNotMemerizeWord('checked'));
+        dispatch(RemoteLikeWord('unchecked'));
+
     }
-    const seletNotMemerizedall = (value) => {
-        dispatch(RemoteNotMemerizeWord(value));
-        if(value===true) {
-            dispatch(RemoteAllWord(false));
-            dispatch(RemoteMemerizeWord(false)); 
-            dispatch(RemoteLikeWord(false)); 
-        }
-        
+    const seletLikeall = () => {
+        dispatch(RemoteAllWord('unchecked'));
+        dispatch(RemoteMemerizeWord('unchecked'));
+        dispatch(RemoteNotMemerizeWord('unchecked'));
+        dispatch(RemoteLikeWord('checked'));
     }
-    const seletLikeall = (value) => {
-        dispatch(RemoteLikeWord(value)); 
-        if(value===true) {
-            dispatch(RemoteAllWord(false));
-            dispatch(RemoteMemerizeWord(false)); 
-            dispatch(RemoteNotMemerizeWord(false));
-        }
-        
+    const seletwordallRadio = () => {
+        dispatch(RemoteAllWord('checked'));
+        dispatch(RemoteMemerizeWord('unchecked'));
+        dispatch(RemoteNotMemerizeWord('unchecked'));
+        dispatch(RemoteLikeWord('unchecked'));
     }
 
     const learnFlashcard = () => {
-        navigation.navigate("Flashcard", {navigation: navigation, lession: lession});
+        navigation.navigate("Flashcard", { navigation: navigation, lession: lession });
     }
     return (
         <View style={{ flex: 1 }}>
-            <CustomHeader title=" Word" navigation={navigation} icon="person" action={learnFlashcard} />
+            <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-between' }}>
+                <View style={{ justifyContent: 'center' }}>
+                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.goBack()}>
+                        <Icon name={'arrow-back'} size={29} style={{ color: '#fff', marginLeft: 5 }} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ justifyContent: 'center' }}>
+                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 18 }}>N5</Text>
+                </View>
+                <View style={{ justifyContent: 'center' }}>
+                    <TouchableOpacity 
+                    onPress={() => learnFlashcard()}
+                    style={{ justifyContent: 'center', marginRight: 20 }} >
+                        <Icons name={'person'} size={29} style={{ color: '#fff', marginLeft: 5 }} />
+                    </TouchableOpacity>
+                </View>
+            </View>
             <View style={{ flexDirection: 'row' }}>
                 <View style={styles.checkboxContainer}>
                     <CheckBox
@@ -85,7 +95,7 @@ export default WordScreen = ({ navigation, route }) => {
                 <View style={styles.checkboxContainer}>
                     <CheckBox
                         style={styles.checkbox}
-                        value={isKanji} 
+                        value={isKanji}
                         onValueChange={(value) => dispatch(RemoteKanjiWord(value))}
                     />
                     <AppText i18nKey={"kanji"} style={styles.label} />
@@ -94,7 +104,7 @@ export default WordScreen = ({ navigation, route }) => {
                     <CheckBox
                         style={styles.checkbox}
                         value={isMean}
-                        onValueChange={(value) =>  dispatch(RemoteMeanWord(value))}
+                        onValueChange={(value) => dispatch(RemoteMeanWord(value))}
                     />
                     <AppText i18nKey={"mean"} style={styles.label} />
                 </View>
@@ -102,7 +112,7 @@ export default WordScreen = ({ navigation, route }) => {
                     <CheckBox
                         style={styles.checkbox}
                         value={isReverse}
-                        onValueChange={(value) =>  dispatch(RemoteReverseWord(value))}
+                        onValueChange={(value) => dispatch(RemoteReverseWord(value))}
                     />
                     <AppText i18nKey={"reverse"} style={styles.label} />
                 </View>
@@ -111,38 +121,32 @@ export default WordScreen = ({ navigation, route }) => {
 
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'blue' }}>
                 <View style={styles.checkboxContainer}>
-                    <CheckBox
-                        style={styles.checkbox}
-                        value={isAll}
-                        onValueChange={(value) => seletwordall(value)}
-
+                    <RadioButton
+                        status={isAll}
+                        onPress={() => seletwordallRadio()}
                     />
                     <AppText i18nKey={"all"} style={styles.label} />
                 </View>
 
                 <View style={styles.checkboxContainer}>
-                    <CheckBox
-                        style={styles.checkbox}
-                        value={isMemerize}
-                        onValueChange={(value) => seletMemerizedall(value)}
+                    <RadioButton
+                        status={isMemerize}
+                        onPress={() => seletMemerizedall()}
                     />
                     <AppText i18nKey={"memerize"} style={styles.label} />
                 </View>
 
                 <View style={styles.checkboxContainer}>
-                    <CheckBox
-                        style={styles.checkbox}
-                        value={isNotMemerize}
-                        onValueChange={(value) => seletNotMemerizedall(value)}
+                    <RadioButton
+                        status={isNotMemerize}
+                        onPress={() => seletNotMemerizedall()}
                     />
                     <AppText i18nKey={"not memerize"} style={styles.label} />
                 </View>
                 <View style={styles.checkboxContainer}>
-                    <CheckBox
-                        style={styles.checkbox}
-                        value={isLike}
-                        checked={isLike}
-                        onValueChange={(value) => seletLikeall(value)}
+                    <RadioButton
+                        status={isLike}
+                        onPress={() => seletLikeall()}
                     />
                     <AppText i18nKey={"like"} style={styles.label} />
                 </View>
@@ -150,7 +154,7 @@ export default WordScreen = ({ navigation, route }) => {
             </View>
             <View style={{ flex: 1 }}>
                 {/* <ListWord /> */}
-                    <ListWord navigation={navigation} lession={lession}/>
+                <ListWord navigation={navigation} lession={lession} />
             </View>
 
         </View>
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: "row",
     },
-    
+
     label: {
         margin: 8,
         marginLeft: 0

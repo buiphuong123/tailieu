@@ -7,7 +7,6 @@ import {getListWordRequest, getListWordSuccess, getListWordLevel} from '../redux
 
 function* getWord({ payload }) {
     const { id } = payload;
-    console.log('id nhan dau vao la', id);
     yield put(showLoading());
     const resp = yield call(allWord, {
         id: id,

@@ -13,7 +13,7 @@ import { getListVocaSuccess } from '../../../redux/actions/vocabulary.action';
 import axios from 'axios';
 import { RadioButton } from 'react-native-paper';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const WIDTH = Dimensions.get('window').width;
 
 const VocabularyScreen = ({ navigation }) => {
@@ -284,7 +284,7 @@ const VocabularyScreen = ({ navigation }) => {
                                 <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
                             </TouchableOpacity>
                             <TouchableOpacity style={{ justifyContent: 'center', marginRight: 10, marginLeft: 20 }} onPress={() => setisVisibleSort(true)}>
-                                <Icons name={"sort-bool-ascending"} size={29} style={{ color: '#fff' }} />
+                                <MaterialCommunityIcons name={"sort-bool-ascending"} size={29} style={{ color: '#fff' }} />
                             </TouchableOpacity>
                         </View>
                     </View>
