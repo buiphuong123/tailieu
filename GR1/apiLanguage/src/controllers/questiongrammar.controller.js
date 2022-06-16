@@ -1,9 +1,10 @@
 const QuestionGrammar = require('../models/questiongrammar.model.js');
 const ResultGrammar = require('../models/resultgrammar.model');
+const Question = require('../models/question.model');
 
 const createQuestion = async (req, res) => {
-    const { grammar_id, question, ansA, ansB, ansC, answer, explain } = req.body;
-    const newquestion = new QuestionGrammar({ grammar_id, question, ansA, ansB, ansC, answer, explain });
+    const {  question, listAns, answer, explain, level, lession } = req.body;
+    const newquestion = new QuestionGrammar({question, listAns, answer, explain, level, lession });
     await newquestion.save(function (error, newquestion) {
         if (error) {
             return res.json({ code: 0, err: error });
@@ -105,16 +106,6 @@ const readImage = async (req, res) => {
             const ansA = kaka[1].slice(1);
             const ansB = ss[1];
             const ansC = ss[2];
-            // const kaka = text.split('\n');
-            // const question = kaka[0].split(' ').join('');
-            // const result = kaka[1].split(' ').join('');
-            // const resultC = result.split('c');
-            // const ansC = resultC[1];
-            // const resultB = resultC[0].split('b');
-            // const ansB = resultB[1];
-            // const resultA = resultB[0].split('a');
-            // const ansA = resultA[1];
-            // console.log('result A la ', resultA[0], resultA[1]);
             const newquestion = new QuestionGrammar({ grammar_id, question, ansA, ansB, ansC, answer, explain });
              newquestion.save(function (error, newquestion) {
                 if (error) {
@@ -129,11 +120,57 @@ const readImage = async (req, res) => {
 
 }
 
+const readImage1 = async (req, res) => {
+    const {  urlImage, explain, answer, level, lession, data } = req.body;
+    console.log(urlImage, explain, answer, level, lession, data);
+    const T = require("tesseract.js");
+    T.recognize(urlImage, 'jpn', { logger: e => console.log(e) })
+        .then(async({ data: { text } }) => {
+            const c = text.split("\n");
+            const question = c[0];
+            c.splice(0,1);
+            // return res.json({question: question, answer: c});
+            const newquestion = new QuestionGrammar({ question: question, listAns: c, answer: answer, explain, level, lession, data });
+           await newquestion.save();
+           console.log(newquestion);
+           return res.json(newquestion);
+        });
+
+}
+const getQuestionLevellession = async(req, res) => {
+    const question = await QuestionGrammar.find({level: 5, lession: 1});
+    return res.json(question);
+}
+
+const changeType = async(req, res) => {
+    const question = await Question.find();
+    // for (var i=0;i<question.length; i++) {
+    //     const kaka = question[i].data._id;
+    //     question[i].data = kaka;
+    //     // question[i].data = kaka;
+    //     // await question[i].save();
+    //     // console.log('save success');
+    // }
+    // console.log(question);
+    const kaka = await QuestionGrammar.insertMany(question);
+    // await ka.save();
+    console.log(kaka);
+}
+
+const getAllQuestionGrammar = async(req, res) => {
+    const question = await QuestionGrammar.find().populate("data");
+   return res.json({question: question});
+}
+
 module.exports = {
+    getAllQuestionGrammar,
     createQuestion,
     getQuestion,
     createResult,
     getResult,
     readImage,
-    image
+    image, 
+    readImage1,
+    getQuestionLevellession,
+    changeType
 };

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const questiongrammarSchema = mongoose.Schema({
+const questionSchema = mongoose.Schema({
     question: {
         type: String,
         require: true,
@@ -32,5 +32,5 @@ const questiongrammarSchema = mongoose.Schema({
 
 }); 
 
-const QuestionGrammar = mongoose.model("questiongrammar", questiongrammarSchema);
-module.exports = QuestionGrammar;
+const Question = mongoose.model("question", questionSchema);
+module.exports = Question;

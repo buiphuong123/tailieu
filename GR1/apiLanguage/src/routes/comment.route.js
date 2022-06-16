@@ -11,5 +11,7 @@ router.post('/getComment', commentController.getComment)
 router.post('/countLike', commentController.countLike)
 router.post('/countDisLike', commentController.countDisLike)
 router.get('/test', commentController.test)
+router.get('/testComment', commentController.testComment)
+router.get('/getAllGrammarComment', commentController.getAllGrammarComment)
 
 module.exports = router

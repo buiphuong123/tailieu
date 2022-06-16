@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
 
-const WordDisLikeSchema = mongoose.Schema({
+const KanjiLikeSchema = mongoose.Schema({
     userId: {
         type: String,
         ref: "user"
     },
-    wordId: {
+    kanjiId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'word',
+        ref: 'kanji',
     },
-    isDisLike: {
+    islike: {
         type: Boolean,
         default: true,
     },
 }); 
 
-const WordDisLike = mongoose.model("worddislike", WordDisLikeSchema);
-module.exports = WordDisLike;
+const KanjiLike = mongoose.model("kanjilike", KanjiLikeSchema);
+module.exports = KanjiLike;

@@ -8,5 +8,9 @@ router.post('/createResult', questiongrammarController.createResult)
 router.post('/getResult', questiongrammarController.getResult)
 router.post('/readImage', questiongrammarController.readImage)
 router.get('/image', questiongrammarController.image)
+router.post('/readImage1', questiongrammarController.readImage1)
+router.get('/getQuestionLevellession', questiongrammarController.getQuestionLevellession)
+router.get('/changeType', questiongrammarController.changeType)
+router.get('/getAllQuestionGrammar', questiongrammarController.getAllQuestionGrammar)
 
 module.exports = router

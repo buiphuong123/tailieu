@@ -15,11 +15,7 @@ const notificationSchema = mongoose.Schema({
     },
     action: {
         type: String,
-        require: true
-    },
-    comment_id: {
-        type: String,
-        require: true
+        require: false
     },
     data: {
         type: Object,
@@ -28,6 +24,10 @@ const notificationSchema = mongoose.Schema({
     isRead: {
         type: Boolean,
         default: false,
+    },
+    typeNoti: {
+        type: String,
+        require: true
     }
 }); 
 

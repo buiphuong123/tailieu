@@ -3,6 +3,7 @@ const ActionLike = require('../models/actionlike.model');
 const ActionDisLike = require('../models/actiondislike.model');
 const socket = require('../../index');
 const User = require('../models/user.model.js');
+const Grammar = require('../models/grammar.model.js');
 
 const test = async(req, res) => {
     var last = new Date();
@@ -15,16 +16,6 @@ const test = async(req, res) => {
     const month = (day-day%30)/30;
     const year = (month-month%12)/12;
 return res.json({minutes, hours, day, month, year});
-//   return res.json([hours, minutes, result % 60].map(format).join(':'));
-    // console.log(result);
-    // const now = new Date();
-	// const year = now.getFullYear();
-	// const month = now.getMonth() + 1;
-	// const date = now.getDate();
-	// const lastMillisecond =
-	// 	new Date(`${month}/${date}/${year}`).getTime() + 24 * 60 * 60 * 1000;
-	// const firstMillisecond = lastMillisecond - number * 24 * 60 * 60 * 1000;
-    // console.log(firstMillisecond);
 }
 
 // const sendToAll = async
@@ -58,17 +49,19 @@ const getComment = async(req, res) => {
     comment.sort((a, b) => (a.like < b.like) ? 1 : -1);
     return res.json({code: 1, comment: comment});
 }
+
 const createComment = async (req, res) => {
-    const { grammar_id, user_id, content } = req.body;
+    console.log('vao create comment day nhe');
+    const { grammar_id, user_id, content, requ } = req.body;
     var today = new Date();
-    const user = await User.findOne({_id: user_id});
+    // const user = await User.findOne({_id: user_id});
     // var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear() + ' ' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    const newComment = new Comment({ grammar_id, user_id: user, content, time: today, review: "not approved" });
+    const newComment = new Comment({ grammar_id, user_id: user_id, content, time: today, review: requ});
     console.log('NEW COMMENT' , newComment);
-    socket.socket.emit("SEVER-SEND-NEWCOMMENT", {
-        comment: newComment,
-        username: user.username
-    });
+    // socket.socket.emit("SEVER-SEND-NEWCOMMENT", {
+    //     comment: newComment,
+    //     username: user.username
+    // });
     await newComment.save(function (error, newComment) {
         if (error) {
             return res.json({ code: 0, error: error });
@@ -90,11 +83,11 @@ const createLikeComment = async (req, res) => {
         else {
             if(check) {
                 ActionLike.findOneAndRemove({ comment_id, user_id_like}, function(err) {
-                    socket.socket.emit("SEVER-SEND-LIKE", {
-                        comment_id: comment_id,
-                        islike: true,
-                        isdislike: checkStatus,
-                    });
+                    // socket.socket.emit("SEVER-SEND-LIKE", {
+                    //     comment_id: comment_id,
+                    //     islike: true,
+                    //     isdislike: checkStatus,
+                    // });
                     return res.json('not like success');
                 })
             }
@@ -107,11 +100,11 @@ const createLikeComment = async (req, res) => {
                 }
                 else {
                     
-                        socket.socket.emit("SEVER-SEND-LIKE", {
-                            comment_id: comment_id,
-                            islike: false,
-                            isdislike: checkStatus,
-                        });
+                        // socket.socket.emit("SEVER-SEND-LIKE", {
+                        //     comment_id: comment_id,
+                        //     islike: false,
+                        //     isdislike: checkStatus,
+                        // });
                         return res.json({ code: 1, success: "action success", action: newAction });
                     
                 }
@@ -145,14 +138,14 @@ const createDisLikeComment = async (req, res) => {
         }
         else {
             if(check) {
-                ActionDisLike.findOneAndRemove({ comment_id, user_id_dislike}, function(err) {
-                    socket.socket.emit("SEVER-SEND-DISLIKE", {
-                        comment_id: comment_id,
-                        isdislike: true,
-                        islike: checkStatus,
-                    });
+                // ActionDisLike.findOneAndRemove({ comment_id, user_id_dislike}, function(err) {
+                //     socket.socket.emit("SEVER-SEND-DISLIKE", {
+                //         comment_id: comment_id,
+                //         isdislike: true,
+                //         islike: checkStatus,
+                //     });
                     return res.json('not dislike success');
-                })
+                // })
             }
 
             else {
@@ -162,11 +155,11 @@ const createDisLikeComment = async (req, res) => {
                     return res.json({ code: 0, error: "loix xay ra, vui long th lai" });
                 }
                 else {
-                        socket.socket.emit("SEVER-SEND-DISLIKE", {
-                            comment_id: comment_id,
-                            isdislike: false,
-                            islike: checkStatus
-                        });
+                        // socket.socket.emit("SEVER-SEND-DISLIKE", {
+                        //     comment_id: comment_id,
+                        //     isdislike: false,
+                        //     islike: checkStatus
+                        // });
                         return res.json({ code: 1, success: "action success", action: newAction });
                     
                     
@@ -207,6 +200,20 @@ counnt_action = async (req, res) => {
     const { comment_id } = req.body;
 
 }
+const testComment = async(req, res) => {
+    const comment = await Comment.find();
+    for (var i=0;i< comment.length; i++) {
+        comment[i].review = 2;
+        await comment[i].save();
+        console.log('save success');
+    }
+}
+
+const getAllGrammarComment = async(req, res) => {
+    const comment = await Comment.find().populate("user_id").populate("grammar_id");
+    console.log(comment);
+    return res.json({comment: comment});
+}
 module.exports = {
     createComment,
     createLikeComment,
@@ -217,4 +224,6 @@ module.exports = {
     countLike, 
     countDisLike,
     test,
+    testComment,
+    getAllGrammarComment
 };

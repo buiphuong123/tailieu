@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const wordactionlikeSchema = mongoose.Schema({
+const kanjiactionlikeSchema = mongoose.Schema({
     comment_id: {
         type: mongoose.Schema.Types.ObjectId,
         require: true,
@@ -11,5 +11,5 @@ const wordactionlikeSchema = mongoose.Schema({
     }
 }); 
 
-const WordActionlike = mongoose.model("wordactionlike", wordactionlikeSchema);
-module.exports = WordActionlike;
+const KanjiActionlike = mongoose.model("kanjiactionlike", kanjiactionlikeSchema);
+module.exports = KanjiActionlike;

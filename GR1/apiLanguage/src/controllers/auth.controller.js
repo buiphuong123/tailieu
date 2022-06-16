@@ -8,6 +8,7 @@ var crypto = require('crypto');
 
 const login = async (req, res) => {
     const { username, password, notifiToken } = req.body;
+    console.log('BEN MAY THAT DAY NHE', username, password);
     console.log('vao login');
     try {
         const user = await User.findOne({ username });
@@ -78,7 +79,7 @@ const sendMail = async (req, res) => {
         // return res.json({code: 1, success: 'A verification email has been sent to ' + newUser.email + '. It will be expire after one day. If you not get verification Email click on resend token.'});
     });
 }
-
+  
 
 const signUp = async (req, res) => {
     const { username, email, password } = req.body;
@@ -358,6 +359,11 @@ const logout = async (req, res) => {
 //     })
 
 // }
+
+const getListUser = async(req, res) => {
+    const user = await User.find();
+    return res.json({user: user});
+}
 module.exports = {
     login,
     signUp,
@@ -368,4 +374,5 @@ module.exports = {
     logout,
     sendMail,
     changePassword,
+    getListUser,
 };

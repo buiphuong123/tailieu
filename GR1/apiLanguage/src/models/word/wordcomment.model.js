@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const wordcommentSchema = mongoose.Schema({
     word_id: {
         type: mongoose.Schema.Types.ObjectId,
-        require: true,
+        ref: "word"
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +18,7 @@ const wordcommentSchema = mongoose.Schema({
         require: true,
     },
     review: {
-        type: String, // refuse(từ chối), accept(chấp nhận), not approved(chưa duyệt)
+        type: Number, // refuse(từ chối), accept(chấp nhận), not approved(chưa duyệt)
         require: true,
     }, 
     time_review: {

@@ -1,23 +1,27 @@
 const mongoose = require('mongoose');
 
 const wordSchema = mongoose.Schema({
-    hira: {
+    word: {
         type: String,
-        require: false,
+        require: true,
     },
-    kanji: {
+    translate: {
         type: String,
-        require: false,
+        require: true,
     },
     vn: {
         type: String,
         require: true,
     },
-    amhan: {
-        type: String, 
+    means: {
+        type: Array,
         require: false,
     },
-    kata: {
+    kind : {
+        type: Array,
+        require: false
+    },
+    amhan: {
         type: String, 
         require: false,
     },
@@ -25,35 +29,14 @@ const wordSchema = mongoose.Schema({
         type: Number,
         require: true,
     },
-    type: {  // hira(1), kanji(2), kata(3)
-        type: Number,
-        require: false,
-    },
-    typeWord: { // N, V, adj, adv
-        type: String,
-        require: false, 
-    },
-    verbGround: { // V nhom may 1,2,3
-        type: Number,
-        require: false,
-    },
-    typeVerb: {  // tu(1), tha(2)
-        type: Number,
-        require: false,
-    },
-    typeAdj: { // 1: i, 2: na
-        type: Number,
+    images: {
+        type: Array,
         require: false,
     },
     lession: {
         type: Number,
-        require: true,
-    },
-    example: {
-        type: Array,
-        ref: "wordexample"
+        require: false,
     }
-
 }); 
 
 const Word = mongoose.model("word", wordSchema);

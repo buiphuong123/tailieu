@@ -7,32 +7,17 @@ const grammarSchema = mongoose.Schema({
     },
     lession: {
         type: Number,
-        require: true,
+        require: false,
     },
     grammar: {
         type: String,
         require: true,
     },
-    translation: {
-        type: String,
-        require: true,
-    },
-    structure: { 
-        type: Array, 
-        require: true 
-    },
-    mean: {
-        type: Array, 
-        require: true,
-    },
-    indication: {
+    uses : {
         type: Array,
-        require: false,
-    },
-    example: {
-        type: Array,
-        ref: "example"
+        require: true,
     }
+    
 }); 
 
 const Grammar = mongoose.model("grammar", grammarSchema);

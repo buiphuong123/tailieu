@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
 
-const WordMemSchema = mongoose.Schema({
+const KanjiMemSchema = mongoose.Schema({
     userId: {
         type: String,
         ref: "user"
     },
-    
-    wordId: {
+    kanjiId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "word",
+        ref: 'kanji',
     },
     isMemerize: {
         type: Boolean,
@@ -16,5 +15,5 @@ const WordMemSchema = mongoose.Schema({
     },
 }); 
 
-const WordMem = mongoose.model("wordmem", WordMemSchema);
-module.exports = WordMem; 
+const KanjiMem = mongoose.model("kanjimem", KanjiMemSchema);
+module.exports = KanjiMem;

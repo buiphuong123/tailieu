@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const commentSchema = mongoose.Schema({
-    grammar_id: {
+const kanjicommentSchema = mongoose.Schema({
+    kanji_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "grammar",
+        ref: "kanji",
     },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +18,7 @@ const commentSchema = mongoose.Schema({
         require: true,
     },
     review: {
-        type: Number, // 0 refuse(từ chối),1  accept(chấp nhận), 2 not approved(chưa duyệt)
+        type: Number, // refuse(từ chối), accept(chấp nhận), not approved(chưa duyệt)
         require: true,
     }, 
     time_review: {
@@ -51,5 +51,5 @@ const commentSchema = mongoose.Schema({
     }
 }); 
 
-const Comment = mongoose.model("comment", commentSchema);
-module.exports = Comment;
+const KanjiComment = mongoose.model("kanjicomment", kanjicommentSchema);
+module.exports = KanjiComment;

@@ -1,6 +1,6 @@
 const WordComment = require('../models/word/wordcomment.model');
-const WordActionLike = require('../models/word/wordactionlike');
-const WordActionDisLike = require('../models/word/wordactiondislike');
+const WordActionLike = require('../models/word/wordactionlike.model');
+const WordActionDisLike = require('../models/word/wordactiondislike.model');
 // const socket = require('../../index');
 const User = require('../models/user.model.js');
 
@@ -57,25 +57,27 @@ const getCommentWord = async(req, res) => {
     comment.sort((a, b) => (a.like < b.like) ? 1 : -1);
     return res.json({code: 1, comment: comment});
 }
-const createWordComment = async (req, res) => {
-    const { word_id, user_id, content } = req.body;
-    var today = new Date();
-    const user = await User.findOne({_id: user_id});
-    // var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear() + ' ' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    const newComment = new WordComment({ word_id, user_id: user, content, time: today, review: "not approved" });
-    // socket.socket.emit("SEVER-SEND-NEWCOMMENT", {
-    //     comment: newComment,
-    //     username: user.username
-    // });
-    await newComment.save(function (error, newComment) {
-        if (error) {
-            return res.json({ code: 0, error: error });
-        }
-        else {
-            return res.json({ code: 1, success: "Comment của bạn đợi quản trị viên xét duyệt ", comment: newComment });
-        }
-    })
-}
+// const createWordComment = async (req, res) => {
+//     console.log('vao day chua');
+//     const { word_id, user_id, content } = req.body;
+//     var today = new Date();
+//     const user = await User.findOne({_id: user_id});
+//     // var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear() + ' ' + today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+//     const newComment = new WordComment({ word_id, user_id: user, content, time: today, review: 2 });
+//     // socket.socket.emit("SEVER-SEND-NEWCOMMENT", {
+//     //     comment: newComment,
+//     //     username: user.username
+//     // });
+//     console.log('NEW COMMENT NE ', newComment);
+//     await newComment.save(function (error, newComment) {
+//         if (error) {
+//             return res.json({ code: 0, error: error });
+//         }
+//         else {
+//             return res.json({ code: 1, success: "Comment của bạn đợi quản trị viên xét duyệt ", comment: newComment });
+//         }
+//     })
+// }
 
 const createLikeWordComment = async (req, res) => {
     const { comment_id, user_id_like, checkStatus } = req.body;
@@ -135,7 +137,7 @@ const countWordDisLike = async(req, res) => {
 
 const createDisLikeWordComment = async (req, res) => {
     const { comment_id, user_id_dislike, checkStatus } = req.body;
-    const check = await ActionDisLike.findOne({ comment_id, user_id_dislike });
+    const check = await WordActionDisLike.findOne({ comment_id, user_id_dislike });
     WordActionLike.findOneAndRemove({  comment_id, user_id_like: user_id_dislike }, function (err) {
         if (err) {
             console.log(err);
@@ -176,10 +178,7 @@ const createDisLikeWordComment = async (req, res) => {
     });
 }
 
-const userRequest = async (req, res) => { // tim các comment chưa duyệt 
-    const comment = await Comment.find({ review: "not approved" });
-    return res.json({ content: comment });
-}
+
 
 const browseComment = async (req, res) => {
     const { user_id, review, people_review, reason, grammar_id, time } = req.body;
@@ -205,8 +204,22 @@ counnt_action = async (req, res) => {
     const { comment_id } = req.body;
 
 }
+
+const testWordComment = async(req, res) => {
+    const comment = await WordComment.find();
+    for (var i=0;i< comment.length; i++) {
+        comment[i].review = 2;
+        await comment[i].save();
+    }
+    return res.json({mess: 'success'});
+}
+
+const getAllWordComment = async(req, res) => {
+    const comment = await WordComment.find().populate("user_id").populate("word_id");
+    return res.json({comment: comment});
+}
 module.exports = {
-    createWordComment,
+    // createWordComment,
     createLikeWordComment,
     createDisLikeWordComment,
     // userRequest,
@@ -214,5 +227,7 @@ module.exports = {
     getCommentWord,
     countWordLike, 
     countWordDisLike,
+    testWordComment,
+    getAllWordComment
     // test,
 };

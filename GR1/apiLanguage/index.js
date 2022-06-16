@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const firebaseConfig = {
 	"type": "service_account",
@@ -40,6 +41,8 @@ mongoose.connection.on('error', error => {
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());
 
 app.all('/*', function(req, res, next) {
 	// CORS headers
@@ -89,6 +92,15 @@ const questiongrammarRoute = require('./src/routes/questiongrammar.route');
 const scheduleRoute = require('./src/routes/schedule.route');
 const wordcommentRoute = require('./src/routes/wordcomment.route')
  // const { messaging } = require('firebase-admin');
+const kanjiRoute = require('./src/routes/kanji.route')
+const kanjicommentRoute = require('./src/routes/kanjicomment.route');
+const vocabularyRoute = require('./src/routes/vocabulary.route');
+const postRoute = require('./src/routes/post.route');
+const adminRoute = require('./src/routes/admin.route');
+
+app.get('/', (req, res) => {
+	return res.send(1);
+})
 
 const firstParamsRoute = 'language'
 app.use(`/${firstParamsRoute}`, authRoute)
@@ -100,6 +112,12 @@ app.use(`/${firstParamsRoute}`, wordRoute)
 app.use(`/${firstParamsRoute}`, questiongrammarRoute)
 app.use(`/${firstParamsRoute}`, scheduleRoute)
 app.use(`/${firstParamsRoute}`, wordcommentRoute)
+app.use(`/${firstParamsRoute}`, kanjiRoute)
+app.use(`/${firstParamsRoute}`, kanjicommentRoute)
+app.use(`/${firstParamsRoute}`, vocabularyRoute)
+app.use(`/${firstParamsRoute}`, postRoute)
+app.use(`/${firstParamsRoute}`, adminRoute)
+
 // app.listen(process.env.PORT || 3002);
 
 // socket io
@@ -108,7 +126,7 @@ const {Server} = require('socket.io');
 const io = new Server(server);
 server.listen(3002);
 const ioo = require('socket.io-client');
-const socket = ioo("http://192.168.1.8:3002");
+const socket = ioo("http://192.168.1.72:3002");
 module.exports.socket = socket;
 
 io.on("connection", socket => {
