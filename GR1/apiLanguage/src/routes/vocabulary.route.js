@@ -11,5 +11,6 @@ router.post('/editWordInVoca', vocabularyController.editWordInVoca)
 router.post('/deleteWordInVoca', vocabularyController.deleteWordInVoca)
 router.post('/create', vocabularyController.create)
 router.post('/shareVocabulary', vocabularyController.shareVocabulary)
+router.post('/getVocabularyShare', vocabularyController.getVocabularyShare)
 
 module.exports = router

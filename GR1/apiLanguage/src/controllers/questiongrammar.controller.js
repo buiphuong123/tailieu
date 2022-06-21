@@ -137,6 +137,15 @@ const readImage1 = async (req, res) => {
         });
 
 }
+
+const testReadImage = async(req, res) => {
+    const {urlImage} = req.body;
+    const T = require("tesseract.js");
+    T.recognize(urlImage, 'jpn', { logger: e => console.log(e) })
+    .then(async({ data: { text } }) => {
+        return res.json(text);
+    });
+}
 const getQuestionLevellession = async(req, res) => {
     const question = await QuestionGrammar.find({level: 5, lession: 1});
     return res.json(question);
@@ -161,8 +170,18 @@ const getAllQuestionGrammar = async(req, res) => {
     const question = await QuestionGrammar.find().populate("data");
    return res.json({question: question});
 }
+const checkQuestionGrammar = async(req, res) => {
+    const question = await QuestionGrammar.find().populate("data");
+    for (var i=0;i<question.length; i++) {
+        const questionss= question[i].question.slice(1).slice(1);
+        question[i].question = questionss;
+        await question[i].save();
+    }
+   return res.json({mess: 'ket thuc'});
+}
 
 module.exports = {
+    checkQuestionGrammar,
     getAllQuestionGrammar,
     createQuestion,
     getQuestion,
@@ -172,5 +191,6 @@ module.exports = {
     image, 
     readImage1,
     getQuestionLevellession,
-    changeType
+    changeType,
+    testReadImage
 };

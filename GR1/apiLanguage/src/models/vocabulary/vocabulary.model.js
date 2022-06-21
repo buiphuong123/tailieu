@@ -13,13 +13,12 @@ const vocabularySchema = mongoose.Schema({
         type: Array,
         require: false,
     },
+    typeShare: { // 0: private, 1: all, 2 : group
+        type: Number,
+        require: false,
+    },
     share: {
         type: Array,
-        require: false,
-        public: false,
-    },
-    usershare: {
-        type: String,
         require: false,
     },
     remind: {

@@ -37,10 +37,11 @@ const getPost = async (req, res) => {
                     const count = await LikePost.find({ postId: data[i]._id });
                     data[i].countlike = count.length;
                 }
+                console.log('DATA BEN API NE ', data);
                 return res.json({ code: 1, postData: data });
             }
             forloop();
-            // return res.json({ code: 1, postData: data });
+            // return res.json({ code: 1, postData: data.length });
         }
     })
 }

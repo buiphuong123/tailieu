@@ -72,13 +72,10 @@ const sendNotiToDeviceAsset = async (req, res) => {
 
         // console.log('DATA WORD OF COMMENT LA ',dataaa); // data t lưu đây nhé 
             console.log('data test day nhe');
-            console.log(comment.user_id.username, content,action, dataaa, type );
-
             const newNotifi = new Notification({ username: comment.user_id.username, content, time, action, data: dataaa, typeNoti: type, isRead: false });
-            console.log(newNotifi)
             await newNotifi.save(function (err) {
                 if (err) {
-                    console.log(err);
+                    console.log('error ben noti ne');
                     return res.json({ code: 0 });
                 }
                 else {
@@ -102,18 +99,17 @@ const sendNotiToDeviceAsset = async (req, res) => {
                     })
                         .then(() => {
                             console.log('send success');
-                            res.status(200).send('Notification send successfully');
+                             return res.json({mess: 'Notification send successfully'});
                             
                         }).catch((err) => {
                             console.log('send error');
-                            res.status(400).send('somethinh went wrongy');
+                            return res.json({mess: 'somethinh went wrongy'});
 
                         })
                 }
             })
 
         }
-        console.log('ra khoi if');
     }
     // var comment;
     // if(noti === 'word' ) {
