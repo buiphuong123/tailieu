@@ -99,9 +99,7 @@ const vocabularyRoute = require('./src/routes/vocabulary.route');
 const postRoute = require('./src/routes/post.route');
 const adminRoute = require('./src/routes/admin.route');
 
-app.get('/', (req, res) => {
-	return res.send(1);
-})
+
 
 const firstParamsRoute = 'language'
 app.use(`/${firstParamsRoute}`, authRoute)
