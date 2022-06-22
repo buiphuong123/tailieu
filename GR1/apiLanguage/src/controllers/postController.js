@@ -1,13 +1,61 @@
 const Post = require('../models/communication/post.model');
 const LikePost = require('../models/communication/likepost.model');
+const User = require('../models/user.model');
+
+// const getPost = async (req, res) => {
+//     const { id } = req.body;
+//     Post.aggregate([
+//         {
+//             $lookup: {
+//                 from: "likeposts",
+//                 let: { user: "$userId._id", idd: "$_id" },
+//                 pipeline: [
+//                     {
+//                         $match:
+//                         {
+//                             $expr:
+//                             {
+//                                 $and:
+//                                     [
+//                                         { $eq: ["$$user", id] },
+//                                         { $eq: ["$$idd", "$postId"] }
+//                                     ]
+//                             }
+//                         }
+//                     },
+//                     { $project: { islike: 1, _id: 0 } }
+//                 ],
+//                 as: "likeposts"
+//             }
+
+//         }
+//     ], function async(err, data) {
+//         if (err) {
+//             return res.json({ code: 0, errMsg: err });
+//         } else {
+//             const forloop = async () => {
+//                 for (var i = 0; i < data.length; i++) {
+//                     const count = await LikePost.find({ postId: data[i]._id });
+//                     data[i].countlike = count.length;
+//                 }
+//                 console.log('DATA BEN API NE ', data);
+//                 return res.json({ code: 1, postData: data });
+//             }
+//             forloop();
+//             // return res.json({ code: 1, postData: data.length });
+//         }
+//     })
+// }
+
 
 const getPost = async (req, res) => {
     const { id } = req.body;
+    console.log('vao post ne');
     Post.aggregate([
         {
             $lookup: {
                 from: "likeposts",
-                let: { user: "$userId._id", idd: "$_id" },
+                let: { user: "$userId", idd: "$_id" },
                 pipeline: [
                     {
                         $match:
@@ -16,23 +64,31 @@ const getPost = async (req, res) => {
                             {
                                 $and:
                                     [
-                                        { $eq: ["$$user", id] },
+                                        { $eq: ["$userId", id] },
                                         { $eq: ["$$idd", "$postId"] }
                                     ]
                             }
                         }
                     },
-                    { $project: { isLike: 1, _id: 0 } }
+                    { $project: { islike: 1, _id: 0 } }
                 ],
                 as: "likeposts"
-            }
-
-        }
+            },
+           
+        },
+        { $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "user_id"
+          }},
     ], function async(err, data) {
         if (err) {
             return res.json({ code: 0, errMsg: err });
         } else {
             const forloop = async () => {
+                // data = await Post.populate(data, { path: '_id' })
+                // data = await Post.populate(data, {path: "user_id", select: 'user post'});
                 for (var i = 0; i < data.length; i++) {
                     const count = await LikePost.find({ postId: data[i]._id });
                     data[i].countlike = count.length;
@@ -168,6 +224,11 @@ const setReviewPost = async(req, res) => {
     }
     return res.json('xong');
 }
+
+const testPost = async(req, res) => {
+    const post = await Post.find().populate("user_id");
+    console.log(post);
+}
 module.exports = {
     getPost,
     createPost,
@@ -177,5 +238,6 @@ module.exports = {
     deletePost,
     acceptPost,
     refusePost,
-    setReviewPost
+    setReviewPost,
+    testPost
 }

@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const postSchema = mongoose.Schema({
     user_id: {
-        type: Object,
-        require: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
     },
     time: {
         type: Date,
@@ -37,7 +37,12 @@ const postSchema = mongoose.Schema({
         type: Number, //0 refuse(từ chối),1  accept(chấp nhận), 2 not approved(chưa duyệt)
         require: true
 
+    },
+    islike: {
+        type: Number,
+        require: false
     }
+
     
 }); 
 

@@ -22,9 +22,14 @@ const firebaseConfig = {
 dotenv.config();
 
 // import cac models
+const app = express();
+
+app.use(express.json());
+
+app.use(cors());
 require('./src/models/user.model');
 // connect mongodb
-mongoose.connect(process.env.MONGODB_URI || '', {
+mongoose.connect(process.env.MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	// useFindAndModify: false
@@ -38,11 +43,7 @@ mongoose.connection.on('error', error => {
 	console.log('Connect to mongo error', error);
 });
 
-const app = express();
 
-app.use(express.json());
-
-app.use(cors());
 
 app.all('/*', function(req, res, next) {
 	// CORS headers

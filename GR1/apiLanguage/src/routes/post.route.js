@@ -11,5 +11,6 @@ router.post('/deletePost', postController.deletePost)
 router.post('/acceptPost', postController.acceptPost)
 router.post('/refusePost', postController.refusePost)
 router.get('/setReviewPost', postController.setReviewPost)
+router.get('/testPost', postController.testPost)
 
 module.exports = router

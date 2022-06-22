@@ -31,6 +31,31 @@ return res.json({minutes, hours, day, month, year});
 
 const getCommentWord = async(req, res) => {
     const {word_id, user_id} = req.body;
+    // WordComment.aggregate([
+    //     {
+    //         $lookup: {
+    //             from: "wordactionlikes",
+    //             let: { user: "$user_id_like", idd: "$_id" },
+    //             pipeline: [
+    //                 {
+    //                     $match:
+    //                     {
+    //                         $expr:
+    //                         {
+    //                             $and:
+    //                                 [
+    //                                     { $eq: ["$user_id_like", user_id] },
+    //                                     { $eq: ["$$idd", "$postId"] }
+    //                                 ]
+    //                         }
+    //                     }
+    //                 },
+    //                 { $project: { islike: 1, _id: 0 } }
+    //             ],
+    //             as: "likeposts"
+    //         },
+    //     }
+    // ])
     const comment = await WordComment.find({word_id: word_id}).populate("user_id");
     var i;
     for (i=0; i< comment.length; i++) {

@@ -49,11 +49,16 @@ const sendNotiToDeviceAsset = async (req, res) => {
             comment = await KanjiComment.findOne({ _id: list_user[i] }).populate("user_id").populate("kanji_id");
         }
         else {
-            comment = await Post.findOne({_id: list_user[i]});
+            comment = await Post.findOne({_id: list_user[i]}).populate("user_id");
         }
         // const comment = await WordComment.findOne({ _id: list_user[i] }).populate("user_id").populate("word_id");
         if (comment) {
-            content = `${username} đã ${action} ${noti} của bạn: ${comment.content}`;
+            if(type==="post") {
+                content = `${username} đã ${action} ${noti} của bạn`;
+            }
+            else {
+                content = `${username} đã ${action} ${noti} của bạn: ${comment.content}`;
+            }
             var time = new Date();
             // const dataaa = comment.word_id.toObject();
             var dataaa={};
@@ -67,7 +72,7 @@ const sendNotiToDeviceAsset = async (req, res) => {
                 dataaa = comment.kanji_id.toObject();
             }
             else {
-                dataaa = comment;
+                dataaa = comment.toObject();
             }
 
         // console.log('DATA WORD OF COMMENT LA ',dataaa); // data t lưu đây nhé 
@@ -90,6 +95,7 @@ const sendNotiToDeviceAsset = async (req, res) => {
                             "action": action,
                             "routedata": type==="word"? comment.word_id: type==="grammar" ?  comment.grammar_id: type==="kanji"? comment.kanji_id: comment,
                             "notification_id": newNotifi._id,
+                            "type": type
                         },
                     }, {
                         headers: {
