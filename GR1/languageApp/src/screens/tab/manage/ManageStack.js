@@ -6,34 +6,84 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconss from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getAllcommentWord } from '../../../redux/actions/comment.action';
+import { getAllcommentWord, getAllcommentGrammar, getAllcommentKanji } from '../../../redux/actions/comment.action';
 import axios from 'axios';
 import { RemoteManage } from '../../../redux/actions/manage.action';
 
 const ManageStack = ({ navigation }) => {
     const listPost = useSelector(state => state.postReducer.listPost);
     const allCommentWord = useSelector(state => state.commentReducer.allCommentWord);
+    const allCommentKanji = useSelector(state => state.commentReducer.allCommentKanji);
+    const allCommentGrammar = useSelector(state => state.commentReducer.allCommentGrammar);
     const users = useSelector(state => state.userReducer.user);
     const dispatch = useDispatch();
     const [asset, setAsset] = useState(true);
     const isManage = useSelector(state => state.manageReducer.isManage);
+    // useEffect(() => {
+    //     if (users.role === 1) {
+    //         axios.get('http://192.168.1.72:3002/language/getAllWordComment', {
+    //             headers: {
+    //                 "Accept": "application/json",
+    //                 "Content-Type": "application/json"
+    //             }
+    //         })
+    //             .then((response) => {
+    //                 dispatch(getAllcommentWord(response.data.comment));
+    //             })
+    //             .catch(function (error) {
+    //                 throw error;
+    //             })
+    //     }
+    // }, []);
     useEffect(() => {
-        console.log('vao day nhe, managa');
-        if (users.role === 1) {
+        const unsubscribe = navigation.addListener('focus', () => {
             axios.get('http://192.168.1.72:3002/language/getAllWordComment', {
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                }
-            })
-                .then((response) => {
-                    dispatch(getAllcommentWord(response.data.comment));
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
                 })
-                .catch(function (error) {
-                    throw error;
+                    .then((response) => {
+                        dispatch(getAllcommentWord(response.data.comment));
+                    })
+                    .catch(function (error) {
+                        
+                        throw error;
+                    })
+                &&
+                axios.get('http://192.168.1.72:3002/language/getAllKanjiComment', {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
                 })
-        }
-    }, []);
+                    .then((response) => {
+                        // console.log(response.data.comment);
+                        dispatch(getAllcommentKanji(response.data.comment));
+                    })
+                    .catch(function (error) {
+                        console.log('loi ben kanji');
+                        throw error;
+                    })
+                &&
+                axios.get('http://192.168.1.72:3002/language/getAllGrammarComment', {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then((response) => {
+                        dispatch(getAllcommentGrammar(response.data.comment));
+                    })
+                    .catch(function (error) {
+                        console.log('loi ben kanji');
+                        throw error;
+                    })
+
+        });
+
+        return unsubscribe;
+    }, [navigation]);
     const toggleSwitchAction = (value) => {
         if (isManage === true) {
             if (listPost.filter(e => e.review === 2).length !== 0 || allCommentWord.filter(e => e.review === 2).length !== 0) {
@@ -137,7 +187,7 @@ const ManageStack = ({ navigation }) => {
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }} onPress={() => navigation.navigate("AssetsComment", { navigation: navigation })}>
+                        <TouchableOpacity style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }} onPress={() => navigation.navigate("AssetsComment", { navigation: navigation, type: "Từ vựng" })}>
                             <Iconss name={'post-outline'} size={29} color={'black'} style={{ paddingTop: 10, paddingRight: 10 }} />
                             <View style={{ marginLeft: 5 }}>
                                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Kiểm duyệt comment từ vựng</Text>
@@ -148,30 +198,36 @@ const ManageStack = ({ navigation }) => {
                             </View>
                         </TouchableOpacity>
 
-                        <View style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }}>
+                        <TouchableOpacity 
+                        onPress={() => {
+                            navigation.navigate("AssetsComment", { navigation: navigation, type: "Ngữ pháp" });
+                        }}
+                        style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }}>
                             <Iconss name={'post-outline'} size={29} color={'black'} style={{ paddingTop: 10, paddingRight: 10 }} />
                             <View style={{ marginLeft: 5 }}>
                                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Kiểm duyệt comment ngữ pháp </Text>
                                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#e6e6e6', paddingBottom: 5 }}>
                                     <Text style={{ fontWeight: 'bold', fontSize: 40, marginTop: -30, color: '#00bfff' }}>.</Text>
-                                    <Text>1 new days</Text>
+                                    <Text>{allCommentGrammar.filter(e => e.review === 2).length} comment</Text>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
 
-                        <View style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }}>
+                        <TouchableOpacity 
+                        onPress={() => navigation.navigate("AssetsComment", { navigation: navigation, type: "Hán tự" })}
+                        style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }}>
                             <Iconss name={'post-outline'} size={29} color={'black'} style={{ paddingTop: 10, paddingRight: 10 }} />
                             <View style={{ marginLeft: 5 }}>
                                 <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Kiểm duyệt comment chữ hán </Text>
                                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#e6e6e6', paddingBottom: 5 }}>
                                     <Text style={{ fontWeight: 'bold', fontSize: 40, marginTop: -30, color: '#00bfff' }}>.</Text>
-                                    <Text>1 new days</Text>
+                                    <Text>{allCommentKanji.filter(e => e.review === 2).length} comment</Text>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </View>
 
-                    <View style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }}>
+                    {/* <View style={{ flexDirection: 'row', paddingRight: 10, paddingLeft: 10, paddingBottom: 10 }}>
                         <Octicons name={'report'} size={29} color={'black'} style={{ paddingTop: 10, paddingRight: 10 }} />
                         <View style={{ marginLeft: 5 }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Nội dung bị báo cáo</Text>
@@ -180,7 +236,7 @@ const ManageStack = ({ navigation }) => {
                                 <Text>1 new days</Text>
                             </View>
                         </View>
-                    </View>
+                    </View> */}
 
 
                 </View>

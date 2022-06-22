@@ -129,7 +129,9 @@ export default ListWord = ({ navigation, lession }) => {
                         </View>
 
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft: 10 }}>
+                    {
+                        item.explain !== undefined ?
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft: 10 }}>
                         <View style={{ width: '50%', justifyContent: 'center', marginBottom: 20 }}>
                             <Text>{item.explain}</Text>
                         </View>
@@ -142,6 +144,8 @@ export default ListWord = ({ navigation, lession }) => {
                             />
                         </View>
                     </View>
+                    : null
+                    }
 
                 </View>
 

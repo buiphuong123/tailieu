@@ -18,6 +18,8 @@ const urlkanji = 'getKanji';
 const urlkanjicomment = 'getKanjiComment';
 const urlSchedule = 'getSchedule';
 const urlVocabulary = 'getVocabulary';
+const urlshareVocabulary = 'getVocabularyShare';
+
 //post
 const urlPost = 'getPost';
 // export const getList = (params = {}) => {
@@ -86,7 +88,9 @@ export const allSchedule = data => {
 export const allVocabulary = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlVocabulary}`, data);
 }
-
+export const allshareVocabulary = data => {
+  return axiosService.post(`${API_ENDPOINT}/${urlshareVocabulary}`, data);
+}
 export const allPost = data => {
   return axiosService.post(`${API_ENDPOINT}/${urlPost}`, data);
 }

@@ -87,21 +87,21 @@ export default ExplainKanji = ({ navigation, route }) => {
         if (index === 0) {
             list.push(comment_id);
             axios.post('http://192.168.1.72:3002/language/createLikeKanjiComment', {
-            "comment_id": comment_id,
-            "user_id_like":  users._id,
-            "checkStatus": checkdislike
-        }, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-            .then((response) => {
-                console.log(response.data);
+                "comment_id": comment_id,
+                "user_id_like": users._id,
+                "checkStatus": checkdislike
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
             })
-            .catch(function (error) {
-                throw error;
-            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
 
             axios.post('http://192.168.1.72:3002/language/sendNotiToDeviceAsset', {
                 "list_user": list,
@@ -122,7 +122,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        
+
 
     }
 
@@ -161,21 +161,21 @@ export default ExplainKanji = ({ navigation, route }) => {
         if (index === 0) {
             list.push(comment_id);
             axios.post('http://192.168.1.72:3002/language/createDisLikeKanjiComment', {
-            "comment_id": comment_id,
-            "user_id_dislike": user_id,
-            "checkStatus": checkdislike
-        }, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-            .then((response) => {
-                console.log(response.data);
+                "comment_id": comment_id,
+                "user_id_dislike": user_id,
+                "checkStatus": checkdislike
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
             })
-            .catch(function (error) {
-                throw error;
-            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
             axios.post('http://192.168.1.72:3002/language/sendNotiToDeviceAsset', {
                 "list_user": list,
                 "action": "dislike",
@@ -196,7 +196,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                     throw error;
                 })
         }
-        
+
     }
 
 
@@ -528,7 +528,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                     <Icon name={'arrow-back'} size={29} style={{ color: '#fff', marginLeft: 5 }} />
                 </TouchableOpacity>
                 <View style={{ justifyContent: 'center' }}>
-                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 18 }}>{vocabulary.word}</Text>
+                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 18 }}>{kanjiword.kanji} - {kanjiword.mean}</Text>
                 </View>
                 {
                     users.role === 1 ?
@@ -596,18 +596,22 @@ export default ExplainKanji = ({ navigation, route }) => {
                             </SeeMore>
                         </View>
                     </View>
-                    <View style={{}}>
-                        <Text style={{}}>hình ảnh minh họa :</Text>
-                        <View style={{ marginRight: 30 }}>
-                            <Image
-                                style={{ height: 70, width: '80%', marginBottom: 10, marginLeft: 20 }}
-                                source={{
-                                    uri: kanjiword.image,
-                                }}
-                            />
-                        </View>
-                        <Text>{kanjiword.explain}</Text>
-                    </View>
+                    {
+                        kanjiword.explain !== undefined ?
+                            <View style={{}}>
+                                <Text style={{}}>hình ảnh minh họa :</Text>
+                                <View style={{ marginRight: 30 }}>
+                                    <Image
+                                        style={{ height: 70, width: '80%', marginBottom: 10, marginLeft: 20 }}
+                                        source={{
+                                            uri: kanjiword.image,
+                                        }}
+                                    />
+                                </View>
+                                <Text>{kanjiword.explain}</Text>
+                            </View>
+                            : null
+                    }
 
                     <View>
                         <Text>Ví dụ phân loại theo cách đọc</Text>
@@ -731,7 +735,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                     <View>
                         <FlatList
                             style={{ padding: 5 }}
-                            data={dataKanjiComment.filter(e=>e.review===1 || e.review ===2).slice(0, 3)}
+                            data={dataKanjiComment.filter(e => e.review === 1 || e.review === 2).slice(0, 3)}
                             keyExtractor={item => item._id}
                             renderItem={renderComment}
                         />
@@ -759,7 +763,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                             />
                         </View>
                     </View>
-                  
+
                 </View>
 
             </ScrollView>
@@ -776,7 +780,7 @@ export default ExplainKanji = ({ navigation, route }) => {
                         <ScrollView>
                             <FlatList
                                 style={{ padding: 5 }}
-                                data={dataKanjiComment.filter(e=>e.review===1|| e.review===2).slice(3, dataKanjiComment.length)}
+                                data={dataKanjiComment.filter(e => e.review === 1 || e.review === 2).slice(3, dataKanjiComment.length)}
                                 keyExtractor={item => item._id}
                                 renderItem={renderComment}
                             />

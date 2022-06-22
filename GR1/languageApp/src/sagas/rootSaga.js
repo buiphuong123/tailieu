@@ -8,7 +8,7 @@ import { watchgetWord, watchgetWordComment } from './wordSaga';
 import { watchgetGrammarQuestion } from './grammarquestionSaga';
 import { watchgetKanji, watchgetCommentKanji } from './kanjiSaga';
 import { watchgetSchedule } from './scheduleSaga';
-import { watchgetVocabulary } from './vocabularySaga';
+import { watchgetVocabulary, watchgetshareVocabulary } from './vocabularySaga';
 import {watchgetPost} from './postSaga';
 
 export default function* rootSaga() {
@@ -28,5 +28,6 @@ export default function* rootSaga() {
         watchgetSchedule(),
         watchgetVocabulary(),
         watchgetPost(),
+        watchgetshareVocabulary()
     ])
 }

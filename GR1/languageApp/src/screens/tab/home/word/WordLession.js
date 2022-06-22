@@ -43,7 +43,7 @@ export default WordLession = ({ navigation }) => {
     useEffect(() => {
         setSearching(false);
         // console.log(wordlevel);
-        console.log(wordlevel.filter(w => !w.lesson).map(w => w.lession))
+        // console.log(wordlevel.filter(w => !w.lesson).map(w => w.lession))
         const max = Math.max(...wordlevel.map(w => w.lession ?? 1));
         console.log(max);
         for (var i = 1; i <= max; i++) {
@@ -71,10 +71,10 @@ export default WordLession = ({ navigation }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <View>
                         {
-                            index=== 0 ?
-                            <Text>{Math.floor((wordlevel.filter(e=>e.memerizes.length===1).length/wordlevel.length)*100)}%</Text>
-                            :
-                            <Text>{Math.floor((wordlevel.filter(e=>e.memerizes.length===1 && e.lession=== index).length/wordlevel.filter(e=>e.lession=== index).length)*100)}%</Text>
+                            index === 0 ?
+                                <Text>{Math.floor((wordlevel.filter(e => e.memerizes.length === 1).length / wordlevel.length) * 100)}%</Text>
+                                :
+                                <Text>{Math.floor((wordlevel.filter(e => e.memerizes.length === 1 && e.lession === index).length / wordlevel.filter(e => e.lession === index).length) * 100)}%</Text>
 
 
                         }
@@ -92,7 +92,7 @@ export default WordLession = ({ navigation }) => {
     }
     return (
         <View style={styles.container}>
-            <CustomHeader title="Word" navigation={navigation} />
+            <CustomHeader title={"Word"} navigation={navigation} />
             <View style={{ justifyContent: 'center', alignItems: 'center', height: 60, backgroundColor: '#009387', }}>
                 <TextInput
                     style={styles.textInput}
@@ -103,7 +103,7 @@ export default WordLession = ({ navigation }) => {
 
                 />
             </View>
-            <View style={{}}>
+            <ScrollView style={{ flex: 1, }}>
                 <View style={{
                     flexWrap: 'wrap', flexDirection: 'row',
                     // justifyContent: 'center'
@@ -138,10 +138,10 @@ export default WordLession = ({ navigation }) => {
                     }
                 </View>
 
-            </View>
+            </ScrollView>
 
 
-            <View style={{paddingTop: 100}}>
+            {/* <View style={{paddingTop: 100}}>
                 <Modal
                     isVisible={isVisible}
                     animationInTiming={1000}
@@ -169,7 +169,7 @@ export default WordLession = ({ navigation }) => {
 
                     </View>
                 </Modal>
-            </View>
+            </View> */}
 
 
             <TouchableOpacity
@@ -203,7 +203,36 @@ export default WordLession = ({ navigation }) => {
 
 
             }
-            {/* </View> */}
+
+            <View style={{}}>
+                <Modal
+                    isVisible={isVisible}
+                    animationInTiming={1000}
+                    animationOutTiming={1000}
+                    backdropTransitionInTiming={1000}
+                    backdropTransitionOutTiming={1000}
+                    deviceWidth={WIDTH}
+                >
+                    <View style={styles.modalContent}>
+                        <ScrollView>
+                            <FlatList
+                                style={{ padding: 5 }}
+                                data={dataSource}
+                                keyExtractor={item => item.id}
+                                renderItem={renderLession}
+                            />
+
+                        </ScrollView>
+                        <TouchableOpacity onPress={() => setisVisible(false)}>
+                            <View style={styles.button}>
+                                <Text>Close</Text>
+                            </View>
+                        </TouchableOpacity>
+
+
+                    </View>
+                </Modal>
+            </View>
         </View>
     )
 }
@@ -214,6 +243,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         marginTop: 50,
         marginBottom: 50,
+        // marginBottom: 50,
         backgroundColor: 'white',
         // height: HEIGHT
     },

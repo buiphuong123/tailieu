@@ -6,7 +6,7 @@ import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector, useDispatch } from 'react-redux';
 import { getListNotifiRequest } from '../../../redux/actions/notifi.action';
 import axios from 'axios';
-
+import { getListCommentRequest, getListWordCommentRequest, getListKanjiCommentRequest } from '../../../redux/actions/comment.action';
 const WIDTH = Dimensions.get('window').width;
 
 const NotificationStack = ({ navigation }) => {
@@ -14,6 +14,8 @@ const NotificationStack = ({ navigation }) => {
     const users = useSelector(state => state.userReducer.user);
     const notifiList = useSelector(state => state.notifiReducer.notifiList);
     const [dataNotifi, setdataNotifi] = useState(notifiList);
+    const listPost = useSelector(state => state.postReducer.listPost);
+
     var last = new Date();
     
 
@@ -88,13 +90,22 @@ const NotificationStack = ({ navigation }) => {
         }
         // navigation.navigate("ExplainScreen", {word: item.data});
         if(item.typeNoti === 'word') {
-            navigation.navigate("WordScreenDetail", { vocabulary: item.data });
+            dispatch(getListWordCommentRequest(item.data._id, users._id));
+            navigation.navigate("WordScreenDetail", {navigation: navigation, vocabulary: item.data });
         }
         else if(item.typeNoti === 'kanji') {
+            dispatch(getListKanjiCommentRequest(item.data._id, users._id));
             navigation.navigate("ExplainKanji", { navigation: navigation, kanjiword: item.data });
         }
-        else {
+        else if(item.typeNoti === 'grammar'){
+            dispatch(getListCommentRequest(item.data._id, users._id));
             navigation.navigate("ExplainScreen", { word: item.data });
+        }
+        else {
+            // console.log('datachuyen di day ne', item.data);
+            const data = listPost.filter(e=>e._id === item.data._id);
+            console.log('CHECK DAY NE', data);
+            navigation.navigate("PostUser", { navigation: navigation, dataOne: data})
         }
     }
     const renderNotifi = ({ item, index }) => {

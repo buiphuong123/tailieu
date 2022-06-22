@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native'
+import { Text, Alert, View, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import WordInfo from './WordInfo';
 const { width: WIDTH } = Dimensions.get('window');
@@ -105,6 +105,7 @@ export default ListWord = ({ navigation, lession }) => {
         setisVisibleAction(true);
     }
     const deleteAction = (currentWord) => {
+        setisVisibleAction(false);
         Alert.alert(
             "Alert",
             "Are you sure delete" + currentWord.word + "?",

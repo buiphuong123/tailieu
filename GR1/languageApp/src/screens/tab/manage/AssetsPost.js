@@ -138,6 +138,26 @@ const AssetPost = ({ navigation }) => {
             .catch(function (error) {
                 throw error;
             })
+
+            axios.post('http://192.168.1.72:3002/language/sendNotiToDeviceAsset', {
+                "list_user": list,
+                "action": "phê duyệt",
+                "noti": "post",
+                "type": "post",
+                "username": "Quản trị viên"
+    
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
     }
     const refusePost = (element) => {
         const list = [];
@@ -409,7 +429,7 @@ const AssetPost = ({ navigation }) => {
                                                     }}
                                                 />
                                                 <View style={{ marginLeft: 10 }}>
-                                                    <Text>{element.userId.username}</Text>
+                                                    <Text>{element.user_id.username}</Text>
                                                     <Text>{timeMath(new Date(element.time))}</Text>
                                                 </View>
 

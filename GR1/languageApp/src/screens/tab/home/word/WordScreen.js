@@ -63,7 +63,7 @@ export default WordScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ justifyContent: 'center' }}>
-                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 18 }}>N5</Text>
+                    <Text style={{ textAlign: 'center', color: '#fff', fontSize: 18 }}>{lession===0? "Tất cả": "Bài " +lession}</Text>
                 </View>
                 <View style={{ justifyContent: 'center' }}>
                     <TouchableOpacity 

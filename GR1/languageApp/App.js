@@ -47,6 +47,7 @@ import ListWordVocabulary from './src/screens/tab/home/ListWordVocabulary';
 import PracticeScreen from './src/screens/tab/home/practice/PracticeScreen';
 import NewPostScreen from './src/screens/tab/contact/NewPostScreen';
 import axios from 'axios';
+import GrammarTest from './src/screens/tab/home/practice/GrammarTest';
 
 const store = createStore(
   appReducers,
@@ -175,11 +176,8 @@ const App = () => {
   // });
   return (
       <Provider store={store}>
-        {/* <VocabularyScreen /> */}
-        {/* <ListWordVocabulary /> */}
-        {/* <ExplainScreen /> */}
         {/* <PracticeScreen /> */}
-        {/* <NewPostScreen /> */}
+        {/* <GrammarTest /> */}
         <Home />
         {/* <Button onPress={dataTake} title="Hello" /> */}
         <Toast ref={(ref) => Toast.setRef(ref)} />

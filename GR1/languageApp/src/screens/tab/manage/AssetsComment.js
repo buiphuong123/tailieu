@@ -17,7 +17,8 @@ import axios from 'axios';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const AssetsComment = ({ navigation }) => {
+const AssetsComment = ({ navigation, route }) => {
+    const { type } = route.params;
     const [isVisibleSort, setisVisibleSort] = useState(false);
     const [chooseTab, setChooseTab] = useState(1);
     const [isNew, setisNew] = useState('unchecked');
@@ -30,48 +31,90 @@ const AssetsComment = ({ navigation }) => {
     const [searchRequire, setSearchRequire] = useState(false);
     const [searching, setSearching] = useState(false);
     const [filtered, setFiltered] = useState(dataCommentWord)
+    const allCommentKanji = useSelector(state => state.commentReducer.allCommentKanji);
+    const allCommentGrammar = useSelector(state => state.commentReducer.allCommentGrammar);
+    const [dataCommentKanji, setDataCommentKanji] = useState(allCommentKanji);
+    const [dataCommentGrammar, setDataCommentGrammar] = useState(allCommentGrammar);
 
-    // useEffect(() => {
-    //     setSearchName(false);
-    //     setSearchRequire(false);
-    //     setSearching(false);
-    // }, []);
     useEffect(() => {
-        
-        // const data = chooseTab === 2 ? dataWordComment.filter(e => e.review === 1) :
-        //     chooseTab === 3 ? dataPost.filter(e => e.review === 0) :
-        //         dataPost.filter(e => e.review === 2);
-        if (dataCommentWord.every(p => !p.checked)) {
-            setCheckAll(false);
-        }
-        if (dataCommentWord.some(p => p.checked)) {
-            setCheckAll(true);
-        }
-        if (searching === true)  {      
-            if (filtered.every(p => !p.checked)) {
+        setDataCommentWord(allCommentWord);
+        setDataCommentGrammar(allCommentGrammar);
+        setDataCommentKanji(allCommentKanji);
+    }, [allCommentWord, allCommentGrammar, allCommentKanji]);
+    useEffect(() => {
+        if(type === "Từ vựng") {
+            if (dataCommentWord.every(p => !p.checked)) {
                 setCheckAll(false);
             }
-            if (filtered.some(p => p.checked)) {
+            if (dataCommentWord.some(p => p.checked)) {
                 setCheckAll(true);
             }
-
         }
+        else if (type === "Ngữ pháp" ) {
+            if (dataCommentGrammar.every(p => !p.checked)) {
+                setCheckAll(false);
+            }
+            if (dataCommentGrammar.some(p => p.checked)) {
+                setCheckAll(true);
+            }
+        }
+        else {
+            if (dataCommentKanji.every(p => !p.checked)) {
+                setCheckAll(false);
+            }
+            if (dataCommentKanji.some(p => p.checked)) {
+                setCheckAll(true);
+            }
+        }
+        // if (searching === true)  {      
+        //     if (filtered.every(p => !p.checked)) {
+        //         setCheckAll(false);
+        //     }
+        //     if (filtered.some(p => p.checked)) {
+        //         setCheckAll(true);
+        //     }
 
-    }, [dataCommentWord, checkAll, filtered]);
+        // }
+
+    }, [type === "Từ vựng" ? dataCommentWord : type === "Ngữ pháp" ? dataCommentGrammar : dataCommentKanji, checkAll]);
     const toggleSwitchisNew = () => {
         if (isNew === 'unchecked') {
-            dataCommentWord.sort(function (a, b) {
-                return new Date(b.time) - new Date(a.time);
-            })
+            if (type === "Từ vựng") {
+                dataCommentWord.sort(function (a, b) {
+                    return new Date(b.time) - new Date(a.time);
+                })
+            }
+            else if (type === "Ngữ pháp") {
+                dataCommentGrammar.sort(function (a, b) {
+                    return new Date(b.time) - new Date(a.time);
+                })
+            }
+            else {
+                dataCommentKanji.sort(function (a, b) {
+                    return new Date(b.time) - new Date(a.time);
+                })
+            }
             setisNew('checked');
             setisOld('unchecked');
         }
     }
     const toggleSwitchisOld = () => {
         if (isOld === 'unchecked') {
-            dataCommentWord.sort(function (a, b) {
-                return new Date(a.time) - new Date(b.time);
-            })
+            if (type === "Từ vựng") {
+                dataCommentWord.sort(function (a, b) {
+                    return new Date(a.time) - new Date(b.time);
+                })
+            }
+            else if (type === "Ngữ pháp") {
+                dataCommentGrammar.sort(function (a, b) {
+                    return new Date(a.time) - new Date(b.time);
+                })
+            }
+            else {
+                dataCommentKanji.sort(function (a, b) {
+                    return new Date(a.time) - new Date(b.time);
+                })
+            }
             setisNew('unchecked');
             setisOld('checked');
         }
@@ -106,43 +149,132 @@ const AssetsComment = ({ navigation }) => {
         setSearchName(text);
         if (text) {
             setSearching(true);
-            const tempList = dataCommentWord.filter(item => {
-                if (item.review === 2 && item.content.match(text.toLowerCase()))
-                    return item
-            })
-            setFiltered(tempList)
+            // const tempList = dataCommentWord.filter(item => {
+            //     if (item.review === 2 && item.content.match(text.toLowerCase()))
+            //         return item
+            // })
+            if (type === "Từ vựng") {
+                const tempList = dataCommentWord.filter(item => {
+                    if (item.review === 2 && item.content.match(text.toLowerCase()))
+                        return item
+                })
+                setFiltered(tempList);
+            }
+            else if (type === "Ngữ pháp") {
+                const tempList = dataCommentGrammar.filter(item => {
+                    if (item.review === 2 && item.content.match(text.toLowerCase()))
+                        return item
+                })
+                setFiltered(tempList);
+            }
+            else {
+                const tempList = dataCommentKanji.filter(item => {
+                    if (item.review === 2 && item.content.match(text.toLowerCase()))
+                        return item
+                })
+                setFiltered(tempList);
+            }
+
         }
         else {
             setSearching(false)
-            setFiltered(dataCommentWord.filter(e => e.review === 2));
+            if (type === "Từ vựng") {
+                setFiltered(dataCommentWord.filter(e => e.review === 2));
+            }
+            else if (type === "Ngữ pháp") {
+                setFiltered(dataCommentGrammar.filter(e => e.review === 2));
+            }
+            else {
+                setFiltered(dataCommentKanji.filter(e => e.review === 2));
+            }
+
         }
     }
     const acceptComment = (element) => {
         const list = [];
+        var notitype = "word";
         if (element._id !== undefined) {
-            const objIndex = dataCommentWord.findIndex(e => e._id === element._id);
-            if (objIndex !== -1) {
-                list.push(element._id);
-                dataCommentWord[objIndex].review = 1;
-                dataCommentWord[objIndex].checked = false;
-                setDataCommentWord([...dataCommentWord]);
+            // const objIndex = dataCommentWord.findIndex(e => e._id === element._id);
+            // if (objIndex !== -1) {
+            //     list.push(element._id);
+            //     dataCommentWord[objIndex].review = 1;
+            //     dataCommentWord[objIndex].checked = false;
+            //     setDataCommentWord([...dataCommentWord]);
 
+            // }
+            if (type === "Từ vựng") {
+                const objIndex = dataCommentWord.findIndex(e => e._id === element._id);
+                if (objIndex !== -1) {
+                    list.push(element._id);
+                    dataCommentWord[objIndex].review = 1;
+                    dataCommentWord[objIndex].checked = false;
+                    setDataCommentWord([...dataCommentWord]);
+
+                }
+            }
+            else if (type === "Ngữ pháp") {
+                const objIndex = dataCommentGrammar.findIndex(e => e._id === element._id);
+                if (objIndex !== -1) {
+                    list.push(element._id);
+                    dataCommentGrammar[objIndex].review = 1;
+                    dataCommentGrammar[objIndex].checked = false;
+                    setDataCommentGrammar([...dataCommentGrammar]);
+
+                }
+            }
+            else {
+                const objIndex = dataCommentKanji.findIndex(e => e._id === element._id);
+                if (objIndex !== -1) {
+                    list.push(element._id);
+                    dataCommentKanji[objIndex].review = 1;
+                    dataCommentKanji[objIndex].checked = false;
+                    setDataCommentKanji([...dataCommentKanji]);
+
+                }
             }
         }
         else {
 
-            const post = dataCommentWord.filter(e => e.checked === true);
-            for (var i = 0; i < post.length; i++) {
-                list.push(post[i]._id);
-                dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 1;
-                dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
-                setDataCommentWord([...dataCommentWord]);
+            // const post = dataCommentWord.filter(e => e.checked === true);
+            // for (var i = 0; i < post.length; i++) {
+            //     list.push(post[i]._id);
+            //     dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 1;
+            //     dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+            //     setDataCommentWord([...dataCommentWord]);
+            // }
+            if (type === "Từ vựng") {
+                const post = dataCommentWord.filter(e => e.checked === true);
+                for (var i = 0; i < post.length; i++) {
+                    list.push(post[i]._id);
+                    dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 1;
+                    dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+                    setDataCommentWord([...dataCommentWord]);
+                }
+            }
+            else if (type === "Ngữ pháp") {
+                const post = dataCommentGrammar.filter(e => e.checked === true);
+                for (var i = 0; i < post.length; i++) {
+                    list.push(post[i]._id);
+                    dataCommentGrammar[dataCommentGrammar.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 1;
+                    dataCommentGrammar[dataCommentGrammar.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+                    setDataCommentGrammar([...dataCommentGrammar]);
+                }
+            }
+            else {
+                const post = dataCommentKanji.filter(e => e.checked === true);
+                for (var i = 0; i < post.length; i++) {
+                    list.push(post[i]._id);
+                    dataCommentKanji[dataCommentKanji.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 1;
+                    dataCommentKanji[dataCommentKanji.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+                    setDataCommentKanji([...dataCommentKanji]);
+                }
             }
 
         }
 
         axios.post('http://192.168.1.72:3002/language/accpetComment', {
             "list": list,
+            "type": type
         }, {
             headers: {
                 "Accept": "application/json",
@@ -155,12 +287,17 @@ const AssetsComment = ({ navigation }) => {
             .catch(function (error) {
                 throw error;
             })
-
+        if (type === "Ngữ pháp") {
+            notitype = "grammar";
+        }
+        else if (type === "Hán tự") {
+            notitype = "kanji";
+        }
         axios.post('http://192.168.1.72:3002/language/sendNotiToDeviceAsset', {
             "list_user": list,
             "action": "phê duyệt",
             "noti": "comment",
-            "type": "word",
+            "type": notitype,
             "username": "Quản trị viên"
 
         }, {
@@ -180,29 +317,87 @@ const AssetsComment = ({ navigation }) => {
     const refuseComment = (element) => {
         const list = [];
         if (element._id !== undefined) {
-            const objIndex = dataCommentWord.findIndex(e => e._id === element._id);
-            if (objIndex !== -1) {
-                list.push(element._id);
-                dataCommentWord[objIndex].review = 0;
-                dataCommentWord[objIndex].checked = false;
-                setDataCommentWord([...dataCommentWord]);
+            // const objIndex = dataCommentWord.findIndex(e => e._id === element._id);
+            // if (objIndex !== -1) {
+            //     list.push(element._id);
+            //     dataCommentWord[objIndex].review = 0;
+            //     dataCommentWord[objIndex].checked = false;
+            //     setDataCommentWord([...dataCommentWord]);
 
+            // }
+            if (type === "Từ vựng") {
+                const objIndex = dataCommentWord.findIndex(e => e._id === element._id);
+                if (objIndex !== -1) {
+                    list.push(element._id);
+                    dataCommentWord[objIndex].review = 0;
+                    dataCommentWord[objIndex].checked = false;
+                    setDataCommentWord([...dataCommentWord]);
+
+                }
+            }
+            else if (type === "Ngữ pháp") {
+                const objIndex = dataCommentGrammar.findIndex(e => e._id === element._id);
+                if (objIndex !== -1) {
+                    list.push(element._id);
+                    dataCommentGrammar[objIndex].review = 0;
+                    dataCommentGrammar[objIndex].checked = false;
+                    setDataCommentGrammar([...dataCommentGrammar]);
+
+                }
+            }
+            else {
+                const objIndex = dataCommentKanji.findIndex(e => e._id === element._id);
+                if (objIndex !== -1) {
+                    list.push(element._id);
+                    dataCommentKanji[objIndex].review = 0;
+                    dataCommentKanji[objIndex].checked = false;
+                    setDataCommentKanji([...dataCommentKanji]);
+
+                }
             }
         }
         else {
 
-            const post = dataCommentWord.filter(e => e.checked === true);
-            for (var i = 0; i < post.length; i++) {
-                list.push(post[i]._id);
-                dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 0;
-                dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
-                setDataCommentWord([...dataCommentWord]);
+            // const post = dataCommentWord.filter(e => e.checked === true);
+            // for (var i = 0; i < post.length; i++) {
+            //     list.push(post[i]._id);
+            //     dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 0;
+            //     dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+            //     setDataCommentWord([...dataCommentWord]);
+            // }
+            if (type === "Từ vựng") {
+                const post = dataCommentWord.filter(e => e.checked === true);
+                for (var i = 0; i < post.length; i++) {
+                    list.push(post[i]._id);
+                    dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 0;
+                    dataCommentWord[dataCommentWord.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+                    setDataCommentWord([...dataCommentWord]);
+                }
+            }
+            else if (type === "Ngữ pháp") {
+                const post = dataCommentGrammar.filter(e => e.checked === true);
+                for (var i = 0; i < post.length; i++) {
+                    list.push(post[i]._id);
+                    dataCommentGrammar[dataCommentGrammar.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 0;
+                    dataCommentGrammar[dataCommentGrammar.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+                    setDataCommentGrammar([...dataCommentGrammar]);
+                }
+            }
+            else {
+                const post = dataCommentKanji.filter(e => e.checked === true);
+                for (var i = 0; i < post.length; i++) {
+                    list.push(post[i]._id);
+                    dataCommentKanji[dataCommentKanji.map(function (e) { return e._id; }).indexOf(post[i]._id)].review = 0;
+                    dataCommentKanji[dataCommentKanji.map(function (e) { return e._id; }).indexOf(post[i]._id)].checked = false;
+                    setDataCommentKanji([...dataCommentKanji]);
+                }
             }
 
         }
 
         axios.post('http://192.168.1.72:3002/language/refuseComment', {
             "list": list,
+            "type": type
         }, {
             headers: {
                 "Accept": "application/json",
@@ -215,6 +410,7 @@ const AssetsComment = ({ navigation }) => {
             .catch(function (error) {
                 throw error;
             })
+
     }
     return (
         <View style={{ flex: 1 }}>
@@ -240,7 +436,7 @@ const AssetsComment = ({ navigation }) => {
                             :
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <View>
-                                    <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Comment đợi xác nhận: {dataCommentWord.filter(e => e.review === 2).length}</Text>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Comment đợi xác nhận: {type === "Từ vựng" ? dataCommentWord.filter(e => e.review === 2).length : type === "Ngữ pháp" ? dataCommentGrammar.filter(e => e.review === 2).length : dataCommentKanji.filter(e => e.review === 2).length}</Text>
                                     <Text style={{ fontSize: 15, color: 'gray' }}>Đang xem theo cũ nhất trước</Text>
                                 </View>
                                 <EvilIcons name={'search'} size={29}
@@ -256,7 +452,16 @@ const AssetsComment = ({ navigation }) => {
                             value={checkAll}
                             onValueChange={() => {
                                 setCheckAll(!checkAll);
-                                setDataCommentWord(dataCommentWord.map(p => ({ ...p, checked: !checkAll })))
+                                if (type === "Từ vựng") {
+                                    setDataCommentWord(dataCommentWord.map(p => ({ ...p, checked: !checkAll })))
+                                }
+                                else if (type === "Ngữ pháp") {
+                                    setDataCommentGrammar(dataCommentGrammar.map(p => ({ ...p, checked: !checkAll })))
+                                }
+                                else {
+                                    setDataCommentKanji(dataCommentKanji.map(p => ({ ...p, checked: !checkAll })))
+
+                                }
                             }}
                         />
 
@@ -271,7 +476,7 @@ const AssetsComment = ({ navigation }) => {
 
                 <ScrollView style={{ backgroundColor: '#f2f2f2' }}>
                     {
-                        (searching === true ? filtered : dataCommentWord.filter(e => e.review === 2)).map((element, key) => {
+                        (searching === true ? filtered : type === "Từ vựng" ? dataCommentWord.filter(e => e.review === 2) : type === "Ngữ pháp" ? dataCommentGrammar.filter(e => e.review === 2) : dataCommentKanji.filter(e => e.review === 2)).map((element, key) => {
                             return (
                                 <View key={key} style={{ backgroundColor: '#fff', marginTop: 10, paddingTop: 10, paddingLeft: 10 }}>
                                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#e6e6e6' }}>
@@ -291,20 +496,47 @@ const AssetsComment = ({ navigation }) => {
                                                     );
                                                 }
                                                 else {
-                                                    setDataCommentWord(
-                                                        dataCommentWord.map(p => {
-                                                            if (p._id === element._id) {
-                                                                return { ...p, checked: !p.checked }
-                                                            }
-                                                            return p;
-                                                        })
+                                                    if (type === "Từ vựng") {
+                                                        setDataCommentWord(
+                                                            dataCommentWord.map(p => {
+                                                                if (p._id === element._id) {
+                                                                    return { ...p, checked: !p.checked }
+                                                                }
+                                                                return p;
+                                                            })
 
 
-                                                    );
+                                                        );
+                                                    }
+                                                    else if (type === "Ngữ pháp") {
+                                                        setDataCommentGrammar(
+                                                            dataCommentGrammar.map(p => {
+                                                                if (p._id === element._id) {
+                                                                    return { ...p, checked: !p.checked }
+                                                                }
+                                                                return p;
+                                                            })
+
+
+                                                        );
+                                                    }
+                                                    else {
+                                                        setDataCommentKanji(
+                                                            dataCommentKanji.map(p => {
+                                                                if (p._id === element._id) {
+                                                                    return { ...p, checked: !p.checked }
+                                                                }
+                                                                return p;
+                                                            })
+
+
+                                                        );
+                                                    }
+
                                                 }
                                             }}
                                         />
-                                        <View style={{ marginLeft: 10, }}>
+                                        {/* <View style={{ marginLeft: 10, }}>
                                             <View style={{ justifyContent: 'center' }}>
                                                 <Text>{element.word_id.word}</Text>
                                                 <View style={{ flexDirection: 'row' }}>
@@ -323,7 +555,71 @@ const AssetsComment = ({ navigation }) => {
                                                 </View>
 
                                             </View>
-                                        </View>
+                                        </View> */}
+                                        {
+                                            type === "Từ vựng" ?
+                                                <View style={{ marginLeft: 10, }}>
+                                                    <View style={{ justifyContent: 'center' }}>
+                                                        <Text>{element.word_id.word}</Text>
+                                                        <View style={{ flexDirection: 'row' }}>
+                                                            {element.word_id.translate !== undefined ? <Text>[{element.word_id.translate}]</Text> : null}
+                                                            {element.word_id.amhan !== undefined ? <Text>[{element.word_id.amhan}]</Text> : null}
+                                                        </View>
+                                                    </View>
+                                                    <View style={{ width: WIDTH - 50, marginTop: 10 }}>
+                                                        <View style={{}}>
+                                                            <Text>{element.content}</Text>
+
+                                                        </View>
+                                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 5, marginRight: 10, marginBottom: 20 }}>
+                                                            <Text>{element.user_id.username}</Text>
+                                                            <Text>({time(new Date(element.time))})</Text>
+                                                        </View>
+
+                                                    </View>
+                                                </View>
+                                                :
+                                                type === "Ngữ pháp" ?
+                                                    <View style={{ marginLeft: 10, }}>
+                                                        <View style={{ justifyContent: 'center' }}>
+                                                            <Text>{element.grammar_id.grammar.split("=>")[0]}</Text>
+                                                            <View style={{ flexDirection: 'row' }}>
+                                                                <Text>{element.grammar_id.grammar.split("=>")[1]}</Text> 
+                                                            </View>
+                                                        </View>
+                                                        <View style={{ width: WIDTH - 50, marginTop: 10 }}>
+                                                            <View style={{}}>
+                                                                <Text>{element.content}</Text>
+
+                                                            </View>
+                                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 5, marginRight: 10, marginBottom: 20 }}>
+                                                                {/* <Text>{element.user_id.username}</Text> */}
+                                                                <Text>({time(new Date(element.time))})</Text>
+                                                            </View>
+
+                                                        </View>
+                                                    </View>
+                                                    :
+                                                    <View style={{ marginLeft: 10, }}>
+                                                        <View style={{ justifyContent: 'center' }}>
+                                                            <Text>{element.kanji_id.kanji}</Text>
+                                                            <View style={{ flexDirection: 'row' }}>
+                                                                <Text>{element.kanji_id.mean}</Text> 
+                                                            </View>
+                                                        </View>
+                                                        <View style={{ width: WIDTH - 50, marginTop: 10 }}>
+                                                            <View style={{}}>
+                                                                <Text>{element.content}</Text>
+
+                                                            </View>
+                                                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 5, marginRight: 10, marginBottom: 20 }}>
+                                                            {element.user_id !== null ?<Text>{element.user_id.username}</Text>: null}
+                                                                <Text>({time(new Date(element.time))})</Text>
+                                                            </View>
+
+                                                        </View>
+                                                    </View>
+                                        }
                                         <View />
 
                                     </View>

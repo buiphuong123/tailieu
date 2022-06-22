@@ -87,7 +87,7 @@ export default Grammer = ({ navigation, route }) => {
     }
   return (
     <View style={{flex: 1}}>
-        <CustomHeader title=" Grammar" navigation={navigation} />
+        <CustomHeader title={lession === 0? "Tất cả": "Bài "+ lession} navigation={navigation} />
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'blue', padding: 10 }}>
                     <View style={styles.checkboxContainer}>
                         <CheckBox

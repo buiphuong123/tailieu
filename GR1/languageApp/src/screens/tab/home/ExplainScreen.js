@@ -14,11 +14,18 @@ import { getListCommentRequest, getListCommentSuccess } from '../../../redux/act
 import io from 'socket.io-client';
 import axios from 'axios';
 import { socket } from '../../../../App';
-const WIDTH = Dimensions.get('window').width;
 import Modal from 'react-native-modal'; // 2.4.0
 import { getListNotifiRequest } from '../../../redux/actions/notifi.action';
 import { getListQuestionRequest } from '../../../redux/actions/grammarquestion.action';
 import { element } from 'prop-types';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { getListVocaRequest } from '../../../redux/actions/vocabulary.action';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { Card } from 'react-native-paper';
+import { getListVocaSuccess } from '../../../redux/actions/vocabulary.action';
+
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs();//Ignore all log notifications
@@ -33,7 +40,12 @@ export default ExplainScreen = ({ navigation, route }) => {
     const { word } = route.params;
     const isManage = useSelector(state => state.manageReducer.isManage);
     const [isVisibleAction, setisVisibleAction] = useState(false);
-
+    const colorBack = ["#0000b3", "#005ce6", "#ff9900", "#00b300", "#e67300"];
+    const vocabularyList = useSelector(state => state.vocabularyReducer.vocabularyList);
+    const [dataList, setDataList] = useState(vocabularyList);
+    const [isVisibleAddWord, setisVisibleAddWord] = useState(false);
+    const [isVisibleAddWordVocu, setisVisibleAddWordVocu] = useState(false);
+    const [name, setName] = useState("");
     // useEffect(() => {
     //     console.log('word truyen sang la', word);
     //     socket.on("SEVER-SEND-LIKE", (msg) => {
@@ -50,7 +62,12 @@ export default ExplainScreen = ({ navigation, route }) => {
     useEffect(() => {
         setdataComment(commentList.filter(e => e.review === 1).map(e => ({ ...e, checked: false })));
     }, [commentList]);
-
+    useEffect(() => {
+        setDataList(vocabularyList);
+    }, []);
+    const fixDigit = (val) => {
+        return (val < 10 ? '0' : '') + val;
+    }
     const likeaction = (comment_id,userlist ) => {
         var index = 0;
         var checkdislike = false;
@@ -239,6 +256,11 @@ export default ExplainScreen = ({ navigation, route }) => {
         if (comment.length === 0 || comment === '') {
             return;
         }
+        var requ = 2;
+
+        if (isManage === false || users.role === 2) {
+            requ = 1;
+        }
         // var date = new Date;
         // const kaka = {grammar_id: grammar_id, user_id: users._id, content: comment, time: date, islike: 0, isdislike: 0, like: 0, dislike: 0, review: "not approved" };
         // setdataComment(dataComment.concat(kaka));
@@ -246,7 +268,8 @@ export default ExplainScreen = ({ navigation, route }) => {
         axios.post('http://192.168.1.72:3002/language/createComment', {
             "grammar_id": grammar_id,
             "user_id": users._id,
-            "content": comment
+            "content": comment,
+            "requ": requ,
         }, {
             headers: {
                 "Accept": "application/json",
@@ -254,7 +277,6 @@ export default ExplainScreen = ({ navigation, route }) => {
             }
         })
             .then((response) => {
-                console.log('gia tri nhan duowcj la', response.data.comment);   
                 const newComment = response.data.comment;
                 const kaka = { _id: newComment._id, grammar_id: newComment.grammar_id, user_id: newComment.user_id, content: newComment.content, time: newComment.time, islike: 0, isdislike: 0, like: 0, dislike: 0, review: newComment.review, username: users.username };
             setdataComment([...dataComment.concat(kaka)]);
@@ -480,6 +502,99 @@ export default ExplainScreen = ({ navigation, route }) => {
         }
         setdataComment([...dataComment]);
     }
+
+    const AddWordInVocu = (element) => {
+        const objIndex = dataList.findIndex(e => e._id === element._id);
+        if (objIndex !== -1) {
+            var d = {};
+            d.word = word.grammar.split("=>")[0];
+            d.vn = word.grammar.split("=>")[1];
+            d.type = "Ngữ pháp";
+            d.date = last;
+            d.explain = word;
+            dataList[objIndex].data.push(d);
+            setDataList([...dataList]);
+            getListVocaSuccess([...dataList]);
+            setisVisibleAddWord(false);
+            axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                "id": element._id,
+                "word": word.grammar.split("=>")[0],
+                "vn": word.grammar.split("=>")[1],
+                "type": "Ngữ pháp",
+                "date": last,
+                "explain": word,
+
+            }, {
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    throw error;
+                })
+        }
+    }
+
+    const createVocaAndAddWord = () => {
+        axios.post('http://192.168.1.72:3002/language/createVocabulary', {
+            "user_id": users._id,
+            "name": name,
+            // "dataElement": vocabulary,
+            "date": last
+        }, {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => {
+                console.log(response.data);
+                const listData = dataList.concat(response.data.vocabulary);
+                // const voca 
+                setDataList([...dataList.concat(response.data.vocabulary)]);
+                const objIndex = listData.findIndex(e => e.name === name);
+                setisVisibleAddWordVocu(false);
+                var d = {};
+                d.word = word.grammar.split("=>")[0];
+                d.vn = word.grammar.split("=>")[1];
+                d.type = "Ngữ pháp";
+                d.date = last;
+                d.explain = word;
+                listData[objIndex].data.push(d);
+                setDataList([...listData]);
+                getListVocaSuccess([...listData]);
+                setisVisibleAddWord(false);
+                setName("");
+                axios.post('http://192.168.1.72:3002/language/createWordInVoca', {
+                    "id": listData[objIndex]._id,
+                    "word":  word.grammar.split("=>")[0],
+                    "vn": word.grammar.split("=>")[1],
+                    "type": "Ngữ pháp",
+                    "date": last,
+                    "explain": word,
+                }, {
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then((response1) => {
+                        console.log(response1.data);
+                    })
+                    .catch(function (error) {
+                        throw error;
+                    })
+                // objIndex = dataList.concat(response.data.vocabulary).findIndex(e => e.name === name);
+            })
+            .catch(function (error) {
+                throw error;
+            })
+
+    }
     return (
         <View style={{ flexGrow: 1, flex: 1 }}>
             <CustomHeader title={word.grammar.split("=>")[0]} navigation={navigation} />
@@ -487,12 +602,11 @@ export default ExplainScreen = ({ navigation, route }) => {
                 <View style={{ marginTop: 20, marginLeft: 15 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <View />
-                        <View>
+                        <TouchableOpacity>
                             <Text>Lưu cấu trúc ngữ pháp này</Text>
-                        </View>
+                        </TouchableOpacity>
                         <Iconsss
-                            // onPress={() => sendComment(word._id)}
-                            style={{ marginRight: 10, marginLeft: 10 }}
+                            onPress={() => setisVisibleAddWord(true)}                            style={{ marginRight: 10, marginLeft: 10 }}
                             name="add-circle-outline"
                             // color={'#d9d9d9'}
                             size={25}
@@ -618,11 +732,121 @@ export default ExplainScreen = ({ navigation, route }) => {
                     </View>
                 </Modal>
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={{ borderWidth: 1, width: 50, borderRadius: 30, backgroundColor: '#009387', borderColor: '#009387', bottom: 60, right: 20, position: 'absolute', zIndex: 1 }}
                 onPress={() => quesSc()}>
                 <Entypo name={'triangle-right'} size={50} style={{ color: 'white' }} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+             <View style={[styles.container]}>
+                <Modal
+                    isVisible={isVisibleAddWord}
+                    swipeDirection="down"
+                    style={{ justifyContent: 'flex-end', margin: 0 }}
+                    onRequestClose={() => setisVisibleAddWord(false)}
+                    deviceWidth={WIDTH}
+                    deviceHeight={HEIGHT}
+                >
+                    <View style={styles.modalContentadd}>
+                        <View style={{ flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-between' }}>
+                            <AntDesign name={'close'} size={20} color={'#fff'}
+                                onPress={() => setisVisibleAddWord(false)}
+                                style={{ paddingTop: 15, paddingRight: 20, marginLeft: 10 }} />
+                            <View style={{ paddingTop: 15 }}>
+                                <Text style={{ color: '#fff', fontSize: 20 }}>Thêm ngữ pháp "{word.grammar.split("=>")[0]}"</Text>
+                            </View>
+                            <TouchableOpacity style={{ justifyContent: 'center', marginRight: 20 }} onPress={() => setisVisibleAddWordVocu(true)}>
+                                <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            {
+                                dataList.length === 0 ?
+                                    <View style={{ padding: 20 }}>
+                                        <Text>Gợi ý </Text>
+                                        <Text>- Nhấn nút dấu "+" góc trên bên phải để thêm nhóm từ mới.</Text>
+                                        <Text>- Bên cạnh nhóm từ có nút đẻ sửa xóa nhóm từ
+                                        </Text>
+                                    </View>
+                                    :
+                                    <ScrollView style={{ marginBottom: 40 }}>
+                                        {
+                                            dataList.map((element, key) => {
+                                                return (
+                                                    <TouchableOpacity key={key} onPress={() => AddWordInVocu(element)}>
+                                                        <Card style={{ marginTop: 10, margin: 10 }}>
+                                                            <Card.Content>
+                                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                                    <View style={{ flexDirection: 'row' }}>
+                                                                        <View style={{ backgroundColor: colorBack[Math.floor(Math.random() * colorBack.length)], borderRadius: 30 }}>
+                                                                            <Text style={{ paddingTop: 15, paddingBottom: 15, paddingLeft: 20, paddingRight: 20, color: '#fff' }}>{element.name.charAt(0)}</Text>
+                                                                        </View>
+                                                                        {/* <Avatar.Image size={40} style={{padding: 10}} source={('https://www.google.com/url?sa=i&url=https%3A%2F%2Fvi.m.wikipedia.org%2Fwiki%2FT%25E1%25BA%25ADp_tin%3AImage_created_with_a_mobile_phone.png&psig=AOvVaw3T9sYalA9E5MRsYwkeGOWj&ust=1652583018117000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJDa-8_93fcCFQAAAAAdAAAAABAD')} /> */}
+                                                                        <View
+                                                                            style={{
+                                                                                marginLeft: 10,
+                                                                                height: 30,
+                                                                                marginBottom: 10
+                                                                            }}>
+
+                                                                            <Text style={{ fontSize: 20 }}>{element.name}</Text>
+                                                                            <Text>{element.data.length} items</Text>
+                                                                        </View>
+                                                                    </View>
+
+                                                                </View>
+                                                                <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                                    <Text>{new Date(element.date).getFullYear() + '/' + fixDigit(new Date(element.date).getMonth()) + '/' + fixDigit(new Date(element.date).getDate())}</Text>
+                                                                </View>
+                                                            </Card.Content>
+                                                        </Card>
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
+                            }
+                        </View>
+                    </View>
+
+                </Modal>
+            </View>
+
+            <View style={styles.container}>
+                <Modal
+                    isVisible={isVisibleAddWordVocu}
+                    animationInTiming={1000}
+                    animationOutTiming={1000}
+                    backdropTransitionInTiming={1000}
+                    backdropTransitionOutTiming={1000}
+                    deviceWidth={WIDTH}
+                >
+                    <View style={[styles.modalContent, { marginTop: 50, minHeight: 170 }]}>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Tạo nhóm từ</Text>
+                            <TextInput
+                                style={{ borderBottomWidth: 1, borderBottomColor: '#80b3ff', alignItems: 'center', justifyContent: 'center' }}
+                                placeholder="Nhập nhóm từ cần lưu"
+                                value={name}
+                                onChangeText={text => setName(text)}
+                            />
+                            <View style={styles.stylebutton}>
+                                <TouchableOpacity
+                                    onPress={() => setisVisibleAddWordVocu(false)}
+                                    style={[styles.keepStyle, { backgroundColor: '#999999', marginRight: 110 }]}>
+                                    <Text style={{ color: '#fff' }}>Đóng</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={[styles.keepStyle, { backgroundColor: '#1a75ff', }]}
+                                    onPress={() => createVocaAndAddWord()}
+                                >
+                                    <Text style={{ color: '#fff' }}>Tạo</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
+
+                    </View>
+                </Modal>
+            </View>
         </View>
     )
 };
@@ -650,6 +874,12 @@ const styles = StyleSheet.create({
     //     justifyContent: 'flex-end',
     //     margin: 0,
     //   },
+    modalContentadd: {
+        flex: 1,
+        backgroundColor: 'white',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
     text: {
         fontSize: 24,
         marginBottom: 30,
@@ -661,5 +891,7 @@ const styles = StyleSheet.create({
     },
     textt: {
         marginLeft: 10, marginTop: 5
-    }
+    },
+    stylebutton: { flexDirection: 'row', justifyContent: 'space-around', flex: 4, marginTop: 20 },
+    keepStyle: { height: 40, width: 100, alignItems: 'center', justifyContent: 'center', borderRadius: 5 },
 })

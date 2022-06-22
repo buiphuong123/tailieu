@@ -32,6 +32,9 @@ import ErrorScreen from "../screens/tab/contact/ErrorScreen";
 import MemberScreen from "../screens/tab/manage/MemberScreen";
 import WordLevel from "../screens/tab/home/word/WordLevel";
 import ListAllWordLevel from "../screens/tab/home/word/ListAllWordLevel";
+import GrammarTest from "../screens/tab/home/practice/GrammarTest";
+import PracticeScreen from "../screens/tab/home/practice/PracticeScreen";
+import PostUser from "../screens/tab/contact/PostUser";
 const Drawer = createDrawerNavigator();
 
 const DrawerTab = () => {
@@ -68,6 +71,9 @@ const DrawerTab = () => {
             <Drawer.Screen name="MemberScreen" component={MemberScreen} />
             <Drawer.Screen name="WordLevel" component={WordLevel} />
             <Drawer.Screen name="ListAllWordLevel" component={ListAllWordLevel} />
+            <Drawer.Screen name="GrammarTest" component={GrammarTest} />
+            <Drawer.Screen name="PracticeScreen" component={PracticeScreen} />
+            <Drawer.Screen name="PostUser" component={PostUser} />
 
         </Drawer.Navigator> 
     )

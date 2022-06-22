@@ -6,7 +6,7 @@ import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconss from 'react-native-vector-icons/MaterialCommunityIcons';
-import { element } from 'prop-types';
+import { element, number } from 'prop-types';
 import { Card, Avatar, Button } from 'react-native-paper';
 import Modal from 'react-native-modal'; // 2.4.0
 import { getListVocaSuccess } from '../../../redux/actions/vocabulary.action';
@@ -35,7 +35,10 @@ const VocabularyScreen = ({ navigation }) => {
     const [sort3, setSort3] = useState('checked');
     const [sort4, setSort4] = useState('unchecked');
     const [nameSearch, setNameSearch] = useState("");
-    const [searchRequire, setSearchRequire] = useState(false);
+    const ramdom = Math.floor(Math.random() * colorBack.length);
+    const dispatch = useDispatch();
+    const vocabularyShare = useSelector(state => state.vocabularyReducer.vocabularyShare);
+
     // const vocabulary = [
     //     {
     //         "data": [
@@ -67,19 +70,44 @@ const VocabularyScreen = ({ navigation }) => {
     //     },
     // ];
     const [dataList, setDataList] = useState(vocabulary);
+    const [dataShare, setDataShare] = useState(vocabularyShare);
+    const [searchRequire, setSearchRequire] = useState(false);
+    const [searching, setSearching] = useState(false);
+    const [searchname, setSearchName] = useState("");
+    const [filtered, setFiltered] = useState(vocabulary);
     useEffect(() => {
         setDataList(vocabulary);
-    }, [vocabulary]);
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            setDataList(vocabulary);
-            //Put your Data loading function here instead of my loadData()
-        });
+        setDataShare(vocabularyShare);
+    }, [vocabulary, vocabularyShare]);
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         setDataList(vocabulary);
+    //         //Put your Data loading function here instead of my loadData()
+    //     });
 
-        return unsubscribe;
-    }, [navigation]);
+    //     return unsubscribe;
+    // }, [navigation]);
 
-
+    const onSearchNameVocu = (text) => {
+        setSearchName(text);
+        if (text) {
+            setSearching(true);
+            if (numberTab === 1) {
+                const tempList = dataList.filter(item => {
+                    if (item.name.match(text.toLowerCase()))
+                        return item
+                })
+                setFiltered(tempList);
+            }
+            else {
+                const tempList = dataShare.filter(item => {
+                    if (item.name.match(text.toLowerCase()))
+                        return item
+                })
+                setFiltered(tempList);
+            }
+        }
+    }
     const createVoca = () => {
         axios.post('http://192.168.1.72:3002/language/createVocabulary', {
             "user_id": users._id,
@@ -96,14 +124,17 @@ const VocabularyScreen = ({ navigation }) => {
                 console.log(response.data);
                 setName("");
                 setDataList([...dataList.concat(response.data.vocabulary)]);
+                dispatch(getListVocaSuccess(dataList.concat(response.data.vocabulary)));
+
+
             })
             .catch(function (error) {
                 throw error;
             })
         setisVisibleAdd(false);
     }
-    const listVoca = (element) => {
-        navigation.navigate("ListWordVocabulary", { navigation: navigation, listdata: element, status: false });
+    const listVoca = (element, numberTab) => {
+        navigation.navigate("ListWordVocabulary", { navigation: navigation, listdata: element, status: false, type: numberTab });
     }
     const editVocaAction = (element) => {
         setNewVocu(element.name);
@@ -123,7 +154,7 @@ const VocabularyScreen = ({ navigation }) => {
             dataList[objectIndex].name = newVocu;
             dataList[objectIndex].date = date;
             setDataList([...dataList]);
-            getListVocaSuccess(dataList);
+            dispatch(getListVocaSuccess(dataList));
             axios.post('http://192.168.1.722:3002/language/editVocabulary', {
                 "id": currentElement._id,
                 "name": newVocu,
@@ -145,6 +176,43 @@ const VocabularyScreen = ({ navigation }) => {
         setisVisibleEdit(false);
     }
 
+    const deleteVocuShare = (element) => {
+        Alert.alert(
+            "Delete",
+            "Want to delete" + element.name + "khỏi bộ từ được chia sẻ ?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "OK", onPress: () => {
+                        const objectIndex = dataShare.findIndex(e => e._id === element._id);
+                        if (objectIndex !== -1) {
+                            dataShare.splice(objectIndex, 1);
+                            setDataShare([...dataShare]);
+
+                            axios.post('http://192.168.1.72:3002/language/deleteVocabulary', {
+                                "id": element._id,
+                            }, {
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json"
+                                }
+                            })
+                                .then((response) => {
+                                    console.log(response.data);
+                                })
+                                .catch(function (error) {
+                                    throw error;
+                                })
+                        }
+                    }
+                }
+            ]
+        )
+    }
     const deleteVocu = (element) => {
         Alert.alert(
             "Delete",
@@ -277,12 +345,14 @@ const VocabularyScreen = ({ navigation }) => {
                                 <Icons name={"clouddownloado"} size={29} style={{ color: '#fff' }} />
                             </TouchableOpacity> */}
                             <TouchableOpacity style={{ justifyContent: 'center', marginLeft: 20, paddingRight: 10 }} onPress={() => setSearchRequire(true)}>
-                                    <EvilIcons name={"search"} size={29} style={{ color: '#fff' }} />
-                                    
-                                </TouchableOpacity>
-                            <TouchableOpacity style={{ justifyContent: 'center', marginLeft: 20 }} onPress={() => setisVisibleAdd(true)}>
-                                <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
+                                <EvilIcons name={"search"} size={29} style={{ color: '#fff' }} />
+
                             </TouchableOpacity>
+                            {numberTab === 1 ?
+                                <TouchableOpacity style={{ justifyContent: 'center', marginLeft: 20 }} onPress={() => setisVisibleAdd(true)}>
+                                    <MaterialIcons name={"add-box"} size={29} style={{ color: '#fff' }} />
+                                </TouchableOpacity>
+                                : null}
                             <TouchableOpacity style={{ justifyContent: 'center', marginRight: 10, marginLeft: 20 }} onPress={() => setisVisibleSort(true)}>
                                 <MaterialCommunityIcons name={"sort-bool-ascending"} size={29} style={{ color: '#fff' }} />
                             </TouchableOpacity>
@@ -297,13 +367,13 @@ const VocabularyScreen = ({ navigation }) => {
                             <TextInput
                                 style={{ marginLeft: 10, fontSize: 18 }}
                                 placeholder="tìm kiếm ..."
-                                value={nameSearch}
-                                onChangeText={text => setNameSearch(text)}
+                                value={searchname}
+                                onChangeText={text => onSearchNameVocu(text)}
                             />
                         </View>
                         <View />
                         <Icons name={'close'} size={20}
-                            onPress={() => setSearchRequire(false)}
+                            onPress={() => {setSearchRequire(false); setSearching(false)}}
                             style={{ color: colors.text, paddingTop: 15, paddingRight: 20 }} />
                     </View>
             }
@@ -348,12 +418,12 @@ const VocabularyScreen = ({ navigation }) => {
             <View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#009387', borderTopWidth: 1, borderTopColor: '#737373', height: 40 }}>
                     <TouchableOpacity
-                        onPress={() => setNumberTab(1)}
+                        onPress={() => {setNumberTab(1); setSearching(false); setSearchName("")}}
                         style={{ alignItems: 'center', justifyContent: 'center', width: '50%', borderBottomWidth: numberTab === 1 ? 2 : 0, borderBottomColor: numberTab === 1 ? '#66ff66' : '#009387' }}>
                         <Text style={{ color: numberTab === 1 ? '#fff' : '#bfbfbf' }}>Bộ từ</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => setNumberTab(2)}
+                        onPress={() => {setNumberTab(2);setSearching(false); setSearchName("") }}
                         style={{ alignItems: 'center', justifyContent: 'center', width: '50%', borderBottomWidth: numberTab === 2 ? 2 : 0, borderBottomColor: numberTab === 2 ? '#66ff66' : '#009387' }}>
                         <Text style={{ color: numberTab === 2 ? '#fff' : '#bfbfbf' }}>Share</Text>
                     </TouchableOpacity>
@@ -371,14 +441,14 @@ const VocabularyScreen = ({ navigation }) => {
                             :
                             <ScrollView style={{ marginBottom: 90 }}>
                                 {
-                                    dataList.map((element, key) => {
+                                    (searching === true? filtered: dataList).map((element, key) => {
                                         return (
-                                            <TouchableOpacity key={key} onPress={() => listVoca(element)}>
+                                            <TouchableOpacity key={key} onPress={() => listVoca(element, numberTab)}>
                                                 <Card style={{ marginTop: 10, margin: 10 }}>
                                                     <Card.Content>
                                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                                             <View style={{ flexDirection: 'row' }}>
-                                                                <View style={{ backgroundColor: colorBack[Math.floor(Math.random() * colorBack.length)], borderRadius: 30 }}>
+                                                                <View style={{ backgroundColor: colorBack[ramdom], borderRadius: 30 }}>
                                                                     <Text style={{ paddingTop: 15, paddingBottom: 15, paddingLeft: 20, paddingRight: 20, color: '#fff' }}>{element.name.charAt(0)}</Text>
                                                                 </View>
                                                                 {/* <Avatar.Image size={40} style={{padding: 10}} source={('https://www.google.com/url?sa=i&url=https%3A%2F%2Fvi.m.wikipedia.org%2Fwiki%2FT%25E1%25BA%25ADp_tin%3AImage_created_with_a_mobile_phone.png&psig=AOvVaw3T9sYalA9E5MRsYwkeGOWj&ust=1652583018117000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJDa-8_93fcCFQAAAAAdAAAAABAD')} /> */}
@@ -397,7 +467,7 @@ const VocabularyScreen = ({ navigation }) => {
                                                                 <TouchableOpacity onPress={() => editVocaAction(element)}>
                                                                     <Icons name={'edit'} size={20} style={{ color: 'black' }} />
                                                                 </TouchableOpacity>
-                                                                <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => deleteVocu(element)}>
+                                                                <TouchableOpacity style={{ marginLeft: 10 }} >
                                                                     <Iconss name={'delete-outline'} size={20} style={{ color: 'red' }} />
                                                                 </TouchableOpacity>
                                                             </View>
@@ -414,9 +484,46 @@ const VocabularyScreen = ({ navigation }) => {
                             </ScrollView>
 
                         :
-                        <View>
-                            <Text>ben share day ne</Text>
-                        </View>
+                        <ScrollView style={{ marginBottom: 90 }}>
+                            {
+                                (searching=== true?filtered: dataShare).map((element, key) => {
+                                    return (
+                                        <TouchableOpacity key={key} onPress={() => listVoca(element, numberTab)}>
+                                            <Card style={{ marginTop: 10, margin: 10 }}>
+                                                <Card.Content>
+                                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                        <View style={{ flexDirection: 'row' }}>
+                                                            <View style={{ backgroundColor: colorBack[ramdom], borderRadius: 30 }}>
+                                                                <Text style={{ paddingTop: 15, paddingBottom: 15, paddingLeft: 20, paddingRight: 20, color: '#fff' }}>{element.name.charAt(0)}</Text>
+                                                            </View>
+                                                            {/* <Avatar.Image size={40} style={{padding: 10}} source={('https://www.google.com/url?sa=i&url=https%3A%2F%2Fvi.m.wikipedia.org%2Fwiki%2FT%25E1%25BA%25ADp_tin%3AImage_created_with_a_mobile_phone.png&psig=AOvVaw3T9sYalA9E5MRsYwkeGOWj&ust=1652583018117000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCJDa-8_93fcCFQAAAAAdAAAAABAD')} /> */}
+                                                            <View
+                                                                style={{
+                                                                    marginLeft: 10,
+                                                                    height: 30,
+                                                                    marginBottom: 10
+                                                                }}>
+
+                                                                <Text style={{ fontSize: 20 }}>{element.name}</Text>
+                                                                <Text>{element.data.length} items</Text>
+                                                            </View>
+                                                        </View>
+                                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                            <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => deleteVocu(element)}>
+                                                                <Iconss name={'delete-outline'} size={20} style={{ color: 'red' }} />
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
+                                                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                                                        <Text>Được chia sẻ bởi {element.user_id.username} {new Date(element.date).getFullYear() + '/' + fixDigit(new Date(element.date).getMonth()) + '/' + fixDigit(new Date(element.date).getDate())}</Text>
+                                                    </View>
+                                                </Card.Content>
+                                            </Card>
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            }
+                        </ScrollView>
                 }
                 {/* </View> */}
             </View>

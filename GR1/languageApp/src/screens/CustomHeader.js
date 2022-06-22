@@ -12,16 +12,18 @@ const CustomHeader = ({title, isHome, navigation, icon, action}) => {
                 {
                     isHome ?
                     <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-                        <Icon name={'menu'} size={29} style={{color: colors.text}} />
+                        {/* <Icon name={'menu'} size={29} style={{color: colors.text}} /> */}
+                        <Icon name={'menu'} size={29} style={{color: '#fff'}} />
+
                     </TouchableOpacity>
                     :
                     <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => navigation.goBack()}>
-                        <Icon name={'arrow-back'} size={29} style={{color: colors.text, marginLeft: 5}} />
+                        <Icon name={'arrow-back'} size={29} style={{color: '#fff', marginLeft: 5}} />
                     </TouchableOpacity>
                 }
             </View>
             <View style={{flex: 1.5, justifyContent: 'center'}}>
-                <Text style={{textAlign: 'center', color: colors.text, fontSize: 18}}>{title}</Text>
+                <Text style={{textAlign: 'center', color: '#fff', fontSize: 18}}>{title}</Text>
             </View>
 
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}} onPress={() => action()}>

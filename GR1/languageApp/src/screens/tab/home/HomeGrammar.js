@@ -8,14 +8,19 @@ import CustomHeader from '../../CustomHeader';
 import Entypo from 'react-native-vector-icons/EvilIcons';
 const WIDTH = Dimensions.get('window').width;
 import Modal from 'react-native-modal'; // 2.4.0
+import { getGrammarSuccess } from '../../../redux/actions/grammar.action';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-export default HomeGrammar = ({navigation}) => {
-    const [dataSource] = useState(['tat ca', 'bai 1', 'bai 2', 'bai 3', 'bai 4', 'bai 5', 'bai 6', 'bai 7', 'bai 8', 'bai 9', 'bai 10'])
-   
+export default HomeGrammar = ({navigation, route}) => {
+    const {level } = route.params;
+    const [dataSource, setDataSource] = useState(['tất cả'])
     const [searching, setSearching] = useState(false)
     const [isVisible, setisVisible] = useState(false);
     const dataGrammar = useSelector(state => state.grammarReducer.grammarList);
-    const [filtered, setFiltered] = useState(dataGrammar)
+    const grammarlevel = useSelector(state => state.grammarReducer.grammarlevel);
+    const [filtered, setFiltered] = useState(dataGrammar);
+    const dispatch = useDispatch();
     const onSearch = (text) => {
         if (text) {
             setSearching(true)
@@ -34,14 +39,56 @@ export default HomeGrammar = ({navigation}) => {
 
     }
 
-    const renderLession = ({ item }) => {
+    useEffect(() => {
+        setSearching(false);
+        // console.log(wordlevel);
+        // console.log(grammarlevel.filter(w => !w.lesson).map(w => w.lession))
+        // const max = Math.max(...grammarlevel.map(w => w.lession ?? 1));
+        // // console.log(max);
+        // for (var i = 1; i <= max; i++) {
+        //     dataSource.push("bài " + i);
+
+        // }
+        // setDataSource([...dataSource]);
+    }, []);
+    useEffect(() => {
+        console.log('ve bai nha', level);
+        const max = Math.max(...grammarlevel.map(w => w.lession ?? 1));
+        // console.log(max);
+        for (var i = 1; i <= max; i++) {
+            dataSource.push("bài " + i);
+
+        }
+        console.log(dataSource);
+        setDataSource([...dataSource]);
+    }, [level, grammarlevel]);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            setSearching(false);
+            let arr3 = dataGrammar.map((item, i) => Object.assign({}, item, grammarlevel[i]));
+            dispatch(getGrammarSuccess(arr3));
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    const renderLession = ({ item, index }) => {
         return (
             <View style={{ backgroundColor: '#fff', padding: 10 }}>
                 <Text>{item} Đã nhớ</Text>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                     <View>
-                        <Text>50%</Text>
+                        {
+                            index === 0 ?
+                                <Text>{Math.floor((grammarlevel.filter(e => e.memerizes.length === 1).length / grammarlevel.length) * 100)}%</Text>
+                                :
+                                <Text>{Math.floor((grammarlevel.filter(e => e.memerizes.length === 1 && e.lession === index).length / grammarlevel.filter(e => e.lession === index).length) * 100)}%</Text>
+
+
+                        }
                     </View>
+
                     <View style={{ borderWidth: 1, borderColor: '#cccccc', width: '80%', height: 1, marginTop: 10, marginLeft: 5 }}></View>
                 </View>
             </View>
@@ -54,7 +101,23 @@ export default HomeGrammar = ({navigation}) => {
     }
     return (
         <View style={styles.container}>
-            <CustomHeader title="grammar" navigation={navigation} />
+            {/* <CustomHeader title="grammar" navigation={navigation} /> */}
+            <View style={{flexDirection: 'row', height: 50, backgroundColor: '#009387', justifyContent: 'space-around'}}>
+            <View style={{flex: 1, justifyContent: 'center'}}>
+               
+                    <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => navigation.goBack()}>
+                        <Icon name={'arrow-back'} size={29} style={{color: '#fff', marginLeft: 5}} />
+                    </TouchableOpacity>
+            </View>
+            <View style={{flex: 1.5, justifyContent: 'center'}}>
+                <Text style={{textAlign: 'center', color: '#fff', fontSize: 18}}>Grammar</Text>
+            </View>
+
+            <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => navigation.navigate("GrammarTest", {navigation: navigation, level: level})}>
+                        <AntDesign name={'caretright'} size={29} style={{color: '#fff', marginRight: 20}} />
+                    </TouchableOpacity>
+            {/* <View style={{flex: 1}}></View> */}
+        </View>
             <View style={{ justifyContent: 'center', alignItems: 'center', height: 60, backgroundColor: '#009387', }}>
                 <TextInput
                     style={styles.textInput}
@@ -64,7 +127,7 @@ export default HomeGrammar = ({navigation}) => {
 
                 />
             </View>
-            <View style={{}}>
+            <ScrollView style={{}}>
                 <View style={{
                     flexWrap: 'wrap', flexDirection: 'row',
                     // justifyContent: 'center'
@@ -83,8 +146,8 @@ export default HomeGrammar = ({navigation}) => {
                                     borderColor: "blue",
                                     borderRadius: 15,
                                     padding: 5,
-                                    paddingLeft: 18,
-                                    paddingRight: 18,
+                                    paddingLeft: 15,
+                                    paddingRight: 15,
 
                                 }} onPress={() => PressLession(index)}>
 
@@ -97,10 +160,10 @@ export default HomeGrammar = ({navigation}) => {
                     }
                 </View>
 
-            </View>
+            </ScrollView>
 
 
-            <View style={styles.container}>
+            <View>
                 <Modal
                     isVisible={isVisible}
                     animationInTiming={1000}
@@ -173,6 +236,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    modalContent: {
+        // flex: 1,
+        marginTop: 50,
+        marginBottom: 50,
+        // marginBottom: 50,
+        backgroundColor: 'white',
+        // height: HEIGHT
     },
 });
 

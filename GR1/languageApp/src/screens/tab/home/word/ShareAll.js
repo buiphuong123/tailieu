@@ -15,27 +15,35 @@ const ShareAll = ({ navigation, route }) => {
     const richText = React.useRef();
     const [data, setData] = useState({ html: `` });
     const [titleSearch, setTitleSearch] = useState("");
-    const [selectedChoose, setSelectedChoose] = useState(["Tất cả","Góc chia sẻ", "Học tiếng Nhật", "Du học Nhật Bản", "Việc làm tiếng Nhật", "Văn hóa Nhật Bản", "Tìm bạn học", "Khác"]);
+    const [selectedChoose, setSelectedChoose] = useState(["Tất cả", "Góc chia sẻ", "Học tiếng Nhật", "Du học Nhật Bản", "Việc làm tiếng Nhật", "Văn hóa Nhật Bản", "Tìm bạn học", "Khác"]);
     const { datavocu } = route.params;
     const users = useSelector(state => state.userReducer.user);
     const listPost = useSelector(state => state.postReducer.listPost);
-    const [dataPost, setDataPost] = useState(listPost.filter(e=> e.review ===1));
+    const [dataPost, setDataPost] = useState(listPost.filter(e => e.review === 1));
     const dispatch = useDispatch();
     const vocabulary = useSelector(state => state.vocabularyReducer.vocabularyList);
     const [dataListVocu, setdataListVocu] = useState(vocabulary);
+    const isManage = useSelector(state => state.manageReducer.isManage);
+
     useEffect(() => {
-        setDataPost(listPost.filter(e=> e.review ===1));
+        setDataPost(listPost.filter(e => e.review === 1));
     }, [listPost]);
-  
+
 
     const sharePostAllUser = () => {
+
         setData({ ...data });
+        var requ = 2;
+        if(isManage === false) {
+            requ = 1
+        }
         axios.post('http://192.168.1.72:3002/language/createPost', {
             "userId": users,
             "title": titleSearch,
             "theme": selectedChoose[1],
             "content": data,
             "dataVocuShare": datavocu._id,
+            "requ": requ,
 
         }, {
             headers: {
@@ -47,13 +55,32 @@ const ShareAll = ({ navigation, route }) => {
                 console.log('gia tri nhan duowcj la', response.data.newPost);
                 const kaka = response.data.newPost;
                 kaka.likeposts = [];
-                setDataPost(dataPost.concat(kaka));
+                setDataPost([...dataPost.concat(kaka)]);
                 dispatch(getListPostSuccess(dataPost.concat(kaka)));
-                const objectIndex = dataListVocu.findIndex(e =>e._id === datavocu._id);
-                if(objectIndex !== -1) {
-                    dataListVocu[objectIndex].share = {username: "all"};
+                const objectIndex = dataListVocu.findIndex(e => e._id === datavocu._id);
+                if (objectIndex !== -1) {
+                    dataListVocu[objectIndex].typeShare = 1;
+                    dataListVocu[objectIndex].share = [];
                     console.log('data list vocu ', dataListVocu);
                     setdataListVocu([...dataListVocu]);
+                    axios.post('http://192.168.1.72:3002/language/shareVocabulary', {
+                        "id": datavocu._id,
+                        "listUserShare": [],
+                        "remind": "",
+                        "userid": users._id,
+                        "typeShare": 1
+                    }, {
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json"
+                        }
+                    })
+                        .then((response) => {
+                            console.log(response.data);
+                        })
+                        .catch(function (error) {
+                            throw error;
+                        })
                     navigation.goBack();
                 }
             })
@@ -81,8 +108,8 @@ const ShareAll = ({ navigation, route }) => {
                     <TextInput
                         style={{ marginLeft: 10, fontSize: 18, backgroundColor: '#fff', borderWidth: 1, borderColor: '#e6e6e6', margin: 10 }}
                         placeholder="Nhập tiêu đề bài viết"
-                    value={titleSearch}
-                    onChangeText={text => setTitleSearch(text)}
+                        value={titleSearch}
+                        onChangeText={text => setTitleSearch(text)}
                     />
 
                 </View>
@@ -90,10 +117,10 @@ const ShareAll = ({ navigation, route }) => {
                 <SafeAreaView style={{ padding: 10 }}>
                     <ScrollView>
                         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, minHeight: 200 }}>
-                            <View style={{flexDirection: 'row'}}>
+                            <View style={{ flexDirection: 'row' }}>
                                 <Text>Bộ từ vựng: </Text>
-                                <TouchableOpacity style={{marginLeft: 5}} onPress={() => navigation.navigate("ListWordVocabulary", { navigation: navigation, listdata: datavocu })}>
-                                    <Text style={{color: 'blue', fontStyle: 'italic'}}> {datavocu.name}</Text>
+                                <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => navigation.navigate("ListWordVocabulary", { navigation: navigation, listdata: datavocu })}>
+                                    <Text style={{ color: 'blue', fontStyle: 'italic' }}> {datavocu.name}</Text>
                                 </TouchableOpacity>
                             </View>
                             <RichEditor

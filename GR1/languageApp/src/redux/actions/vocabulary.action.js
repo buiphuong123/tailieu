@@ -14,3 +14,17 @@ export const getListVocaSuccess = (vocabularyList) => {
         payload: {vocabularyList},
     }
 };
+export function getListShareVocaRequest (user_id) { 
+    return {
+      type: types.GET_LIST_VOCABULARY_SHARE_REQUEST,
+      payload: {user_id},
+      
+    }
+}
+
+export const getListShareVocaSuccess = (vocabularyShare) => {
+    return {
+        type: types.GET_LIST_VOCABULARY_SHARE_SUCCESS,
+        payload: {vocabularyShare},
+    }
+};

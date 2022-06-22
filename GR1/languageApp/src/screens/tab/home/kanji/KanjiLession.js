@@ -7,6 +7,7 @@ import Entypo from 'react-native-vector-icons/EvilIcons';
 const WIDTH = Dimensions.get('window').width;
 import Modal from 'react-native-modal'; // 2.4.0
 import CustomHeader from '../../../CustomHeader';
+import { getListKanjiSuccess } from '../../../../redux/actions/kanji.action';
 
 export default KanjiLession = ({navigation}) => {
     const [dataSource, setDataSource] = useState(['tất cả'])
@@ -16,7 +17,8 @@ export default KanjiLession = ({navigation}) => {
     const kanjilevel = useSelector(state => state.kanjiReducer.kanjilevel);
     const [filtered, setFiltered] = useState(kanjiList);
     const [searchName, setSearchName] = useState("");
-    const onSearch = (text) => {
+    const dispatch = useDispatch();
+        const onSearch = (text) => {
         setSearchName(text);
         if (text) {
             setSearching(true)
@@ -51,18 +53,28 @@ export default KanjiLession = ({navigation}) => {
         console.log('vao focus');
         const unsubscribe = navigation.addListener('focus', () => {
             setSearching(false);
+            let arr3 = kanjiList.map((item, i) => Object.assign({}, item, kanjilevel[i]));
+            dispatch(getListKanjiSuccess(arr3));
         });
 
         return unsubscribe;
     }, [navigation]);
-    const renderLession = ({ item }) => {
+    const renderLession = ({ item, index }) => {
         return (
             <View style={{ backgroundColor: '#fff', padding: 10 }}>
                 <Text>{item} Đã nhớ</Text>
                 <View style={{flexDirection: 'row'}}>
-                    <View>
-                        <Text>50%</Text>
+                <View>
+                        {
+                            index=== 0 ?
+                            <Text>{Math.floor((kanjilevel.filter(e=>e.memerizes.length===1).length/kanjilevel.length)*100)}%</Text>
+                            :
+                            <Text>{Math.floor((kanjilevel.filter(e=>e.memerizes.length===1 && e.lession=== index).length/kanjilevel.filter(e=>e.lession=== index).length)*100)}%</Text>
+
+
+                        }
                     </View>
+
                     <View style={{ borderWidth: 1, borderColor: '#cccccc', width: '80%', height: 1, marginTop: 10, marginLeft: 5 }}></View>
                 </View>
             </View>
@@ -85,7 +97,7 @@ export default KanjiLession = ({navigation}) => {
 
                 />
             </View>
-            <View style={{}}>
+            <ScrollView style={{}}>
                 <View style={{
                     flexWrap: 'wrap', flexDirection: 'row',
                     // justifyContent: 'center'
@@ -104,8 +116,8 @@ export default KanjiLession = ({navigation}) => {
                                     borderColor: "blue",
                                     borderRadius: 15,
                                     padding: 5,
-                                    paddingLeft: 18,
-                                    paddingRight: 18,
+                                    paddingLeft: 15,
+                                    paddingRight: 15,
 
                                 }} 
                                 onPress={() => PressLession(index)}
@@ -120,10 +132,10 @@ export default KanjiLession = ({navigation}) => {
                     }
                 </View>
 
-            </View>
+            </ScrollView>
 
 
-            <View style={styles.container}>
+            <View>
                 <Modal
                     isVisible={isVisible}
                     animationInTiming={1000}
@@ -196,6 +208,14 @@ export default KanjiLession = ({navigation}) => {
 
 
 const styles = StyleSheet.create({
+    modalContent: {
+        // flex: 1,
+        marginTop: 50,
+        marginBottom: 50,
+        // marginBottom: 50,
+        backgroundColor: 'white',
+        // height: HEIGHT
+    },
     itemSearch: {
         position: 'absolute', zIndex: 1, top: 100,
         width: WIDTH-40, left: 20 ,backgroundColor: '#fff',

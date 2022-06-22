@@ -226,7 +226,7 @@ export default WordScreenDetail = ({ navigation, route }) => {
         }
         var requ = 2;
 
-        if (isManage === false || users.role===1 || users.role===2) {
+        if (isManage === false || users.role===2) {
             requ = 1;
         }
         axios.post('http://192.168.1.72:3002/language/createWordComment', {
@@ -699,7 +699,13 @@ export default WordScreenDetail = ({ navigation, route }) => {
                 </View>
                 <View style={{ padding: 10, borderTopWidth: 1, borderTopColor: '#d9d9d9' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                        <Text>Có {dataWordComment.length}  góp ý</Text>
+                        {/* <Text>Có {dataWordComment.length}  góp ý</Text> */}
+                        {
+                            users.role ===1 || user.role===2 ?
+                            <Text>Có {dataWordComment.filter(e=>e.review ===1).length}  góp ý</Text>
+                            :
+                            <Text>Có {dataWordComment.length}  góp ý</Text>
+                        }
                         {
                             dataWordComment.length > 3 ?
                                 <TouchableOpacity onPress={() => setisVisible(true)}>

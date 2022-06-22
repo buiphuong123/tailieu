@@ -23,8 +23,8 @@ import { getPostRequest } from '../../../redux/actions/post.action';
 import { getListUser } from '../../../redux/actions';
 import { getAllcommentWord, getAllcommentGrammar, getAllcommentKanji } from '../../../redux/actions/comment.action';
 import { getListWordSuccess } from '../../../redux/actions/word.action';
-
-
+import { getListShareVocaRequest } from '../../../redux/actions/vocabulary.action';
+import { getListCommentRequest, getListKanjiCommentRequest, getListWordCommentRequest } from '../../../redux/actions/comment.action';
 const HomeScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const users = useSelector(state => state.userReducer.user);
@@ -52,54 +52,12 @@ const HomeScreen = ({ navigation }) => {
             .catch(function (error) {
                 throw error;
             });
-        {
-            users.role === 1 ?
-                axios.get('http://192.168.1.72:3002/language/getAllWordComment', {
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then((response) => {
-                        dispatch(getAllcommentWord(response.data.comment));
-                    })
-                    .catch(function (error) {
-                        throw error;
-                    })
-                &&
-                axios.get('http://192.168.1.72:3002/language/getAllKanjiComment', {
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then((response) => {
-                        dispatch(getAllcommentKanji(response.data.comment));
-                    })
-                    .catch(function (error) {
-                        throw error;
-                    })
-                &&
-                axios.get('http://192.168.1.72:3002/language/getAllGrammarComment', {
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then((response) => {
-                        dispatch(getAllcommentGrammar(response.data.comment));
-                    })
-                    .catch(function (error) {
-                        throw error;
-                    })
-
-
-                : null
-        }
+        
         dispatch(getListNotifiRequest(users.username));
         dispatch(getListKanjiRequest(users._id, navigation));
         dispatch(getListWordRequest(users._id));
         dispatch(getListVocaRequest(users._id));
+        dispatch(getListShareVocaRequest(users._id));
         dispatch(getGrammarRequest(users._id));
         dispatch(getPostRequest(users._id));
 
@@ -163,14 +121,29 @@ const HomeScreen = ({ navigation }) => {
                         .catch(function (error) {
                             throw error;
                         });
-                    navigation.navigate("ExplainScreen", { word: JSON.parse(remoteMessage.data.routedata) })
-
+                    const dataaa = JSON.parse(remoteMessage.data.routedata);
+                    // navigation.navigate("ExplainScreen", { word: JSON.parse(remoteMessage.data.routedata) })
+                    if(item.typeNoti === 'word') {
+                        dispatch(getListWordCommentRequest(dataaa._id, users._id));
+                        navigation.navigate("WordScreenDetail", {navigation: navigation, vocabulary: dataaa });
+                    }
+                    else if(item.typeNoti === 'kanji') {
+                        dispatch(getListKanjiCommentRequest(dataaa._id, users._id));
+                        navigation.navigate("ExplainKanji", { navigation: navigation, kanjiword: dataaa });
+                    }
+                    else if(item.typeNoti === 'grammar'){
+                        dispatch(getListCommentRequest(dataaa._id, users._id));
+                        navigation.navigate("ExplainScreen", { word: dataaa });
+                    }
+                    else {
+                        navigation.navigate("PostUser", { navigation: navigation, dataOne: dataaa })
+                    }
                 }
             });
     }, []);
 
     const grammarRequest = () => {
-        var level;
+        var level = 5;
         if (isN5 === 'checked') {
             level = 5;
         }
@@ -183,9 +156,13 @@ const HomeScreen = ({ navigation }) => {
         else if (isN2 === 'checked') {
             level = 2;
         }
+
+        console.log('grammar list day ne',grammarList.length, level);
+        console.log('level day ne ', level);
+        console.log('ben homscree la ',grammarList.filter((e) => e.level === level).length, level) ;
         // dispatch(getListKanjiRequest(users._id, level, navigation));
         dispatch(getListGrammarLevel(grammarList.filter((e) => e.level === level)));
-        navigation.navigate("HomeGrammar");
+        navigation.navigate("HomeGrammar", {level: level});
     }
 
     const kanjiRequest = () => {
